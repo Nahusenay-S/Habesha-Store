@@ -1,0 +1,25 @@
+{
+  "name": "habesha-store",
+  "version": "0.1.0",
+  "description": "Ethiopian E-Commerce Platform",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix frontend\" \"npm run dev --prefix backend\"",
+    "frontend:dev": "npm run dev --prefix frontend",
+    "backend:dev": "npm run dev --prefix backend",
+    "build": "npm run build --prefix frontend && npm run build --prefix backend",
+    "test": "concurrently \"npm test --prefix frontend\" \"npm test --prefix backend\""
+  },
+  "keywords": [
+    "e-commerce",
+    "ethiopia",
+    "marketplace",
+    "nextjs",
+    "express"
+  ],
+  "author": "Nahusenay Simegn",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.0.0"
+  }
+}
