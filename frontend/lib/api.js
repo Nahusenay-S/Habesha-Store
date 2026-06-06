@@ -45,8 +45,17 @@ export const reviewAPI = {
 };
 
 export const paymentAPI = {
+  // Stripe
   createStripePaymentIntent: (data) => api.post('/payments/stripe/create-intent', data),
   confirmStripePayment: (data) => api.post('/payments/stripe/confirm', data),
+  // Telebirr
+  initiateTelebirrPayment: (data) => api.post('/payments/telebirr/initiate', data),
+  verifyTelebirrPayment: (data) => api.post('/payments/telebirr/verify', data),
+  checkTelebirrStatus: (ref) => api.get(`/payments/telebirr/status/${ref}`),
+  // PayPal
+  createPayPalOrder: (data) => api.post('/payments/paypal/create-order', data),
+  capturePayPalPayment: (data) => api.post('/payments/paypal/capture', data),
+  // General
   getPaymentHistory: () => api.get('/payments/history'),
   getPaymentById: (id) => api.get(`/payments/${id}`),
   processRefund: (data) => api.post('/payments/refund', data),
