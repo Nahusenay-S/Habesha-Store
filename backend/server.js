@@ -33,11 +33,15 @@ const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
+const telebirrRoutes = require('./routes/telebirrRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/payments/telebirr', telebirrRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -54,6 +58,8 @@ app.get('/api', (req, res) => {
       products: '/api/products',
       orders: '/api/orders',
       reviews: '/api/reviews',
+      payments: '/api/payments',
+      telebirr: '/api/payments/telebirr',
     },
   });
 });
