@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const mongoose = require('mongoose');
 require('dotenv').config();
 
 const app = express();
@@ -10,6 +11,33 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Database connection
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log('✅ MongoDB connected');
+  } catch (error) {
+    console.error('❌ MongoDB connection failed:', error);
+    process.exit(1);
+  }
+};
+
+connectDB();
+
+// Routes
+const authRoutes = require('./routes/authRoutes');
+const productRoutes = require('./routes/productRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
+
+app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -22,10 +50,10 @@ app.get('/api', (req, res) => {
     message: 'Welcome to Habesha Store API',
     version: '0.1.0',
     endpoints: {
-      health: '/api/health',
+      auth: '/api/auth',
       products: '/api/products',
-      users: '/api/users',
       orders: '/api/orders',
+      reviews: '/api/reviews',
     },
   });
 });
