@@ -44,4 +44,12 @@ export const reviewAPI = {
   delete: (id) => api.delete(`/reviews/${id}`),
 };
 
+export const paymentAPI = {
+  createStripePaymentIntent: (data) => api.post('/payments/stripe/create-intent', data),
+  confirmStripePayment: (data) => api.post('/payments/stripe/confirm', data),
+  getPaymentHistory: () => api.get('/payments/history'),
+  getPaymentById: (id) => api.get(`/payments/${id}`),
+  processRefund: (data) => api.post('/payments/refund', data),
+};
+
 export default api;

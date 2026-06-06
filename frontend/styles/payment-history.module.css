@@ -1,0 +1,150 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 70vh;
+}
+
+.container h1 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, var(--color-red) 0%, var(--color-blue) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.filterSection {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.filterSection button {
+  padding: 0.7rem 1.5rem;
+  border: 2px solid var(--color-light);
+  background: var(--color-white);
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.filterSection button:hover {
+  border-color: var(--color-red);
+  color: var(--color-red);
+}
+
+.activeFilter {
+  background: linear-gradient(135deg, var(--color-red) 0%, var(--color-blue) 100%);
+  color: var(--color-white) !important;
+  border-color: var(--color-red) !important;
+}
+
+.paymentsTable {
+  background: var(--color-white);
+  border-radius: 10px;
+  overflow-x: auto;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: var(--color-light);
+  border-bottom: 2px solid #ddd;
+}
+
+th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-dark);
+}
+
+td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-light);
+}
+
+tbody tr:hover {
+  background: #f9f9f9;
+}
+
+.amount {
+  font-weight: 600;
+  color: var(--color-red);
+  font-size: 1.1rem;
+}
+
+.badge {
+  display: inline-block;
+  background: var(--color-gold);
+  color: var(--color-dark);
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.transactionId {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--color-gray);
+}
+
+.link {
+  color: var(--color-red);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.link:hover {
+  color: var(--color-blue);
+}
+
+.actionBtn {
+  padding: 0.5rem 1rem;
+  background: var(--color-green);
+  color: var(--color-white);
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.actionBtn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 3px 10px rgba(7, 137, 48, 0.3);
+}
+
+.loading,
+.empty {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.1rem;
+  color: var(--color-gray);
+}
+
+@media (max-width: 768px) {
+  table {
+    font-size: 0.9rem;
+  }
+
+  th,
+  td {
+    padding: 0.7rem;
+  }
+}
