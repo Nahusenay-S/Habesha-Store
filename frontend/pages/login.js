@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { authAPI } from '../lib/api';
+import Head from 'next/head';
+import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
-import styles from './auth.module.css';
+import apiClient from '../lib/apiClient';
+import styles from '../pages/auth.module.css';
 
 const LoginPage = () => {
   const router = useRouter();
   const { login } = useAuth();
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
-  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
@@ -25,9 +23,9 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      const response = await authAPI.login(formData);
+      const response = await apiClient.post('/auth/login', formData);
       login(response.data.user, response.data.token);
-      router.push('/dashboard');
+      router.push('/');
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed');
     } finally {
@@ -36,48 +34,47 @@ const LoginPage = () => {
   };
 
   return (
-    <div className={styles.authContainer}>
-      <div className={styles.authBox}>
-        <h1 className={styles.title}>Welcome Back! 🇪🇹</h1>
-        <p className={styles.subtitle}>Login to your Habesha Store account</p>
-
-        {error && <div className={styles.error}>{error}</div>}
-
-        <form onSubmit={handleSubmit}>
-          <div className={styles.formGroup}>
-            <label>Email</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="your@email.com"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label>Password</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="••••••••"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <button type="submit" className={styles.submitBtn} disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
-        </form>
-
-        <p className={styles.link}>
-          Don't have an account? <a href="/register">Register here</a>
-        </p>
+    <>
+      <Head>
+        <title>Login - Habesha Store</title>
+      </Head>
+      <div className={styles.container}>
+        <div className={styles.formBox}>
+          <h1>Login</h1>
+          {error && <div className={styles.error}>{error}</div>}
+          <form onSubmit={handleSubmit}>
+            <div className={styles.formGroup}>
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <button type="submit" disabled={loading}>
+              {loading ? 'Logging in...' : 'Login'}
+            </button>
+          </form>
+          <p>
+            Don't have an account? <Link href="/register">Register here</Link>
+          </p>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
