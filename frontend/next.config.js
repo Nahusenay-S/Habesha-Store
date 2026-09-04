@@ -1,10 +1,9 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+module.exports = {
   reactStrictMode: true,
-  swcMinify: true,
-  images: {
-    domains: ['localhost', 'api.example.com'],
+  env: {
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api',
   },
-}
-
-module.exports = nextConfig
+  images: {
+    domains: ['images.unsplash.com', 'via.placeholder.com'],
+  },
+};
