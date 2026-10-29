@@ -4,6 +4,7 @@ import { orderAPI, paymentAPI } from '../lib/api';
 import styles from './PaymentForm.module.css';
 
 const PaymentForm = ({ orderId, amount, onSuccess }) => {
+  const numericAmount = Number(amount || 0);
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -73,7 +74,7 @@ const PaymentForm = ({ orderId, amount, onSuccess }) => {
         <div className={styles.checkmark}>✓</div>
         <h2>Payment Successful!</h2>
         <p>Your order has been placed successfully.</p>
-        <p className={styles.amount}>Amount Paid: Br {amount.toFixed(2)}</p>
+        <p className={styles.amount}>Amount Paid: ETB {numericAmount.toFixed(2)}</p>
       </div>
     );
   }
@@ -120,7 +121,7 @@ const PaymentForm = ({ orderId, amount, onSuccess }) => {
 
       <div className={styles.amountSummary}>
         <span>Total Amount:</span>
-        <span className={styles.amountValue}>Br {amount.toFixed(2)}</span>
+        <span className={styles.amountValue}>ETB {numericAmount.toFixed(2)}</span>
       </div>
 
       <button
@@ -128,7 +129,7 @@ const PaymentForm = ({ orderId, amount, onSuccess }) => {
         disabled={!stripe || loading}
         className={styles.submitBtn}
       >
-        {loading ? 'Processing...' : `Pay Br ${amount.toFixed(2)}`}
+        {loading ? 'Processing...' : `Pay ETB ${numericAmount.toFixed(2)}`}
       </button>
     </form>
   );

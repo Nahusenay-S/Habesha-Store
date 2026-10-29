@@ -1,0 +1,22 @@
+.page { max-width: 1200px; margin: auto; padding: 4rem 2rem; min-height: 70vh; }
+.eyebrow { color: var(--color-gold); font-size: .75rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+.sellerNotice { max-width: 620px; margin: 4rem auto; padding: 3rem; text-align: center; border: 1px solid var(--color-line); background: var(--color-white); }
+.sellerNotice h1 { margin-bottom: .8rem; }
+.sellerNotice p { color: var(--color-gray); margin-bottom: 1.5rem; }
+.sellerNotice button { padding: .8rem 1.2rem; background: var(--color-green); color: white; border-radius: 3px; }
+.page h1 { margin: .7rem 0 3rem; color: var(--color-green); font-size: 3.5rem; }
+.layout { display: grid; grid-template-columns: 1fr 360px; gap: 4rem; }
+.form, .summary { border: 1px solid var(--color-line); padding: 2rem; }
+.form { display: grid; gap: 1rem; }
+.form h2, .summary h2 { color: var(--color-green); font-size: 1.4rem; }
+.form input:not([type="radio"]) { width: 100%; border: 1px solid var(--color-line); background: var(--color-white); padding: 1rem; font: inherit; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.option { display: block; border: 1px solid var(--color-line); padding: 1rem; color: var(--color-gray); }
+.option input { margin-right: .7rem; }
+.form button { margin-top: 1rem; border: 0; padding: 1rem; background: var(--color-green); color: var(--color-white); cursor: pointer; }
+.form button:disabled { opacity: .5; cursor: not-allowed; }
+.error { color: var(--color-red); }
+.item, .total { display: flex; justify-content: space-between; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--color-line); color: var(--color-gray); font-size: .9rem; }
+.item strong, .total strong { color: var(--color-dark); }
+.total { margin-top: 2rem; border-top: 1px solid var(--color-gold); border-bottom: 1px solid var(--color-gold); color: var(--color-dark); font-size: 1.1rem; }
+@media (max-width: 800px) { .page { padding: 3rem 1.25rem; } .page h1 { font-size: 2.5rem; } .layout { grid-template-columns: 1fr; gap: 2rem; } }

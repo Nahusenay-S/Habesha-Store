@@ -1,14 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
 
 :root {
-  --color-gold: #FFD700;
-  --color-red: #CE1126;
-  --color-green: #078930;
-  --color-blue: #002395;
-  --color-dark: #1a1a1a;
-  --color-light: #f5f5f5;
-  --color-gray: #808080;
-  --color-white: #ffffff;
+  --color-gold: #a47b16;
+  --color-red: #9c3d2d;
+  --color-green: #174f3f;
+  --color-blue: #193b55;
+  --color-dark: #26241f;
+  --color-light: #f5eee3;
+  --color-gray: #756f66;
+  --color-white: #fffaf3;
+  --color-cream: #fbf5eb;
+  --color-line: #e7dccb;
 }
 
 * {
@@ -19,9 +21,9 @@
 
 html,
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   color: var(--color-dark);
-  background-color: var(--color-white);
+  background-color: var(--color-cream);
   line-height: 1.6;
 }
 
@@ -31,7 +33,7 @@ a {
 }
 
 button {
-  font-family: 'Poppins', sans-serif;
+  font-family: inherit;
   cursor: pointer;
   border: none;
   outline: none;
@@ -40,6 +42,18 @@ button {
 img {
   max-width: 100%;
   height: auto;
+}
+
+h1,
+h2,
+h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  letter-spacing: -0.02em;
+}
+
+::selection {
+  background: #d7c08c;
+  color: var(--color-dark);
 }
 
 /* Scrollbar */
@@ -52,10 +66,10 @@ img {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-gold);
+  background: var(--color-green);
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-red);
+  background: var(--color-gold);
 }

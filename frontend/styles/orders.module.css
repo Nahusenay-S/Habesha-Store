@@ -1,0 +1,21 @@
+.page { max-width: 1000px; min-height: 70vh; margin: auto; padding: 4rem 2rem; }
+.eyebrow { display: block; margin-top: 3rem; color: var(--color-gold); font-size: .75rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+.page h1 { margin: .7rem 0 2.5rem; color: var(--color-green); font-size: 4rem; }
+.list { border-top: 1px solid var(--color-line); }
+.row { display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--color-line); padding: 1.4rem 0; color: var(--color-dark); }
+.row div { display: flex; align-items: center; gap: 1.5rem; }
+.row span { color: var(--color-gray); font-size: .85rem; }
+.status { color: var(--color-gold) !important; text-transform: capitalize; }
+.empty { border: 1px solid var(--color-line); padding: 4rem; text-align: center; color: var(--color-gray); }
+.empty a, .back { color: var(--color-green); font-weight: 700; }
+.tracker { display: grid; grid-template-columns: repeat(4, 1fr); margin-bottom: 3rem; }
+.step, .stepActive { position: relative; display: grid; gap: .6rem; color: var(--color-gray); font-size: .8rem; text-transform: capitalize; }
+.step span, .stepActive span { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid var(--color-line); border-radius: 50%; }
+.stepActive { color: var(--color-green); }
+.stepActive span { background: var(--color-green); color: var(--color-white); }
+.detail, .address { border: 1px solid var(--color-line); padding: 1.5rem; margin-top: 1rem; }
+.detail h2, .address h2 { color: var(--color-green); font-size: 1.4rem; }
+.item, .total { display: flex; justify-content: space-between; padding: 1rem 0; border-top: 1px solid var(--color-line); color: var(--color-gray); }
+.total { margin-top: 1rem; border-color: var(--color-gold); color: var(--color-dark); }
+.message { padding: 8rem 2rem; text-align: center; }
+@media (max-width: 650px) { .page { padding: 3rem 1.25rem; } .page h1 { font-size: 3rem; } .row, .row div { align-items: flex-start; flex-direction: column; gap: .4rem; } }

@@ -1,23 +1,24 @@
 .card {
-  background: var(--color-white);
-  border-radius: 10px;
+  background: transparent;
+  border: 1px solid var(--color-line);
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, border-color 0.3s ease;
   cursor: pointer;
 }
 
 .card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 8px 25px rgba(206, 17, 38, 0.2);
+  transform: translateY(-5px);
+  border-color: #bca56e;
 }
+
+.cardLink { display: block; }
 
 .imageContainer {
   position: relative;
   width: 100%;
-  height: 250px;
+  height: 270px;
   overflow: hidden;
-  background: var(--color-light);
+  background: #eee3d2;
 }
 
 .image {
@@ -35,24 +36,39 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  background: var(--color-gold);
-  color: var(--color-dark);
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
+  background: rgba(255,250,243,.9);
+  color: var(--color-green);
+  padding: 0.35rem .65rem;
+  border-radius: 2px;
+  font-size: 0.68rem;
   font-weight: 600;
   text-transform: capitalize;
 }
 
+.saveButton {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255,250,243,.94);
+  color: var(--color-green);
+}
+
+.saveButton.saved { color: #b3261e; }
+
 .content {
-  padding: 1.5rem;
+  padding: 1.15rem;
 }
 
 .name {
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: var(--color-dark);
+  color: var(--color-green);
   line-height: 1.3;
 }
 
@@ -66,8 +82,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 1rem;
-  border-top: 1px solid var(--color-light);
+  padding-top: .8rem;
+  border-top: 1px solid var(--color-line);
 }
 
 .priceRating {
@@ -77,9 +93,9 @@
 }
 
 .price {
-  font-size: 1.3rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  color: var(--color-red);
+  color: var(--color-green);
 }
 
 .rating {
@@ -96,6 +112,21 @@
   font-weight: 600;
   text-transform: uppercase;
 }
+
+.addButton {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .45rem .6rem;
+  border: 1px solid var(--color-green);
+  background: transparent;
+  color: var(--color-green);
+  border-radius: 2px;
+  font-size: .68rem;
+  font-weight: 600;
+}
+
+.addButton:hover { background: var(--color-green); color: white; }
 
 .inStock {
   background: #e8f5e9;

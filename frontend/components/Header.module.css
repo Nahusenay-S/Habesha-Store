@@ -1,15 +1,15 @@
 .header {
-  background: linear-gradient(135deg, var(--color-red) 0%, var(--color-blue) 100%);
-  color: var(--color-white);
-  padding: 1rem 0;
+  background: rgba(255, 250, 243, 0.98);
+  color: var(--color-dark);
+  padding: 0.85rem 0;
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid var(--color-line);
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1320px;
   margin: 0 auto;
   padding: 0 2rem;
   display: flex;
@@ -18,8 +18,11 @@
 }
 
 .logo {
-  font-size: 1.5rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.55rem;
   font-weight: 700;
+  color: var(--color-gold);
+  letter-spacing: -0.04em;
 }
 
 .logoText {
@@ -33,17 +36,20 @@
 
 .nav {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
+  margin-left: auto;
+  margin-right: 2rem;
 }
 
 .navLink {
-  font-weight: 500;
+  font-size: 0.78rem;
+  color: var(--color-gray);
   transition: color 0.3s;
   position: relative;
 }
 
 .navLink:hover {
-  color: var(--color-gold);
+  color: var(--color-green);
 }
 
 .navLink::after {
@@ -67,44 +73,47 @@
   align-items: center;
 }
 
-.cartBtn,
-.loginBtn,
-.registerBtn {
-  padding: 0.6rem 1.2rem;
-  border-radius: 5px;
-  font-weight: 600;
+.searchBtn {
+  display: flex;
+  gap: .45rem;
+  align-items: center;
+  padding: .55rem .85rem;
+  border: 1px solid var(--color-line);
+  border-radius: 8px;
+  color: var(--color-gray);
+  font-size: .75rem;
+  min-width: 155px;
+  background: var(--color-light);
+}
+
+.iconBtn {
+  position: relative;
+  color: var(--color-dark);
+  font-size: 1.15rem;
+  padding: .35rem;
   transition: all 0.3s;
 }
 
-.cartBtn {
+.cartBadge {
+  position: absolute;
+  top: -0.3rem;
+  right: -0.4rem;
+  min-width: 1.05rem;
+  height: 1.05rem;
+  padding: 0 0.2rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
   background: var(--color-gold);
-  color: var(--color-dark);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1;
+  border: 2px solid var(--color-cream);
 }
 
-.cartBtn:hover {
-  background: #ffd700cc;
-  transform: translateY(-2px);
-}
-
-.loginBtn {
-  background: transparent;
-  border: 2px solid var(--color-white);
-  color: var(--color-white);
-}
-
-.loginBtn:hover {
-  background: var(--color-white);
-  color: var(--color-red);
-}
-
-.registerBtn {
-  background: var(--color-gold);
-  color: var(--color-dark);
-}
-
-.registerBtn:hover {
-  background: #ffd700cc;
-  transform: translateY(-2px);
+.iconBtn:hover {
+  color: var(--color-gold);
 }
 
 .userMenu {
@@ -113,10 +122,28 @@
 
 .userBtn {
   background: transparent;
-  color: var(--color-white);
-  font-weight: 600;
+  color: var(--color-green);
+  font-weight: 500;
   padding: 0.5rem 1rem;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+}
+
+.avatar {
+  width: 1.65rem;
+  height: 1.65rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #b6e2d2;
+  color: var(--color-green);
+  font-size: .75rem;
+}
+
+.userName {
+  font-size: .78rem;
 }
 
 .dropdown {
@@ -124,7 +151,7 @@
   position: absolute;
   top: 100%;
   right: 0;
-  background: var(--color-white);
+  background: var(--color-cream);
   color: var(--color-dark);
   min-width: 150px;
   border-radius: 5px;
@@ -151,7 +178,7 @@
 .dropdown a:hover,
 .dropdown button:hover {
   background: var(--color-light);
-  color: var(--color-red);
+  color: var(--color-green);
 }
 
 @media (max-width: 768px) {
@@ -163,9 +190,12 @@
     gap: 0.5rem;
   }
 
-  .loginBtn,
-  .registerBtn {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.9rem;
+  .searchBtn {
+    min-width: 0;
+  }
+
+  .searchBtn span,
+  .userName {
+    display: none;
   }
 }

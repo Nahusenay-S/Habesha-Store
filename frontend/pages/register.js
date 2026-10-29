@@ -3,6 +3,8 @@ import { useRouter } from 'next/router';
 import { authAPI } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import styles from './auth.module.css';
+import Link from 'next/link';
+import Icon from '../components/Icon';
 
 const RegisterPage = () => {
   const router = useRouter();
@@ -16,6 +18,14 @@ const RegisterPage = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [queryApplied, setQueryApplied] = useState(false);
+
+  React.useEffect(() => {
+    if (router.query.role === 'seller' && !queryApplied) {
+      setFormData((previous) => ({ ...previous, role: 'seller' }));
+      setQueryApplied(true);
+    }
+  }, [router.query.role, queryApplied]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,7 +51,8 @@ const RegisterPage = () => {
       });
 
       login(response.data.user, response.data.token);
-      router.push('/dashboard');
+      const destination = response.data.user?.role === 'seller' ? '/vendor' : '/dashboard';
+      router.push(destination);
     } catch (err) {
       setError(err.response?.data?.error || 'Registration failed');
     } finally {
@@ -51,13 +62,18 @@ const RegisterPage = () => {
 
   return (
     <div className={styles.authContainer}>
-      <div className={styles.authBox}>
-        <h1 className={styles.title}>Join Habesha Store 🇪🇹</h1>
-        <p className={styles.subtitle}>Create your account today</p>
+      <div className={`${styles.authBox} ${styles.registerBox}`}>
+        <div className={styles.authImage} style={{ backgroundImage: "url('/images/portrait.svg')" }}>
+          <div className={styles.imageOverlay}><h2>Heritage Redefined.</h2><p>Join a global community dedicated to the finest Ethiopian crafts.</p></div>
+        </div>
+        <div className={styles.authPanel}>
+        <Link href="/" className={styles.brand}>Habesha Modern</Link>
+        <h1 className={styles.title}>Create Your Account</h1>
+        <p className={styles.subtitle}>Step into the world of luxury Ethiopian artisanry.</p>
 
         {error && <div className={styles.error}>{error}</div>}
 
-        <form onSubmit={handleSubmit}>
+        <form className={styles.authForm} onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
             <label>Full Name</label>
             <input
@@ -123,9 +139,9 @@ const RegisterPage = () => {
           </button>
         </form>
 
-        <p className={styles.link}>
-          Already have an account? <a href="/login">Login here</a>
-        </p>
+        <p className={styles.link}>Already have an account? <Link href="/login">Sign In</Link></p>
+        <div className={styles.artistCard}><strong><Icon name="edit" size={16} /> &nbsp; Are you an Artisan?</strong><p>Showcase your craftsmanship to the world and grow your legacy.</p><Link href="/register?role=seller">Join as Artisan →</Link></div>
+        </div>
       </div>
     </div>
   );

@@ -8,18 +8,18 @@ import styles from '../styles/payment-history.module.css';
 
 const PaymentHistoryPage = () => {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
 
   useEffect(() => {
-    if (!user) {
+    if (!authLoading && !user) {
       router.push('/login');
     } else {
       fetchPayments();
     }
-  }, [user]);
+  }, [user, authLoading]);
 
   const fetchPayments = async () => {
     try {
@@ -53,7 +53,7 @@ const PaymentHistoryPage = () => {
     }
   };
 
-  if (!user) return <div>Loading...</div>;
+  if (authLoading || !user) return <div>Loading your payments...</div>;
 
   return (
     <>
@@ -94,7 +94,7 @@ const PaymentHistoryPage = () => {
           <div className={styles.empty}>No payments found</div>
         ) : (
           <div className={styles.paymentsTable}>
-            <table>
+            <table className={styles.table}>
               <thead>
                 <tr>
                   <th>Date</th>
@@ -110,7 +110,7 @@ const PaymentHistoryPage = () => {
                 {filteredPayments.map((payment) => (
                   <tr key={payment._id}>
                     <td>{new Date(payment.createdAt).toLocaleDateString()}</td>
-                    <td className={styles.amount}>Br {payment.amount.toFixed(2)}</td>
+                    <td className={styles.amount}>ETB {Number(payment.amount || 0).toFixed(2)}</td>
                     <td>
                       <span className={styles.badge}>{payment.paymentMethod}</span>
                     </td>

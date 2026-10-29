@@ -1,19 +1,77 @@
 .authContainer {
   min-height: 100vh;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
-  background: linear-gradient(135deg, var(--color-red) 0%, var(--color-blue) 100%);
-  padding: 2rem;
+  background: var(--color-cream);
+  padding: 0;
+  background: var(--color-cream);
 }
 
 .authBox {
-  background: var(--color-white);
-  border-radius: 15px;
-  padding: 3rem 2rem;
+  display: grid;
+  grid-template-columns: minmax(380px, 45%) 1fr;
+  background: var(--color-cream);
   width: 100%;
-  max-width: 450px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  min-height: 100vh;
+  max-width: 1100px;
+  margin: 0 auto;
+  box-shadow: 0 18px 50px rgba(38, 36, 31, .08);
+}
+
+.authPanel {
+  padding: 2rem 3.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.authImage {
+  min-height: 100%;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: auto 2.5rem 2rem;
+  color: white;
+  text-shadow: 0 2px 12px rgba(0,0,0,.4);
+}
+
+.imageOverlay h2 {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1.08;
+  margin: .8rem 0 1.2rem;
+}
+
+.imageOverlay strong {
+  color: #e7bd2e;
+  font-size: 1.35rem;
+  margin-right: .25rem;
+}
+
+.imageTag {
+  border: 1px solid rgba(255,255,255,.55);
+  border-radius: 1rem;
+  padding: .25rem .7rem;
+  font-size: .62rem;
+  letter-spacing: .08em;
+}
+
+.brand {
+  display: block;
+  margin-bottom: 3.5rem;
+  color: var(--color-green);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.25rem;
+  text-align: left;
+}
+
+.brand em {
+  color: var(--color-gold);
+  font-style: normal;
 }
 
 .title {
@@ -21,7 +79,7 @@
   font-weight: 700;
   margin-bottom: 0.5rem;
   color: var(--color-dark);
-  text-align: center;
+  text-align: left;
 }
 
 .subtitle {
@@ -39,8 +97,44 @@
   border-left: 4px solid var(--color-red);
 }
 
-form {
+.authForm {
   margin-bottom: 2rem;
+}
+
+.socialRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .75rem;
+  margin-bottom: 1rem;
+}
+
+.socialRow button {
+  padding: .7rem;
+  background: white;
+  border: 1px solid #eee7dc;
+  border-radius: 3px;
+  color: var(--color-dark);
+}
+.googleMark { color: #4285f4; font-size: 1rem; margin-right: .25rem; }
+.appleMark { color: #111; font-size: .75rem; margin-right: .25rem; }
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  color: var(--color-gray);
+  font-size: .65rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin: .8rem 0 1.3rem;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  height: 1px;
+  background: var(--color-line);
+  flex: 1;
 }
 
 .formGroup {
@@ -74,11 +168,11 @@ form {
 .submitBtn {
   width: 100%;
   padding: 0.8rem;
-  background: linear-gradient(135deg, var(--color-red) 0%, var(--color-blue) 100%);
+  background: var(--color-green);
   color: var(--color-white);
   font-size: 1rem;
   font-weight: 600;
-  border-radius: 5px;
+  border-radius: 2px;
   cursor: pointer;
   transition: transform 0.3s, box-shadow 0.3s;
 }
@@ -98,6 +192,24 @@ form {
   color: var(--color-gray);
 }
 
+.link a,
+.artistCard a { color: var(--color-gold); font-weight: 600; }
+
+.artistCard {
+  display: flex;
+  gap: .75rem;
+  align-items: center;
+  margin-top: 2rem;
+  padding: .9rem 1rem;
+  border: 1px solid #ead8a5;
+  border-radius: 6px;
+  color: var(--color-gold);
+  font-size: .78rem;
+}
+
+.artistCard small { letter-spacing: .08em; color: var(--color-gray); }
+.artistCard p { margin: .5rem 0; color: var(--color-gray); font-size: .78rem; }
+
 .link a {
   color: var(--color-red);
   font-weight: 600;
@@ -111,6 +223,15 @@ form {
 
 @media (max-width: 768px) {
   .authBox {
+    display: block;
+    min-height: 100vh;
+  }
+
+  .authImage {
+    min-height: 230px;
+  }
+
+  .authPanel {
     padding: 2rem 1.5rem;
   }
 

@@ -49,29 +49,29 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-table {
+.table {
   width: 100%;
   border-collapse: collapse;
 }
 
-thead {
+.table thead {
   background: var(--color-light);
   border-bottom: 2px solid #ddd;
 }
 
-th {
+.table th {
   padding: 1rem;
   text-align: left;
   font-weight: 600;
   color: var(--color-dark);
 }
 
-td {
+.table td {
   padding: 1rem;
   border-bottom: 1px solid var(--color-light);
 }
 
-tbody tr:hover {
+.table tbody tr:hover {
   background: #f9f9f9;
 }
 
@@ -139,12 +139,12 @@ tbody tr:hover {
 }
 
 @media (max-width: 768px) {
-  table {
+  .table {
     font-size: 0.9rem;
   }
 
-  th,
-  td {
+  .table th,
+  .table td {
     padding: 0.7rem;
   }
 }

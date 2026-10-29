@@ -1,0 +1,30 @@
+.page { max-width: 1280px; margin: auto; padding: 3rem 2rem 6rem; }
+.hero { display: flex; justify-content: space-between; gap: 2rem; align-items: flex-start; background: var(--color-white); border: 1px solid var(--color-line); padding: 2rem; }
+.eyebrow { color: var(--color-gold); font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.hero h1 { color: var(--color-green); font-size: clamp(2.2rem, 5vw, 4rem); margin: .6rem 0; }
+.hero p { color: var(--color-gray); }
+.health { color: var(--color-green); background: #e6f4ec; border-radius: 2rem; padding: .5rem .8rem; font-size: .75rem; white-space: nowrap; }
+.metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: 1.5rem 0; }
+.metrics article, .panel { background: var(--color-white); border: 1px solid var(--color-line); padding: 1.4rem; }
+.metrics span, .metrics small, .orders span, .orders small { display: block; color: var(--color-gray); font-size: .75rem; }
+.metrics strong { display: block; color: var(--color-green); font: 1.7rem 'Playfair Display', Georgia, serif; margin: .6rem 0; }
+.grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 1.5rem; }
+.panelHeading { border-bottom: 1px solid var(--color-line); padding-bottom: 1rem; margin-bottom: .5rem; }
+.panel h2 { color: var(--color-green); margin-top: .5rem; }
+.orders article { display: flex; justify-content: space-between; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--color-line); }
+.orders article:last-child { border-bottom: 0; }
+.orders article > div:last-child { text-align: right; }
+.orders b { display: block; color: var(--color-green); }
+.form label { display: block; color: var(--color-gray); font-size: .76rem; margin: .8rem 0; }
+.form input { display: block; width: 100%; margin-top: .35rem; padding: .65rem; border: 1px solid var(--color-line); background: var(--color-cream); font: inherit; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.form fieldset { border: 1px solid var(--color-line); padding: .8rem; margin-top: 1rem; }
+.form legend { padding: 0 .4rem; text-transform: capitalize; color: var(--color-green); font-weight: 700; }
+.checkbox { display: flex !important; align-items: center; gap: .5rem; }
+.checkbox input { width: auto; margin: 0; }
+.save { background: var(--color-green); color: white; padding: .75rem 1rem; margin-top: .7rem; }
+.success { color: var(--color-green); font-size: .8rem; }
+.error { color: var(--color-red); font-size: .8rem; }
+.message { padding: 8rem 2rem; text-align: center; }
+@media (max-width: 800px) { .metrics, .grid { grid-template-columns: 1fr 1fr; } .grid { display: block; } .panel + .panel { margin-top: 1.5rem; } }
+@media (max-width: 560px) { .page { padding: 2rem 1rem; } .hero { display: block; } .health { display: inline-block; margin-top: 1rem; } .metrics { grid-template-columns: 1fr; } .two { grid-template-columns: 1fr; } }

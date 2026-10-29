@@ -2,46 +2,37 @@ import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useCartStore } from '../store/cartStore';
-import { orderAPI } from '../lib/api';
+import { useRouter } from 'next/router';
 import styles from '../styles/cart.module.css';
+import Icon from '../components/Icon';
+import { useAuth } from '../context/AuthContext';
+import LoadingScreen from '../components/LoadingScreen';
+import { configAPI } from '../lib/api';
 
 const CartPage = () => {
   const { items, removeFromCart, updateQuantity, clearCart } = useCartStore();
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
+  const [config, setConfig] = useState(null);
+  useEffect(() => { configAPI.getPublic().then((response) => setConfig(response.data)).catch(() => setConfig(null)); }, []);
 
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const sellerTotals = items.reduce((groups, item) => {
+    const sellerId = item.seller?.id || item.seller_id || 'unknown';
+    groups[sellerId] = (groups[sellerId] || 0) + Number(item.price || 0) * item.quantity;
+    return groups;
+  }, {});
+  const shipping = Object.values(sellerTotals).reduce((sum, sellerTotal) => sum + (sellerTotal >= (config?.shipping.freeThreshold ?? 1000) ? 0 : (config?.shipping.flatRate ?? 50)), 0);
 
-  const handleCheckout = async () => {
-    setLoading(true);
-    try {
-      const orderData = {
-        items: items.map((item) => ({
-          product: item._id,
-          quantity: item.quantity,
-        })),
-        shippingAddress: {
-          city: 'Addis Ababa',
-          region: 'Addis Ababa',
-        },
-        paymentMethod: 'stripe',
-      };
-
-      const response = await orderAPI.create(orderData);
-      alert('Order placed successfully!');
-      clearCart();
-      // Redirect to payment or order confirmation
-    } catch (error) {
-      alert('Failed to place order: ' + error.response?.data?.error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  if (authLoading) return <><Header /><LoadingScreen label="Checking your account..." /></>;
+  if (user?.role === 'seller') return <><Header /><main className={styles.container}><div className={styles.sellerNotice}><h1>Seller workspace</h1><p>Seller accounts cannot purchase items. Use the vendor terminal to manage your listings and fulfillment.</p><button type="button" onClick={() => router.push('/vendor')}>Open vendor terminal</button></div></main><Footer /></>;
   return (
     <>
       <Header />
       <div className={styles.container}>
-        <h1>Shopping Cart 🛒</h1>
+        <span className={styles.eyebrow}>Your collection</span>
+        <h1>Shopping bag</h1>
 
         {items.length === 0 ? (
           <div className={styles.emptyCart}>
@@ -56,12 +47,13 @@ const CartPage = () => {
               {items.map((item) => (
                 <div key={item._id} className={styles.cartItem}>
                   <img
-                    src={item.images?.[0] || 'https://via.placeholder.com/100'}
+                    src={item.images?.[0] || '/images/heritage-textile.svg'}
                     alt={item.name}
+                    onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = '/images/heritage-textile.svg'; }}
                   />
                   <div className={styles.itemInfo}>
                     <h3>{item.name}</h3>
-                    <p>Price: Br {item.price.toFixed(2)}</p>
+                    <p>Price: ETB {Number(item.price || 0).toFixed(2)}</p>
                   </div>
                   <div className={styles.itemControls}>
                     <button onClick={() => updateQuantity(item._id, item.quantity - 1)}>
@@ -71,7 +63,7 @@ const CartPage = () => {
                       type="number"
                       value={item.quantity}
                       onChange={(e) =>
-                        updateQuantity(item._id, parseInt(e.target.value))
+                        updateQuantity(item._id, Math.max(1, parseInt(e.target.value, 10) || 1))
                       }
                     />
                     <button onClick={() => updateQuantity(item._id, item.quantity + 1)}>
@@ -79,13 +71,13 @@ const CartPage = () => {
                     </button>
                   </div>
                   <div className={styles.itemPrice}>
-                    Br {(item.price * item.quantity).toFixed(2)}
+                    ETB {(Number(item.price || 0) * item.quantity).toFixed(2)}
                   </div>
                   <button
                     className={styles.removeBtn}
                     onClick={() => removeFromCart(item._id)}
                   >
-                    🗑️
+                    <Icon name="trash" title="Remove item" />
                   </button>
                 </div>
               ))}
@@ -99,18 +91,18 @@ const CartPage = () => {
               </div>
               <div className={styles.summaryRow}>
                 <span>Shipping:</span>
-                <span>Br 50.00</span>
+                <span>Br {shipping.toFixed(2)}</span>
               </div>
               <div className={styles.summaryTotal}>
                 <span>Total:</span>
-                <span>Br {(total + 50).toFixed(2)}</span>
+                <span>Br {(total + shipping).toFixed(2)}</span>
               </div>
               <button
                 className={styles.checkoutBtn}
-                onClick={handleCheckout}
+                onClick={() => router.push('/checkout')}
                 disabled={loading}
               >
-                {loading ? 'Processing...' : 'Proceed to Checkout'}
+                Continue to checkout <span aria-hidden="true">→</span>
               </button>
             </div>
           </div>

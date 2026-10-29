@@ -1,0 +1,21 @@
+.container { background: var(--color-cream); }
+.hero { padding: 4.5rem 1rem 5rem; text-align: center; background-image: radial-gradient(#e9dfd0 1px, transparent 1px); background-size: 16px 16px; }
+.hero h1, .faq > h2 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 1.5rem; }
+.hero input { width: min(600px, 90%); padding: 1rem; border: 1px solid var(--color-line); border-radius: 6px; background: white; }
+.hero div { margin-top: 1rem; display: flex; justify-content: center; gap: .6rem; flex-wrap: wrap; }
+.hero span { background: #f0e9dd; border-radius: 1rem; padding: .3rem .8rem; font-size: .65rem; }
+.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; max-width: 1320px; margin: -1rem auto 0; padding: 0 2rem 4rem; }
+.cards article { background: white; padding: 1.5rem; min-height: 200px; border: 1px solid #eee6d9; }
+.cards b { display: grid; place-items: center; width: 2rem; height: 2rem; background: #e7f4ed; color: var(--color-green); }
+.cards h2 { font-size: 1.1rem; margin: 1rem 0; }
+.cards p, .cards a, .faq p, .contact p { color: var(--color-gray); font-size: .78rem; }
+.cards a { color: var(--color-gold); display: block; margin-top: 1rem; }
+.faq { background: #f8efdf; padding: 4rem max(1rem, calc((100% - 760px) / 2)); text-align: center; }
+.faq > p { margin: -1rem 0 2rem; }
+.faq button { width: 100%; display: grid; grid-template-columns: 1fr auto; text-align: left; gap: .6rem; margin: .55rem 0; padding: 1.1rem 1.2rem; background: white; border-radius: 5px; }
+.faq small { grid-column: 1 / -1; color: var(--color-gray); font-size: .75rem; }
+.contact { max-width: 1000px; margin: 4rem auto 5rem; padding: 3rem; text-align: center; color: white; background: var(--color-green); border-radius: 16px; }
+.contact h2 { color: white; font-size: 2rem; margin-bottom: .6rem; }
+.contact a { display: inline-block; margin-top: 1.5rem; padding: .8rem 1.5rem; background: #d7ae26; color: var(--color-dark); border-radius: 3px; font-size: .8rem; }
+@media (max-width: 800px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) { .cards { grid-template-columns: 1fr; padding: 0 1rem 3rem; } .contact { margin: 2rem 1rem 3rem; } }

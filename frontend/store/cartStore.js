@@ -23,7 +23,7 @@ export const useCartStore = create((set) => ({
   updateQuantity: (productId, quantity) =>
     set((state) => ({
       items: state.items.map((item) =>
-        item._id === productId ? { ...item, quantity } : item
+        item._id === productId ? { ...item, quantity: Math.max(1, quantity || 1) } : item
       ),
     })),
   clearCart: () => set({ items: [] }),

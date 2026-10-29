@@ -6,9 +6,20 @@ const api = axios.create({
   baseURL: API_URL,
 });
 
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401 && typeof window !== 'undefined') {
+      window.localStorage.removeItem('token');
+      window.dispatchEvent(new Event('auth:expired'));
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Add token to requests
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = typeof window !== 'undefined' ? window.localStorage.getItem('token') : null;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -35,6 +46,8 @@ export const orderAPI = {
   getAll: () => api.get('/orders'),
   getById: (id) => api.get(`/orders/${id}`),
   updateStatus: (id, status) => api.put(`/orders/${id}/status`, { status }),
+  getSellerFulfillment: () => api.get('/orders/seller/fulfillment'),
+  updateSellerStatus: (id, status, trackingNumber) => api.put(`/orders/seller/${id}/status`, { status, trackingNumber }),
 };
 
 export const reviewAPI = {
@@ -49,7 +62,7 @@ export const paymentAPI = {
   createStripePaymentIntent: (data) => api.post('/payments/stripe/create-intent', data),
   confirmStripePayment: (data) => api.post('/payments/stripe/confirm', data),
   // Telebirr
-  initiateTelebirrPayment: (data) => api.post('/payments/telebirr/initiate', data),
+  initiateTelebirrPayment: (data) => api.post('/payments/telebirr/create', data),
   verifyTelebirrPayment: (data) => api.post('/payments/telebirr/verify', data),
   checkTelebirrStatus: (ref) => api.get(`/payments/telebirr/status/${ref}`),
   // PayPal
@@ -59,6 +72,26 @@ export const paymentAPI = {
   getPaymentHistory: () => api.get('/payments/history'),
   getPaymentById: (id) => api.get(`/payments/${id}`),
   processRefund: (data) => api.post('/payments/refund', data),
+};
+
+export const vendorAPI = {
+  getSummary: () => api.get('/vendor/summary'),
+};
+
+export const notificationAPI = {
+  getAll: () => api.get('/notifications'),
+  markRead: (id) => api.put(`/notifications/${id}/read`),
+  markAllRead: () => api.put('/notifications/read-all'),
+};
+
+export const configAPI = {
+  getPublic: () => api.get('/config/public'),
+};
+
+export const adminAPI = {
+  getOverview: () => api.get('/admin/overview'),
+  getPaymentConfig: () => api.get('/admin/payment-config'),
+  updatePaymentConfig: (data) => api.put('/admin/payment-config', data),
 };
 
 export default api;

@@ -1,109 +1,63 @@
-const Review = require('../models/Review');
-const Product = require('../models/Product');
+const { query } = require('../db');
 
-// Create review
 const createReview = async (req, res) => {
+  const { product, rating, title, comment } = req.body;
+  if (!product || !rating || !title || !comment) return res.status(400).json({ error: 'Product, rating, title and comment are required' });
   try {
-    const { product, rating, title, comment } = req.body;
-
-    // Check if product exists
-    const productExists = await Product.findById(product);
-    if (!productExists) {
-      return res.status(404).json({ error: 'Product not found' });
-    }
-
-    // Check if user already reviewed this product
-    const existingReview = await Review.findOne({
-      product,
-      author: req.userId,
-    });
-    if (existingReview) {
-      return res.status(400).json({ error: 'You have already reviewed this product' });
-    }
-
-    const review = await Review.create({
-      product,
-      author: req.userId,
-      rating,
-      title,
-      comment,
-      isVerified: true,
-    });
-
-    // Update product rating
-    const reviews = await Review.find({ product });
-    const avgRating = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
-    await Product.findByIdAndUpdate(product, {
-      rating: avgRating,
-      reviews: reviews.length,
-    });
-
-    res.status(201).json({ message: 'Review created successfully', review });
+    const result = await query(
+      `INSERT INTO reviews (product_id, author_id, rating, title, comment, is_verified)
+       VALUES ($1, $2, $3, $4, $5, EXISTS (
+         SELECT 1 FROM order_items oi JOIN orders o ON o.id = oi.order_id
+         WHERE oi.product_id = $1 AND o.buyer_id = $2 AND o.status = 'delivered'
+       ))
+       RETURNING id AS "_id", product_id AS product, author_id AS author, rating, title, comment, is_verified AS "isVerified", created_at AS "createdAt"`,
+      [product, req.userId, rating, title, comment]
+    );
+    await query(
+      `UPDATE products SET rating = stats.average, review_count = stats.total
+       FROM (SELECT product_id, AVG(rating)::numeric(3,2) AS average, COUNT(*)::int AS total FROM reviews WHERE product_id = $1 GROUP BY product_id) stats
+       WHERE products.id = stats.product_id`,
+      [product]
+    );
+    return res.status(201).json({ message: 'Review created successfully', review: result.rows[0] });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    if (error.code === '23505') return res.status(400).json({ error: 'You have already reviewed this product' });
+    console.error('Create review error:', error);
+    return res.status(500).json({ error: 'Unable to create review' });
   }
 };
 
-// Get product reviews
 const getProductReviews = async (req, res) => {
-  try {
-    const reviews = await Review.find({ product: req.params.productId })
-      .populate('author', 'name')
-      .sort({ createdAt: -1 });
-
-    res.json(reviews);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+  const result = await query(
+    `SELECT r.id AS "_id", r.product_id AS product, r.rating, r.title, r.comment, r.is_verified AS "isVerified", r.created_at AS "createdAt",
+     json_build_object('id', u.id, 'name', u.name) AS author
+     FROM reviews r JOIN users u ON u.id = r.author_id WHERE r.product_id = $1 ORDER BY r.created_at DESC`,
+    [req.params.productId]
+  );
+  return res.json(result.rows);
 };
 
-// Update review
 const updateReview = async (req, res) => {
-  try {
-    const { rating, title, comment } = req.body;
-
-    const review = await Review.findById(req.params.id);
-    if (!review) {
-      return res.status(404).json({ error: 'Review not found' });
-    }
-
-    if (review.author.toString() !== req.userId) {
-      return res.status(403).json({ error: 'Not authorized to update this review' });
-    }
-
-    review.rating = rating || review.rating;
-    review.title = title || review.title;
-    review.comment = comment || review.comment;
-    await review.save();
-
-    res.json({ message: 'Review updated successfully', review });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+  const { rating, title, comment } = req.body;
+  const result = await query(
+    `UPDATE reviews SET rating = COALESCE($1, rating), title = COALESCE($2, title), comment = COALESCE($3, comment), updated_at = NOW()
+     WHERE id = $4 AND author_id = $5 RETURNING id AS "_id", product_id AS product, rating, title, comment`,
+    [rating, title, comment, req.params.id, req.userId]
+  );
+  if (!result.rowCount) return res.status(404).json({ error: 'Review not found or not authorized' });
+  return res.json({ message: 'Review updated successfully', review: result.rows[0] });
 };
 
-// Delete review
 const deleteReview = async (req, res) => {
-  try {
-    const review = await Review.findById(req.params.id);
-    if (!review) {
-      return res.status(404).json({ error: 'Review not found' });
-    }
-
-    if (review.author.toString() !== req.userId) {
-      return res.status(403).json({ error: 'Not authorized to delete this review' });
-    }
-
-    await Review.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Review deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+  const result = await query('DELETE FROM reviews WHERE id = $1 AND author_id = $2 RETURNING product_id', [req.params.id, req.userId]);
+  if (!result.rowCount) return res.status(404).json({ error: 'Review not found or not authorized' });
+  await query(
+    `UPDATE products SET rating = COALESCE(stats.average, 0), review_count = COALESCE(stats.total, 0)
+     FROM (SELECT product_id, AVG(rating)::numeric(3,2) AS average, COUNT(*)::int AS total FROM reviews WHERE product_id = $1 GROUP BY product_id) stats
+     WHERE products.id = $1`,
+    [result.rows[0].product_id]
+  );
+  return res.json({ message: 'Review deleted successfully' });
 };
 
-module.exports = {
-  createReview,
-  getProductReviews,
-  updateReview,
-  deleteReview,
-};
+module.exports = { createReview, getProductReviews, updateReview, deleteReview };

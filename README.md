@@ -6,7 +6,7 @@ An Ethiopian E-Commerce Platform built with modern web technologies to connect E
 
 ### Prerequisites
 - Node.js 16+
-- MongoDB
+- A Neon PostgreSQL database
 - Git
 - Stripe Account (for payments)
 
@@ -17,7 +17,7 @@ An Ethiopian E-Commerce Platform built with modern web technologies to connect E
 cd backend
 npm install
 cp .env.example .env
-# Edit .env with your configuration
+# Edit .env with your Neon DATABASE_URL and payment credentials
 npm run dev
 ```
 
@@ -47,6 +47,8 @@ npm run dev
 - 📦 Order Management & Tracking
 - ⭐ Reviews & Ratings
 - 🏪 Seller Dashboard
+- 🛡️ Role-protected Admin Console
+- ⚙️ Database-backed payment and shipping configuration
 - 🌍 Multi-language Support (Amharic & English)
 - 📱 Responsive Design
 
@@ -61,10 +63,10 @@ npm run dev
 
 ### Backend
 - **Node.js + Express.js** - Server framework
-- **MongoDB** - Database
+- **Neon PostgreSQL** - Serverless relational database
 - **JWT** - Authentication
 - **Stripe** - Payment processing
-- **Mongoose** - MongoDB ODM
+- **pg** - PostgreSQL client
 
 ## Project Structure
 
@@ -72,7 +74,8 @@ npm run dev
 Habesha-Store/
 ├── backend/
 │   ├── controllers/       # Route handlers (auth, products, payments, orders, reviews)
-│   ├── models/           # MongoDB schemas (User, Product, Order, Payment, Review, Invoice)
+│   ├── schema.sql        # Neon PostgreSQL schema and indexes
+│   ├── db.js             # Neon connection pool
 │   ├── routes/           # API endpoints
 │   ├── middleware/       # Auth & error handling
 │   ├── utils/            # Helper functions (JWT, password hashing)
@@ -111,16 +114,24 @@ Habesha-Store/
 - `DELETE /api/products/:id` - Delete product
 
 ### Orders
-- `POST /api/orders` - Create order
+- `POST /api/orders` - Create order; mixed-seller carts are split into one fulfillment order per seller
 - `GET /api/orders` - Get user orders
 - `GET /api/orders/:id` - Get order details
+- `PUT /api/orders/:id/status` - Buyer cancellation/status action
+- `GET /api/orders/seller/fulfillment` - Seller fulfillment queue
+- `PUT /api/orders/seller/:id/status` - Seller processing, shipping, delivery, and tracking action
 
 ### Payments
+- `GET /api/config/public` - Public checkout currency, shipping, and enabled payment methods
+- `GET /api/admin/overview` - Admin marketplace metrics and recent orders
+- `GET /api/admin/payment-config` - Admin payment configuration
+- `PUT /api/admin/payment-config` - Admin update payment providers and shipping rules
 - `POST /api/payments/stripe/create-intent` - Create Stripe intent
 - `POST /api/payments/stripe/confirm` - Confirm payment
 - `GET /api/payments/history` - Get payment history
 - `POST /api/payments/webhook/stripe` - Stripe webhook handler
-- `POST /api/payments/telebirr/checkout` - Telebirr payment
+- `POST /api/payments/telebirr/create` - Create Telebirr payment
+- `POST /api/payments/telebirr/verify` - Verify Telebirr payment
 - `POST /api/payments/paypal/create-order` - PayPal order
 
 ### Reviews
@@ -128,23 +139,28 @@ Habesha-Store/
 - `GET /api/reviews/:productId` - Get product reviews
 - `PUT /api/reviews/:id` - Update review
 
+Reviews are marked verified only when the buyer has a delivered order containing the product.
+
 ## Environment Variables
 
 ### Backend (.env)
 ```
 PORT=5000
 NODE_ENV=development
-MONGODB_URI=mongodb://localhost:27017/habesha-store
+DATABASE_URL=postgresql://user:password@ep-example.us-east-2.aws.neon.tech/neondb?sslmode=require
 JWT_SECRET=your_secure_secret_key
 JWT_EXPIRE=7d
 FRONTEND_URL=http://localhost:3000
 STRIPE_PUBLIC_KEY=pk_test_...
+STRIPE_PUBLISHABLE_KEY=pk_test_...
 STRIPE_SECRET_KEY=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 TELEBIRR_API_KEY=...
 TELEBIRR_MERCHANT_ID=...
 PAYPAL_CLIENT_ID=...
 PAYPAL_CLIENT_SECRET=...
+TELEBIRR_ENABLED=true
+TELEBIRR_MERCHANT_NAME=Habesha Store
 EMAIL_SERVICE=gmail
 EMAIL_USER=your_email@gmail.com
 EMAIL_PASS=your_app_password
@@ -154,6 +170,17 @@ EMAIL_PASS=your_app_password
 ```
 NEXT_PUBLIC_API_URL=http://localhost:5000/api
 ```
+
+### Creating the first administrator
+
+Admin registration is intentionally not exposed publicly. Set these temporary environment variables and run:
+
+```bash
+cd backend
+ADMIN_NAME="Platform Admin" ADMIN_EMAIL="admin@example.com" ADMIN_PASSWORD="change-this-password" npm run create-admin
+```
+
+The admin can then sign in and open `/admin`. Payment provider secrets remain server-side in `.env`; the admin console only stores operational settings and public client identifiers.
 
 ## Running Tests
 

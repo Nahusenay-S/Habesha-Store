@@ -4,6 +4,7 @@ import { paymentAPI } from '../lib/api';
 import styles from './PayPalPayment.module.css';
 
 const PayPalPayment = ({ orderId, amount, onSuccess }) => {
+  const numericAmount = Number(amount || 0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [paypalOrderId, setPaypalOrderId] = useState(null);
@@ -67,7 +68,7 @@ const PayPalPayment = ({ orderId, amount, onSuccess }) => {
 
       <div className={styles.amountDisplay}>
         <span>Amount to Pay:</span>
-        <strong>${(amount / 100).toFixed(2)}</strong>
+        <strong>ETB {numericAmount.toFixed(2)}</strong>
       </div>
 
       <div id="paypal-button-container" className={styles.buttonContainer}></div>

@@ -11,6 +11,6 @@ router.get('/history', authMiddleware, paymentController.getPaymentHistory);
 router.get('/:id', authMiddleware, paymentController.getPaymentById);
 
 // Webhook (no auth needed)
-router.post('/webhook/stripe', express.raw({ type: 'application/json' }), paymentController.handleStripeWebhook);
+router.post('/webhook/stripe', paymentController.handleStripeWebhook);
 
 module.exports = router;

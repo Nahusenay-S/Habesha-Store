@@ -1,26 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useAuth } from '../context/AuthContext';
-import { paymentAPI } from '../lib/api';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import styles from '../styles/payment-detail.module.css';
+import { useAuth } from '../../context/AuthContext';
+import { paymentAPI } from '../../lib/api';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import styles from '../../styles/payment-detail.module.css';
 
 const PaymentDetailPage = () => {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { id } = router.query;
   const [payment, setPayment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refunding, setRefunding] = useState(false);
 
   useEffect(() => {
-    if (!user) {
+    if (!authLoading && !user) {
       router.push('/login');
     } else if (id) {
       fetchPaymentDetail();
     }
-  }, [user, id]);
+  }, [user, id, authLoading]);
 
   const fetchPaymentDetail = async () => {
     try {
@@ -52,7 +52,7 @@ const PaymentDetailPage = () => {
     }
   };
 
-  if (!user) return <div>Loading...</div>;
+  if (authLoading || !user) return <div>Loading payment access...</div>;
 
   if (loading) return <div className={styles.loading}>Loading payment details...</div>;
 
@@ -89,7 +89,7 @@ const PaymentDetailPage = () => {
               <h3>Payment Information</h3>
               <div className={styles.detail}>
                 <span>Amount:</span>
-                <strong>Br {payment.amount.toFixed(2)}</strong>
+                <strong>ETB {Number(payment.amount || 0).toFixed(2)}</strong>
               </div>
               <div className={styles.detail}>
                 <span>Currency:</span>
@@ -144,7 +144,7 @@ const PaymentDetailPage = () => {
                 <h3>Refund Information</h3>
                 <div className={styles.detail}>
                   <span>Refund Amount:</span>
-                  <strong>Br {payment.refundAmount.toFixed(2)}</strong>
+                  <strong>ETB {Number(payment.refundAmount || 0).toFixed(2)}</strong>
                 </div>
                 <div className={styles.detail}>
                   <span>Reason:</span>
