@@ -154,9 +154,10 @@ const updateSellerOrder = async (req, res) => {
          delivered_at = CASE WHEN $1 = 'delivered' THEN NOW() ELSE delivered_at END, updated_at = NOW()
        WHERE id = $3 AND seller_id = $4
          AND (
+           ($1 = status) OR
            ($1 = 'processing' AND status IN ('pending', 'confirmed')) OR
-           ($1 = 'shipped' AND status = 'processing') OR
-           ($1 = 'delivered' AND status = 'shipped') OR
+           ($1 = 'shipped' AND status IN ('pending', 'confirmed', 'processing')) OR
+           ($1 = 'delivered' AND status IN ('processing', 'shipped')) OR
            ($1 = 'cancelled' AND status IN ('pending', 'confirmed', 'processing'))
          )
        RETURNING id, buyer_id, status, tracking_number, delivered_at

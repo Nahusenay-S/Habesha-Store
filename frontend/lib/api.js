@@ -9,7 +9,9 @@ const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401 && typeof window !== 'undefined') {
+    const url = error.config?.url || '';
+    const isAuthRoute = url.includes('/auth/login') || url.includes('/auth/register');
+    if (error.response?.status === 401 && !isAuthRoute && typeof window !== 'undefined') {
       window.localStorage.removeItem('token');
       window.dispatchEvent(new Event('auth:expired'));
     }
@@ -39,6 +41,7 @@ export const productAPI = {
   create: (data) => api.post('/products', data),
   update: (id, data) => api.put(`/products/${id}`, data),
   delete: (id) => api.delete(`/products/${id}`),
+  inquire: (id, data) => api.post(`/products/${id}/inquire`, data),
 };
 
 export const orderAPI = {

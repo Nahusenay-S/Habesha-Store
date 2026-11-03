@@ -75,3 +75,9 @@
   .statStrip { margin-top: 1rem; overflow-x: auto; }
   .shipment { margin-top: 2rem; }
 }
+
+@media (max-width: 480px) {
+  .sidebar { grid-template-columns: 1fr 1fr; }
+  .favoriteGrid { grid-template-columns: 1fr; }
+  .headingRow h1 { font-size: 2rem; }
+}

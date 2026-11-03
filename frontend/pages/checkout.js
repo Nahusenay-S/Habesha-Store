@@ -47,7 +47,18 @@ const CheckoutPage = () => {
         paymentMethod: form.paymentMethod,
       });
       clearCart();
-      router.push(`/order-confirmation?id=${response.data.order._id}`);
+
+      const createdOrder = response.data.order;
+      if (form.paymentMethod === 'telebirr') {
+        try {
+          const teleRes = await import('../lib/api').then(m => m.paymentAPI.initiateTelebirrPayment({ orderId: createdOrder._id }));
+          router.push(`/order-confirmation?id=${createdOrder._id}&ref=${teleRes.data.referenceId}&pid=${teleRes.data.paymentId}`);
+          return;
+        } catch (teleErr) {
+          console.warn('Telebirr init warning:', teleErr);
+        }
+      }
+      router.push(`/order-confirmation?id=${createdOrder._id}`);
     } catch (requestError) {
       setError(requestError.response?.data?.error || 'We could not place this order.');
     } finally { setLoading(false); }

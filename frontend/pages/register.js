@@ -63,7 +63,7 @@ const RegisterPage = () => {
   return (
     <div className={styles.authContainer}>
       <div className={`${styles.authBox} ${styles.registerBox}`}>
-        <div className={styles.authImage} style={{ backgroundImage: "url('/images/portrait.svg')" }}>
+        <div className={styles.authImage} style={{ backgroundImage: "url('/images/portrait.jpg')" }}>
           <div className={styles.imageOverlay}><h2>Heritage Redefined.</h2><p>Join a global community dedicated to the finest Ethiopian crafts.</p></div>
         </div>
         <div className={styles.authPanel}>

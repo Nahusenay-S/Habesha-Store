@@ -8,6 +8,14 @@ const createTelebirrPayment = async (req, res) => {
   const { orderId } = req.body;
   const order = await query('SELECT id, total_amount FROM orders WHERE id = $1 AND buyer_id = $2', [orderId, req.userId]);
   if (!order.rowCount) return res.status(404).json({ error: 'Order not found' });
+  const existing = await query(
+    `SELECT id AS "_id", provider_reference AS "referenceId", amount, status
+     FROM payments WHERE order_id = $1 AND user_id = $2 AND payment_method = 'telebirr' AND status = 'processing'`,
+    [orderId, req.userId]
+  );
+  if (existing.rowCount) {
+    return res.json({ paymentId: existing.rows[0]._id, referenceId: existing.rows[0].referenceId, amount: existing.rows[0].amount, status: 'processing' });
+  }
   const reference = `HB-${uuidv4().split('-')[0].toUpperCase()}`;
   const payment = await query(
     `INSERT INTO payments (order_id, user_id, amount, payment_method, status, provider_reference)
@@ -29,11 +37,16 @@ const verifyTelebirrPayment = async (req, res) => {
   await query(
     `WITH updated AS (
        UPDATE orders SET status = 'confirmed', payment_status = 'completed', updated_at = NOW()
-       WHERE id = $1 AND payment_status <> 'completed' RETURNING id, seller_id
+       WHERE id = $1 AND payment_status <> 'completed' RETURNING id, seller_id, buyer_id
+     ),
+     seller_notice AS (
+       INSERT INTO notifications (user_id, type, title, message, order_id)
+       SELECT seller_id, 'payment_confirmed', 'Payment confirmed', 'Payment was confirmed for a buyer order. You can now begin fulfillment.', id
+       FROM updated WHERE seller_id IS NOT NULL
      )
      INSERT INTO notifications (user_id, type, title, message, order_id)
-     SELECT seller_id, 'payment_confirmed', 'Payment confirmed', 'Payment was confirmed for a buyer order. You can now begin fulfillment.', id
-     FROM updated WHERE seller_id IS NOT NULL`,
+     SELECT buyer_id, 'payment_confirmed', 'Telebirr Payment Confirmed', 'Your payment has been verified! The artisan has been notified to prepare your package.', id
+     FROM updated`,
     [result.rows[0].order]
   );
   return res.json({ message: 'Payment verified', payment: result.rows[0] });

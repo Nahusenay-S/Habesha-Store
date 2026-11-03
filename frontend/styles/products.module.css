@@ -72,15 +72,33 @@
 
 @media (max-width: 768px) {
   .container {
-    padding: 1rem;
+    padding: 1.5rem 1rem;
   }
 
   .pageTitle {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
   }
 
   .productGrid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .productGrid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .filtersSection {
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .searchInput,
+  .filterSelect {
+    width: 100%;
+    min-width: 0;
   }
 }

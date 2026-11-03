@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useCartStore } from '../store/cartStore';
@@ -37,9 +38,9 @@ const CartPage = () => {
         {items.length === 0 ? (
           <div className={styles.emptyCart}>
             <p>Your cart is empty</p>
-            <a href="/products" className={styles.shopBtn}>
+            <Link href="/products" className={styles.shopBtn}>
               Continue Shopping
-            </a>
+            </Link>
           </div>
         ) : (
           <div className={styles.cartLayout}>
@@ -47,9 +48,9 @@ const CartPage = () => {
               {items.map((item) => (
                 <div key={item._id} className={styles.cartItem}>
                   <img
-                    src={item.images?.[0] || '/images/heritage-textile.svg'}
+                    src={item.images?.[0] || '/images/heritage-textile.jpg'}
                     alt={item.name}
-                    onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = '/images/heritage-textile.svg'; }}
+                    onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = '/images/heritage-textile.jpg'; }}
                   />
                   <div className={styles.itemInfo}>
                     <h3>{item.name}</h3>
@@ -87,15 +88,15 @@ const CartPage = () => {
               <h2>Order Summary</h2>
               <div className={styles.summaryRow}>
                 <span>Subtotal:</span>
-                <span>Br {total.toFixed(2)}</span>
+                <span>{config?.currency || 'ETB'} {total.toFixed(2)}</span>
               </div>
               <div className={styles.summaryRow}>
                 <span>Shipping:</span>
-                <span>Br {shipping.toFixed(2)}</span>
+                <span>{config?.currency || 'ETB'} {shipping.toFixed(2)}</span>
               </div>
               <div className={styles.summaryTotal}>
                 <span>Total:</span>
-                <span>Br {(total + shipping).toFixed(2)}</span>
+                <span>{config?.currency || 'ETB'} {(total + shipping).toFixed(2)}</span>
               </div>
               <button
                 className={styles.checkoutBtn}

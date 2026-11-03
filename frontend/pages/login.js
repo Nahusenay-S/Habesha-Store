@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
-import apiClient from '../lib/apiClient';
+import { authAPI } from '../lib/api';
 import styles from '../pages/auth.module.css';
 import Icon from '../components/Icon';
 
@@ -24,7 +24,7 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      const response = await apiClient.post('/auth/login', formData);
+      const response = await authAPI.login(formData);
       login(response.data.user, response.data.token);
       const nextPath = typeof router.query.next === 'string' ? router.query.next : null;
       const destination = response.data.user?.role === 'admin' ? '/admin' : response.data.user?.role === 'seller' ? '/vendor' : nextPath || '/dashboard';
@@ -85,7 +85,7 @@ const LoginPage = () => {
           <p className={styles.link}>Don&apos;t have an account? <Link href="/register">Create Account</Link></p>
           <Link href="/register?role=seller" className={styles.artistCard}><Icon name="edit" /> <span><small>ARE YOU A CREATOR?</small><br />Join as an Artisan →</span></Link>
           </div>
-          <div className={styles.authImage} style={{ backgroundImage: "url('/images/coffee.svg')" }}>
+          <div className={styles.authImage} style={{ backgroundImage: "url('/images/coffee.jpg')" }}>
             <div className={styles.imageOverlay}>
               <span className={styles.imageTag}>THE HERITAGE COLLECTION</span>
               <h2>Every bean tells a story of ancient highlands.</h2>

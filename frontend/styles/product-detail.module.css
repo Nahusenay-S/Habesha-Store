@@ -25,4 +25,18 @@
 .reviewForm input, .reviewForm textarea { border: 1px solid var(--color-line); padding: .9rem; background: var(--color-white); font: inherit; }
 .reviewForm textarea { min-height: 100px; }
 .message { min-height: 60vh; padding: 8rem 2rem; text-align: center; color: var(--color-gray); }
-@media (max-width: 800px) { .page { padding: 1.25rem; } .product { grid-template-columns: 1fr; gap: 2rem; } .gallery, .gallery img { min-height: 360px; } .reviewList { grid-template-columns: 1fr; } }
+@media (max-width: 800px) {
+  .page { padding: 1.25rem; }
+  .product { grid-template-columns: 1fr; gap: 2rem; padding: 1.5rem 0 3rem; }
+  .gallery { min-height: 320px; }
+  .gallery img { min-height: 320px; }
+  .info h1 { font-size: 2.2rem; }
+  .reviewList { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 500px) {
+  .gallery { min-height: 260px; }
+  .gallery img { min-height: 260px; }
+  .info h1 { font-size: 1.85rem; }
+  .meta { flex-direction: column; gap: 0.5rem; }
+}

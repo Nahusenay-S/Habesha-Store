@@ -191,6 +191,10 @@
 }
 
 @media (max-width: 768px) {
+  .container {
+    padding: 2rem 1.25rem;
+  }
+
   .cartLayout {
     grid-template-columns: 1fr;
   }
@@ -201,5 +205,24 @@
 
   .cartItem {
     flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 1.5rem 1rem;
+  }
+
+  .container h1 {
+    font-size: 1.8rem;
+  }
+
+  .cartItem {
+    gap: 0.75rem;
+  }
+
+  .cartItem img {
+    width: 70px;
+    height: 70px;
   }
 }

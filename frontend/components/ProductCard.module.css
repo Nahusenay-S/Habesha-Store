@@ -12,6 +12,8 @@
 }
 
 .cardLink { display: block; }
+.imageLink { display: block; width: 100%; height: 100%; }
+.titleLink { text-decoration: none; color: inherit; display: block; }
 
 .imageContainer {
   position: relative;
