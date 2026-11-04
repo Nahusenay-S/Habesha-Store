@@ -44,7 +44,11 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setToken(null);
-    if (typeof window !== 'undefined') window.localStorage.removeItem('token');
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem('token');
+      window.localStorage.removeItem('habesha-cart');
+      window.localStorage.removeItem('habesha-wishlist');
+    }
   };
 
   return (

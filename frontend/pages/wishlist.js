@@ -1,18 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
+import LoadingScreen from '../components/LoadingScreen';
 import { useWishlistStore } from '../store/wishlistStore';
 import { useCartStore } from '../store/cartStore';
+import { useAuth } from '../context/AuthContext';
 import styles from '../styles/wishlist.module.css';
 import Icon from '../components/Icon';
 
 const WishlistPage = () => {
+  const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const products = useWishlistStore((state) => state.items);
   const addToCart = useCartStore((state) => state.addToCart);
   const [feedback, setFeedback] = useState('');
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.replace('/login?next=/wishlist&reason=wishlist');
+    }
+  }, [user, authLoading, router]);
+
+  if (authLoading || !user) {
+    return (
+      <>
+        <Header />
+        <LoadingScreen label="Unfolding your treasures..." />
+        <Footer />
+      </>
+    );
+  }
 
   const handleMoveAll = () => {
     if (!products.length) return;

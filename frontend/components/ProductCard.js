@@ -6,20 +6,27 @@ import { useCartStore } from '../store/cartStore';
 import Icon from './Icon';
 import { useWishlistStore } from '../store/wishlistStore';
 import { useAuth } from '../context/AuthContext';
+import QuickViewModal from './QuickViewModal';
 
 const ProductCard = ({ product }) => {
   const router = useRouter();
   const addToCart = useCartStore((state) => state.addToCart);
   const toggleWishlist = useWishlistStore((state) => state.toggle);
+  const wishlistItems = useWishlistStore((state) => state.items);
   const { user, loading: authLoading } = useAuth();
-  const saved = useWishlistStore((state) => state.items.some((item) => item._id === product._id));
+  const saved = Boolean(user && wishlistItems.some((item) => item._id === product._id));
   const [addedNotice, setAddedNotice] = useState(false);
+  const [showQuickView, setShowQuickView] = useState(false);
   const price = Number(product.price || 0);
   const isSeller = user?.role === 'seller';
 
   const handleAddToCart = (event) => {
     event.preventDefault();
     event.stopPropagation();
+    if (!user) {
+      router.push(`/login?next=${encodeURIComponent(router.asPath)}&reason=cart`);
+      return;
+    }
     if (isSeller) {
       router.push('/vendor');
       return;
@@ -48,10 +55,26 @@ const ProductCard = ({ product }) => {
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
+            if (!user) {
+              router.push(`/login?next=${encodeURIComponent(router.asPath)}&reason=wishlist`);
+              return;
+            }
             toggleWishlist(product);
           }}
         >
           <Icon name="heart" size={16} />
+        </button>
+        <button
+          type="button"
+          className={styles.quickViewBtn}
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            setShowQuickView(true);
+          }}
+          aria-label={`Quick view ${product.name}`}
+        >
+          <span>👁</span> Quick View
         </button>
       </div>
 
@@ -82,6 +105,11 @@ const ProductCard = ({ product }) => {
           )}
         </div>
       </div>
+      <QuickViewModal
+        product={product}
+        isOpen={showQuickView}
+        onClose={() => setShowQuickView(false)}
+      />
     </div>
   );
 };

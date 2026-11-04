@@ -1,16 +1,166 @@
-.page { color: var(--color-dark); }
-.hero { max-width: 900px; margin: 0 auto; padding: 7rem 2rem 6rem; text-align: center; }
-.eyebrow { color: var(--color-gold); font-size: .75rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
-.hero h1 { margin: 1.2rem auto; color: var(--color-green); font-size: clamp(3rem, 7vw, 6rem); line-height: 1; }
-.hero p { max-width: 560px; margin: 0 auto; color: var(--color-gray); font-size: 1.05rem; }
-.story { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; max-width: 1100px; margin: 0 auto; padding: 5rem 2rem; border-top: 1px solid var(--color-line); border-bottom: 1px solid var(--color-line); }
-.story h2 { margin-top: 1rem; color: var(--color-green); font-size: 2.4rem; line-height: 1.1; }
-.story p { color: var(--color-gray); }
-.story p + p { margin-top: 1rem; }
-.link { display: inline-block; margin-top: 1.5rem; color: var(--color-green); font-weight: 700; }
-.values { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; max-width: 1100px; margin: 0 auto; padding: 5rem 2rem; }
-.values article { padding: 1.5rem; border: 1px solid var(--color-line); background: var(--color-white); }
-.values strong { color: var(--color-gold); font-family: 'Playfair Display', Georgia, serif; font-size: 2rem; }
-.values h3 { margin: 1rem 0 .4rem; color: var(--color-green); font-size: 1.2rem; }
-.values p { color: var(--color-gray); font-size: .9rem; }
-@media (max-width: 700px) { .story, .values { grid-template-columns: 1fr; gap: 2rem; } .hero { padding: 5rem 1.25rem 4rem; } }
+.page {
+  color: var(--color-dark);
+}
+
+.hero {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 5rem 2rem 4rem;
+  text-align: center;
+}
+
+.eyebrow {
+  color: var(--color-gold);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.6rem;
+}
+
+.hero h1 {
+  margin: 0.5rem auto 1.25rem;
+  color: var(--color-green);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  line-height: 1.05;
+}
+
+.hero p {
+  max-width: 620px;
+  margin: 0 auto;
+  color: var(--color-gray);
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+
+.photoShowcase {
+  max-width: 1200px;
+  margin: 0 auto 5rem;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 1.5rem;
+}
+
+.showcaseImg {
+  width: 100%;
+  height: 420px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--color-line);
+}
+
+.story {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 5rem 2rem;
+  border-top: 1px solid var(--color-line);
+  border-bottom: 1px solid var(--color-line);
+  align-items: center;
+}
+
+.story h2 {
+  margin-top: 0.8rem;
+  color: var(--color-green);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.5rem;
+  line-height: 1.15;
+}
+
+.story p {
+  color: #4a453e;
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+.story p + p {
+  margin-top: 1rem;
+}
+
+.values {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 5rem 2rem;
+}
+
+.values article {
+  padding: 2rem 1.5rem;
+  border: 1px solid var(--color-line);
+  background: var(--color-white);
+  border-radius: 4px;
+}
+
+.values strong {
+  color: var(--color-gold);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.2rem;
+}
+
+.values h3 {
+  margin: 1rem 0 0.5rem;
+  color: var(--color-green);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.3rem;
+}
+
+.values p {
+  color: var(--color-gray);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.joinBanner {
+  background: var(--color-green);
+  color: var(--color-white);
+  padding: 4.5rem 2rem;
+  text-align: center;
+  margin-top: 3rem;
+}
+
+.joinBanner h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  color: #fffaf3;
+  margin-bottom: 0.8rem;
+}
+
+.joinBanner p {
+  max-width: 560px;
+  margin: 0 auto 2rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.joinBtnRow {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 800px) {
+  .story,
+  .values,
+  .photoShowcase {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .showcaseImg {
+    height: 280px;
+  }
+
+  .hero {
+    padding: 3.5rem 1.25rem 2.5rem;
+  }
+}

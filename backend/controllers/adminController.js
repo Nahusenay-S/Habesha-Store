@@ -59,4 +59,56 @@ const updatePaymentConfig = async (req, res) => {
   return res.json(await savePlatformConfig(config));
 };
 
-module.exports = { getOverview, getPaymentConfig, updatePaymentConfig };
+const getAllUsers = async (req, res) => {
+  const result = await query(
+    `SELECT u.id, u.name, u.email, u.phone, u.role, u.is_active AS "isActive", u.created_at AS "createdAt",
+     COUNT(o.id)::int AS "orderCount"
+     FROM users u
+     LEFT JOIN orders o ON (o.buyer_id = u.id OR o.seller_id = u.id)
+     GROUP BY u.id
+     ORDER BY u.created_at DESC`
+  );
+  return res.json(result.rows);
+};
+
+const toggleUserStatus = async (req, res) => {
+  const { isActive } = req.body;
+  const result = await query(
+    'UPDATE users SET is_active = $1, updated_at = NOW() WHERE id = $2 RETURNING id, name, is_active AS "isActive"',
+    [Boolean(isActive), req.params.id]
+  );
+  if (!result.rowCount) return res.status(404).json({ error: 'User not found' });
+  return res.json({ message: 'User status updated', user: result.rows[0] });
+};
+
+const getAllProductsAdmin = async (req, res) => {
+  const result = await query(
+    `SELECT p.id AS "_id", p.name, p.price, p.category, p.stock, p.is_active AS "isActive",
+     p.rating, p.review_count AS "reviewCount", p.created_at AS "createdAt",
+     json_build_object('id', u.id, 'name', u.name, 'email', u.email) AS seller
+     FROM products p
+     JOIN users u ON u.id = p.seller_id
+     ORDER BY p.created_at DESC`
+  );
+  return res.json(result.rows);
+};
+
+const toggleProductStatus = async (req, res) => {
+  const { isActive } = req.body;
+  const result = await query(
+    'UPDATE products SET is_active = $1, updated_at = NOW() WHERE id = $2 RETURNING id AS "_id", is_active AS "isActive"',
+    [Boolean(isActive), req.params.id]
+  );
+  if (!result.rowCount) return res.status(404).json({ error: 'Product not found' });
+  return res.json({ message: 'Product listing status updated', product: result.rows[0] });
+};
+
+module.exports = {
+  getOverview,
+  getPaymentConfig,
+  updatePaymentConfig,
+  getAllUsers,
+  toggleUserStatus,
+  getAllProductsAdmin,
+  toggleProductStatus,
+};

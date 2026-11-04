@@ -5,12 +5,14 @@ import { useAuth } from '../context/AuthContext';
 import styles from './Header.module.css';
 import Icon from './Icon';
 import { useCartStore } from '../store/cartStore';
+import { useWishlistStore } from '../store/wishlistStore';
 import { notificationAPI } from '../lib/api';
 
 const Header = () => {
   const router = useRouter();
   const { user, logout } = useAuth();
   const cartItemCount = useCartStore((state) => state.items.reduce((count, item) => count + item.quantity, 0));
+  const wishlistCount = useWishlistStore((state) => state.items.length);
   const [notifications, setNotifications] = useState([]);
   const [showNotifs, setShowNotifs] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -92,20 +94,26 @@ const Header = () => {
         </div>
 
         <nav className={styles.nav}>
+          <Link href="/products" className={styles.navLink}>
+            Shop
+          </Link>
+          <Link href="/collections" className={styles.navLink}>
+            Collections
+          </Link>
           <Link href="/products?category=textiles" className={styles.navLink}>
             Textiles
+          </Link>
+          <Link href="/products?category=coffee" className={styles.navLink}>
+            Coffee
           </Link>
           <Link href="/products?category=spices" className={styles.navLink}>
             Spices
           </Link>
           <Link href="/products?category=crafts" className={styles.navLink}>
-            Art
+            Art & Crafts
           </Link>
-          <Link href="/products?category=coffee" className={styles.navLink}>
-            Coffee
-          </Link>
-          <Link href="/products" className={styles.navLink}>
-            All Works
+          <Link href="/about" className={styles.navLink}>
+            Our Story
           </Link>
         </nav>
 
@@ -178,10 +186,29 @@ const Header = () => {
             </div>
           )}
 
-          <Link href="/cart" className={styles.iconBtn} aria-label="Shopping cart">
-            <Icon name="cart" />
-            {cartItemCount > 0 && <span className={styles.cartBadge}>{cartItemCount > 99 ? '99+' : cartItemCount}</span>}
-          </Link>
+          {user ? (
+            <>
+              <Link href="/wishlist" className={styles.iconBtn} aria-label="Saved treasures" title="Saved treasures">
+                <Icon name="heart" />
+                {wishlistCount > 0 && <span className={styles.cartBadge}>{wishlistCount > 99 ? '99+' : wishlistCount}</span>}
+              </Link>
+
+              <Link href="/cart" className={styles.iconBtn} aria-label="Shopping bag" title="Shopping bag">
+                <Icon name="cart" />
+                {cartItemCount > 0 && <span className={styles.cartBadge}>{cartItemCount > 99 ? '99+' : cartItemCount}</span>}
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/login?next=/wishlist&reason=wishlist" className={styles.iconBtn} aria-label="Saved treasures (Sign in required)" title="Saved treasures (Sign in required)">
+                <Icon name="heart" />
+              </Link>
+
+              <Link href="/login?next=/cart&reason=cart" className={styles.iconBtn} aria-label="Shopping bag (Sign in required)" title="Shopping bag (Sign in required)">
+                <Icon name="cart" />
+              </Link>
+            </>
+          )}
 
           {user ? (
             <div className={styles.userMenu}>
@@ -245,6 +272,9 @@ const Header = () => {
         <div className={styles.drawerSection}>
           <span className={styles.drawerSectionLabel}>Curated Collections</span>
           <div className={styles.drawerNavLinks}>
+            <Link href="/collections" className={styles.drawerNavLink} onClick={() => setMobileMenuOpen(false)}>
+              <span>🏛️</span> The Collections
+            </Link>
             <Link href="/products?category=textiles" className={styles.drawerNavLink} onClick={() => setMobileMenuOpen(false)}>
               <span>✨</span> Handwoven Textiles
             </Link>

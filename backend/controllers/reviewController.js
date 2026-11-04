@@ -60,4 +60,15 @@ const deleteReview = async (req, res) => {
   return res.json({ message: 'Review deleted successfully' });
 };
 
-module.exports = { createReview, getProductReviews, updateReview, deleteReview };
+const getUserReviews = async (req, res) => {
+  const result = await query(
+    `SELECT r.id AS "_id", r.product_id AS product, r.rating, r.title, r.comment, r.is_verified AS "isVerified", r.created_at AS "createdAt",
+     json_build_object('id', p.id, 'name', p.name, 'images', p.images) AS productDetails
+     FROM reviews r JOIN products p ON p.id = r.product_id
+     WHERE r.author_id = $1 ORDER BY r.created_at DESC`,
+    [req.userId]
+  );
+  return res.json(result.rows);
+};
+
+module.exports = { createReview, getProductReviews, updateReview, deleteReview, getUserReviews };

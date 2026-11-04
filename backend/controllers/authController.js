@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const { query } = require('../db');
 const { hashPassword, comparePassword } = require('../utils/password');
 const { generateToken } = require('../utils/jwt');
@@ -72,4 +73,63 @@ const updateProfile = async (req, res) => {
   return res.json({ message: 'Profile updated successfully', user: result.rows[0] });
 };
 
-module.exports = { register, login, getProfile, updateProfile };
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: 'Email address is required' });
+
+    const userResult = await query('SELECT id, name, email FROM users WHERE email = LOWER($1)', [email]);
+    if (!userResult.rowCount) {
+      return res.json({ message: 'If an account exists with that email, a password reset link has been dispatched.' });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const expires = new Date(Date.now() + 60 * 60 * 1000);
+
+    await query(
+      'UPDATE users SET reset_password_token = $1, reset_password_expires = $2 WHERE id = $3',
+      [resetToken, expires, userResult.rows[0].id]
+    );
+
+    return res.json({
+      message: 'If an account exists with that email, a password reset link has been dispatched.',
+      resetToken,
+    });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    return res.status(500).json({ error: 'Unable to process password reset request' });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+    if (!token || !newPassword) {
+      return res.status(400).json({ error: 'Reset token and new password are required' });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    }
+
+    const userResult = await query(
+      'SELECT id, name, email FROM users WHERE reset_password_token = $1 AND reset_password_expires > NOW()',
+      [token]
+    );
+    if (!userResult.rowCount) {
+      return res.status(400).json({ error: 'Invalid or expired password reset token' });
+    }
+
+    const hashedPassword = await hashPassword(newPassword);
+    await query(
+      'UPDATE users SET password = $1, reset_password_token = NULL, reset_password_expires = NULL, updated_at = NOW() WHERE id = $2',
+      [hashedPassword, userResult.rows[0].id]
+    );
+
+    return res.json({ message: 'Password has been reset successfully. You may now sign in.' });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    return res.status(500).json({ error: 'Unable to reset password' });
+  }
+};
+
+module.exports = { register, login, getProfile, updateProfile, forgotPassword, resetPassword };

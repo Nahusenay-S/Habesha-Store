@@ -1,42 +1,398 @@
-.page { max-width: 1200px; margin: auto; padding: 2rem; }
-.back { border: 0; background: none; color: var(--color-gray); cursor: pointer; }
-.product { display: grid; grid-template-columns: 1.1fr .9fr; gap: 5rem; padding: 3rem 0 6rem; }
-.gallery { background: #eee3d2; min-height: 560px; }
-.gallery img { width: 100%; height: 100%; min-height: 560px; object-fit: cover; }
-.category { color: var(--color-gold); font-size: .75rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
-.info h1 { margin: 1rem 0 .4rem; color: var(--color-green); font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1; }
-.seller, .description { color: var(--color-gray); }
-.price { margin: 2rem 0; color: var(--color-green); font-family: 'Playfair Display', Georgia, serif; font-size: 1.8rem; }
-.description { max-width: 500px; line-height: 1.8; }
-.meta { display: flex; justify-content: space-between; margin: 2rem 0; border-top: 1px solid var(--color-line); border-bottom: 1px solid var(--color-line); padding: 1rem 0; color: var(--color-gray); font-size: .85rem; }
-.add, .reviewForm button { width: 100%; padding: 1rem; border: 0; background: var(--color-green); color: var(--color-white); cursor: pointer; }
-.add span { float: right; }
-.add:disabled { opacity: .5; cursor: not-allowed; }
-.promise { margin-top: 2rem; padding: 1.2rem; background: var(--color-light); color: var(--color-green); }
-.promise p { color: var(--color-gray); font-size: .85rem; }
-.reviews { border-top: 1px solid var(--color-line); padding: 4rem 0; }
-.reviews h2 { color: var(--color-green); font-size: 2.4rem; }
-.reviewList { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2rem; }
-.reviewList article { border: 1px solid var(--color-line); padding: 1.2rem; }
-.reviewList span { float: right; color: var(--color-gold); }
-.reviewList h3 { margin: 1rem 0 .4rem; color: var(--color-green); }
-.reviewList p { color: var(--color-gray); font-size: .9rem; }
-.reviewForm { max-width: 600px; margin-top: 3rem; display: grid; gap: .8rem; }
-.reviewForm input, .reviewForm textarea { border: 1px solid var(--color-line); padding: .9rem; background: var(--color-white); font: inherit; }
-.reviewForm textarea { min-height: 100px; }
-.message { min-height: 60vh; padding: 8rem 2rem; text-align: center; color: var(--color-gray); }
-@media (max-width: 800px) {
-  .page { padding: 1.25rem; }
-  .product { grid-template-columns: 1fr; gap: 2rem; padding: 1.5rem 0 3rem; }
-  .gallery { min-height: 320px; }
-  .gallery img { min-height: 320px; }
-  .info h1 { font-size: 2.2rem; }
-  .reviewList { grid-template-columns: 1fr; }
+.page {
+  max-width: 1280px;
+  margin: auto;
+  padding: 2.5rem 2rem 6rem;
 }
 
-@media (max-width: 500px) {
-  .gallery { min-height: 260px; }
-  .gallery img { min-height: 260px; }
-  .info h1 { font-size: 1.85rem; }
-  .meta { flex-direction: column; gap: 0.5rem; }
+.product {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  padding: 1.5rem 0 4rem;
+}
+
+.galleryCol {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.mainImageWrapper {
+  position: relative;
+  width: 100%;
+  height: 520px;
+  background: var(--color-light);
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+.mainImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease-out;
+}
+
+.mainImageWrapper:hover .mainImage {
+  transform: scale(1.15);
+}
+
+.thumbnailStrip {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.thumbBtn {
+  width: 72px;
+  height: 72px;
+  border-radius: 4px;
+  overflow: hidden;
+  padding: 0;
+  background: none;
+  border: 1px solid var(--color-line);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.2s;
+}
+
+.thumbBtnActive {
+  border: 2px solid var(--color-green);
+}
+
+.thumbBtn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+}
+
+.categoryTag {
+  color: var(--color-gold);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.productTitle {
+  margin: 0.6rem 0 0.35rem;
+  color: var(--color-green);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  line-height: 1.15;
+}
+
+.seller {
+  color: var(--color-gray);
+  font-size: 0.92rem;
+  margin-bottom: 1.25rem;
+}
+
+.seller strong {
+  color: var(--color-dark);
+}
+
+.priceRatingRow {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--color-line);
+  border-bottom: 1px solid var(--color-line);
+  margin-bottom: 1.5rem;
+}
+
+.price {
+  color: var(--color-green);
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.rating {
+  color: var(--color-gold);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.stockBadge {
+  margin-left: auto;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-green);
+}
+
+.description {
+  color: #4a453e;
+  line-height: 1.7;
+  font-size: 0.98rem;
+  margin-bottom: 2rem;
+}
+
+.purchaseSection {
+  background: var(--color-white);
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  padding: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.quantityRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.qtyLabel {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-dark);
+}
+
+.qtyControls {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--color-line);
+  border-radius: 3px;
+  background: #fff;
+}
+
+.qtyBtn {
+  background: none;
+  border: none;
+  padding: 0.4rem 0.85rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--color-dark);
+}
+
+.qtyBtn:hover {
+  background: var(--color-light);
+}
+
+.qtyValue {
+  padding: 0 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  min-width: 30px;
+  text-align: center;
+}
+
+.btnRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.wishlistBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--color-line);
+  background: transparent;
+  color: var(--color-dark);
+  font-weight: 600;
+  font-size: 0.88rem;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.wishlistBtn:hover {
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+}
+
+.wishlistSaved {
+  color: #b3261e !important;
+  border-color: #b3261e !important;
+}
+
+/* Tabs */
+.tabsContainer {
+  margin-top: 1.5rem;
+}
+
+.tabButtons {
+  display: flex;
+  border-bottom: 1px solid var(--color-line);
+  gap: 1.5rem;
+  overflow-x: auto;
+}
+
+.tabBtn {
+  background: none;
+  border: none;
+  padding: 0.85rem 0;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-gray);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.tabBtnActive {
+  color: var(--color-green);
+  border-bottom-color: var(--color-green);
+}
+
+.tabContent {
+  padding: 1.5rem 0;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: #4a453e;
+}
+
+.specTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.specTable td {
+  padding: 0.65rem 0;
+  border-bottom: 1px solid #f2ede4;
+}
+
+.specTable td:first-child {
+  font-weight: 600;
+  color: var(--color-dark);
+  width: 35%;
+}
+
+.relatedSection {
+  margin-top: 5rem;
+  padding-top: 3rem;
+  border-top: 1px solid var(--color-line);
+}
+
+.relatedSection h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2rem;
+  color: var(--color-green);
+  margin-bottom: 2rem;
+}
+
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.75rem;
+}
+
+.reviewsSection {
+  margin-top: 4rem;
+  padding-top: 3rem;
+  border-top: 1px solid var(--color-line);
+}
+
+.reviewsHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.reviewsHeading h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.2rem;
+  color: var(--color-green);
+}
+
+.reviewList {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.reviewCard {
+  background: var(--color-white);
+  border: 1px solid var(--color-line);
+  padding: 1.5rem;
+  border-radius: 4px;
+}
+
+.reviewCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.reviewRating {
+  color: var(--color-gold);
+}
+
+.reviewTitle {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.1rem;
+  color: var(--color-green);
+  margin: 0.5rem 0;
+}
+
+.reviewComment {
+  font-size: 0.88rem;
+  color: var(--color-gray);
+  line-height: 1.6;
+}
+
+.reviewFormBox {
+  max-width: 680px;
+  background: var(--color-white);
+  border: 1px solid var(--color-line);
+  padding: 2rem;
+  border-radius: 4px;
+}
+
+.reviewFormBox h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.4rem;
+  color: var(--color-green);
+  margin-bottom: 1.25rem;
+}
+
+.message {
+  min-height: 60vh;
+  padding: 8rem 2rem;
+  text-align: center;
+  color: var(--color-gray);
+}
+
+@media (max-width: 840px) {
+  .product {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .mainImageWrapper {
+    height: 380px;
+  }
+
+  .reviewList {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .btnRow {
+    grid-template-columns: 1fr;
+  }
+
+  .mainImageWrapper {
+    height: 280px;
+  }
 }

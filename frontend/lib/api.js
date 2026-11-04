@@ -33,6 +33,8 @@ export const authAPI = {
   login: (data) => api.post('/auth/login', data),
   getProfile: () => api.get('/auth/profile'),
   updateProfile: (data) => api.put('/auth/profile', data),
+  forgotPassword: (data) => api.post('/auth/forgot-password', data),
+  resetPassword: (data) => api.post('/auth/reset-password', data),
 };
 
 export const productAPI = {
@@ -55,6 +57,7 @@ export const orderAPI = {
 
 export const reviewAPI = {
   getByProduct: (productId) => api.get(`/reviews/product/${productId}`),
+  getMyReviews: () => api.get('/reviews/user/my-reviews'),
   create: (data) => api.post('/reviews', data),
   update: (id, data) => api.put(`/reviews/${id}`, data),
   delete: (id) => api.delete(`/reviews/${id}`),
@@ -95,6 +98,10 @@ export const adminAPI = {
   getOverview: () => api.get('/admin/overview'),
   getPaymentConfig: () => api.get('/admin/payment-config'),
   updatePaymentConfig: (data) => api.put('/admin/payment-config', data),
+  getUsers: () => api.get('/admin/users'),
+  toggleUserStatus: (id, isActive) => api.put(`/admin/users/${id}/status`, { isActive }),
+  getProducts: () => api.get('/admin/products'),
+  toggleProductStatus: (id, isActive) => api.put(`/admin/products/${id}/status`, { isActive }),
 };
 
 export default api;

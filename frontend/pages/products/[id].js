@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import Link from 'next/link';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import Breadcrumbs from '../../components/Breadcrumbs';
+import Button from '../../components/Button';
+import Badge from '../../components/Badge';
+import Icon from '../../components/Icon';
+import ProductCard from '../../components/ProductCard';
 import { productAPI, reviewAPI } from '../../lib/api';
 import { useCartStore } from '../../store/cartStore';
+import { useWishlistStore } from '../../store/wishlistStore';
 import { useAuth } from '../../context/AuthContext';
 import styles from '../../styles/product-detail.module.css';
 
@@ -12,11 +19,18 @@ const ProductDetailPage = () => {
   const router = useRouter();
   const { id } = router.query;
   const { addToCart } = useCartStore();
+  const { toggle: toggleWishlist, items: wishlistItems } = useWishlistStore();
   const { user } = useAuth();
+
   const [data, setData] = useState(null);
+  const [relatedProducts, setRelatedProducts] = useState([]);
   const [pageError, setPageError] = useState('');
   const [addedNotice, setAddedNotice] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [activeTab, setActiveTab] = useState('story'); // 'story' | 'specs' | 'artisan' | 'shipping'
+  const [shareNotice, setShareNotice] = useState(false);
+  const [recentlyViewed, setRecentlyViewed] = useState([]);
 
   // Review state
   const [review, setReview] = useState({ rating: 5, title: '', comment: '' });
@@ -35,21 +49,96 @@ const ProductDetailPage = () => {
   useEffect(() => {
     if (id) {
       productAPI.getById(id)
-        .then((response) => setData(response.data))
-        .catch(() => setPageError('This piece could not be found.'));
+        .then((response) => {
+          setData(response.data);
+          const category = response.data.product?.category;
+          if (category) {
+            productAPI.getAll({ category, limit: 4 })
+              .then((res) => {
+                setRelatedProducts((res.data.products || []).filter((p) => p._id !== id));
+              })
+              .catch(() => {});
+          }
+        })
+        .catch(() => setPageError('This piece could not be found in our collection.'));
     }
   }, [id]);
 
+  useEffect(() => {
+    if (data?.product && typeof window !== 'undefined') {
+      try {
+        const stored = JSON.parse(localStorage.getItem('habesha_recently_viewed') || '[]');
+        const filtered = stored.filter((item) => item.id !== data.product._id);
+        setRecentlyViewed(filtered.slice(0, 4));
+        const updated = [
+          {
+            id: data.product._id,
+            name: data.product.name,
+            price: data.product.price,
+            images: data.product.images,
+            category: data.product.category,
+            stock: data.product.stock,
+          },
+          ...filtered,
+        ].slice(0, 6);
+        localStorage.setItem('habesha_recently_viewed', JSON.stringify(updated));
+      } catch (e) {
+        // storage disabled or quota
+      }
+    }
+  }, [data?.product]);
+
+  const handleShare = () => {
+    if (typeof window !== 'undefined') {
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(window.location.href);
+      }
+      setShareNotice(true);
+      setTimeout(() => setShareNotice(false), 2500);
+    }
+  };
+
   const handleAddToCart = () => {
+    if (!user) {
+      router.push(`/login?next=${encodeURIComponent(router.asPath)}&reason=cart`);
+      return;
+    }
     if (user?.role === 'seller') {
       alert('Artisan/seller accounts cannot purchase items.');
       return;
     }
     if (data?.product) {
-      addToCart(data.product);
+      for (let i = 0; i < quantity; i++) {
+        addToCart(data.product);
+      }
       setAddedNotice(true);
       setTimeout(() => setAddedNotice(false), 3000);
     }
+  };
+
+  const handleBuyNow = () => {
+    if (!user) {
+      router.push(`/login?next=${encodeURIComponent(router.asPath)}&reason=cart`);
+      return;
+    }
+    if (user?.role === 'seller') {
+      alert('Artisan/seller accounts cannot purchase items.');
+      return;
+    }
+    if (data?.product) {
+      for (let i = 0; i < quantity; i++) {
+        addToCart(data.product);
+      }
+      router.push('/checkout');
+    }
+  };
+
+  const handleToggleWishlist = (piece) => {
+    if (!user) {
+      router.push(`/login?next=${encodeURIComponent(router.asPath)}&reason=wishlist`);
+      return;
+    }
+    toggleWishlist(piece);
   };
 
   const submitReview = async (event) => {
@@ -66,7 +155,7 @@ const ProductDetailPage = () => {
       const response = await productAPI.getById(id);
       setData(response.data);
       setReview({ rating: 5, title: '', comment: '' });
-      setReviewSuccess('Thank you for sharing your feedback on this piece!');
+      setReviewSuccess('Thank you for sharing your experience with this piece!');
     } catch (requestError) {
       setReviewError(requestError.response?.data?.error || 'Unable to submit your review.');
     } finally {
@@ -79,13 +168,13 @@ const ProductDetailPage = () => {
     setInquiryError('');
     setInquirySuccess('');
     if (!user) {
-      setInquiryError('Please sign in to send a direct message to this artisan.');
+      setInquiryError('Please sign in to message this artisan.');
       return;
     }
     setInquiryLoading(true);
     try {
       await productAPI.inquire(id, { message: inquiryMessage, contactPhone: inquiryPhone });
-      setInquirySuccess('Your message was sent directly to the artisan! Check your notifications for replies.');
+      setInquirySuccess('Your message was sent directly to the maker! You will receive a response in your notifications.');
       setInquiryMessage('');
       setInquiryPhone('');
     } catch (requestError) {
@@ -95,192 +184,426 @@ const ProductDetailPage = () => {
     }
   };
 
-  if (pageError) return <><Header /><main className={styles.message}>{pageError}</main><Footer /></>;
-  if (!data) return <><Header /><main className={styles.message}>Loading this piece...</main><Footer /></>;
+  if (pageError) {
+    return (
+      <>
+        <Header />
+        <main className={styles.message}>
+          <h2>{pageError}</h2>
+          <p>The piece you are looking for may have been archived or sold.</p>
+          <Link href="/products" style={{ color: 'var(--color-green)', fontWeight: 600, textDecoration: 'underline' }}>
+            ← Return to full collection
+          </Link>
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
+  if (!data) {
+    return (
+      <>
+        <Header />
+        <main className={styles.message}>
+          <p>Unfolding this piece from the archives...</p>
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
   const { product, reviews = [] } = data;
   const images = Array.isArray(product?.images) && product.images.length > 0 ? product.images : ['/images/heritage-textile.jpg'];
+  const isSaved = Boolean(user && wishlistItems.some((item) => item._id === product._id));
+  const inStock = (product.stock || 0) > 0;
+  const isSeller = user?.role === 'seller';
+  const price = Number(product.price || 0);
 
   return (
     <>
+      <Head>
+        <title>{product.name} | Habesha Store</title>
+        <meta name="description" content={product.description?.slice(0, 160)} />
+      </Head>
+
       <Header />
+
       <main className={styles.page}>
-        <button className={styles.back} onClick={() => router.back()}>← Back to collection</button>
+        <Breadcrumbs
+          items={[
+            { label: 'Shop', href: '/products' },
+            { label: product.category?.toUpperCase() || 'HERITAGE', href: `/products?category=${product.category}` },
+            { label: product.name },
+          ]}
+        />
+
         <section className={styles.product}>
-          <div className={styles.gallery}>
-            <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '360px', overflow: 'hidden' }}>
+          {/* Gallery Column */}
+          <div className={styles.galleryCol}>
+            <div className={styles.mainImageWrapper}>
               <img
                 src={images[selectedImageIndex] || images[0] || '/images/heritage-textile.jpg'}
                 alt={product.name}
-                onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = '/images/heritage-textile.jpg'; }}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                className={styles.mainImage}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = '/images/heritage-textile.jpg';
+                }}
               />
             </div>
             {images.length > 1 && (
-              <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.75rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+              <div className={styles.thumbnailStrip}>
                 {images.map((imgUrl, idx) => (
                   <button
                     key={idx}
                     type="button"
                     onClick={() => setSelectedImageIndex(idx)}
-                    style={{
-                      border: idx === selectedImageIndex ? '2px solid #0b3d2c' : '1px solid #c9b084',
-                      padding: 0,
-                      background: 'none',
-                      cursor: 'pointer',
-                      borderRadius: '4px',
-                      overflow: 'hidden',
-                      flexShrink: 0,
-                      width: '64px',
-                      height: '64px',
-                    }}
+                    className={`${styles.thumbBtn} ${idx === selectedImageIndex ? styles.thumbBtnActive : ''}`}
+                    aria-label={`Select photo ${idx + 1}`}
                   >
                     <img
                       src={imgUrl}
                       alt=""
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/images/heritage-textile.jpg'; }}
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/images/heritage-textile.jpg';
+                      }}
                     />
                   </button>
                 ))}
               </div>
             )}
           </div>
+
+          {/* Product Details & Actions */}
           <div className={styles.info}>
-            <span className={styles.category}>{product.category}</span>
-            <h1>{product.name}</h1>
-            <p className={styles.seller}>By {product.seller?.name || 'Habesha artisan'}</p>
-            <p className={styles.price}>ETB {Number(product.price).toFixed(2)}</p>
-            <p className={styles.description}>{product.description}</p>
-            <div className={styles.meta}>
-              <span>★ {Number(product.rating || 0).toFixed(1)} ({product.reviews || 0} reviews)</span>
-              <span>{product.stock > 0 ? `${product.stock} available in stock` : 'Currently sold out'}</span>
+            <span className={styles.categoryTag}>{product.category}</span>
+            <h1 className={styles.productTitle}>{product.name}</h1>
+            <p className={styles.seller}>
+              Handcrafted in Ethiopia by <strong>{product.seller?.name || 'Highland Artisan Guild'}</strong>
+            </p>
+
+            <div className={styles.priceRatingRow}>
+              <span className={styles.price}>ETB {price.toFixed(2)}</span>
+              <span className={styles.rating}>★ {Number(product.rating || 5).toFixed(1)} ({reviews.length} reviews)</span>
+              <span className={styles.stockBadge}>
+                {inStock ? (
+                  <Badge variant="success">In Stock ({product.stock})</Badge>
+                ) : (
+                  <Badge variant="danger">Sold Out</Badge>
+                )}
+              </span>
             </div>
 
-            {addedNotice && (
-              <div style={{ background: '#eaf5ee', color: '#0b3d2c', padding: '0.8rem 1rem', marginBottom: '1rem', border: '1px solid #b7dfca', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>✓ Added to your shopping bag!</span>
-                <Link href="/cart" style={{ color: '#0b3d2c', fontWeight: 600, textDecoration: 'underline' }}>View Bag →</Link>
-              </div>
-            )}
+            <p className={styles.description}>{product.description}</p>
 
-            <button
-              className={styles.add}
-              disabled={!product.stock || user?.role === 'seller'}
-              onClick={handleAddToCart}
-            >
-              {addedNotice ? 'Added to bag ✓' : product.stock > 0 ? 'Add to bag' : 'Sold Out'} <span>→</span>
-            </button>
-
-            {/* Direct Communication / Inquiry with Artisan */}
-            <div style={{ marginTop: '1.25rem', padding: '1rem', border: '1px solid #dfd7cc', borderRadius: '4px', background: '#fdfbf7' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <strong style={{ display: 'block', color: '#0b3d2c' }}>Have a question about this piece?</strong>
-                  <small style={{ color: '#666' }}>Ask the maker about sizing, materials, or custom crafts.</small>
+            {/* Purchase Controls */}
+            <div className={styles.purchaseSection}>
+              {inStock && !isSeller && (
+                <div className={styles.quantityRow}>
+                  <span className={styles.qtyLabel}>Quantity:</span>
+                  <div className={styles.qtyControls}>
+                    <button
+                      type="button"
+                      className={styles.qtyBtn}
+                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    >
+                      −
+                    </button>
+                    <span className={styles.qtyValue}>{quantity}</span>
+                    <button
+                      type="button"
+                      className={styles.qtyBtn}
+                      onClick={() => setQuantity((q) => Math.min(product.stock || 10, q + 1))}
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
+              )}
+
+              {addedNotice && (
+                <div style={{ background: '#eaf5ee', color: '#174f3f', padding: '0.75rem 1rem', marginBottom: '1rem', border: '1px solid #b7dfca', borderRadius: '3px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>✓ Added {quantity} to your shopping bag!</span>
+                  <Link href="/cart" style={{ color: '#174f3f', fontWeight: 700, textDecoration: 'underline' }}>
+                    View Bag →
+                  </Link>
+                </div>
+              )}
+
+              <div className={styles.btnRow}>
+                <Button
+                  variant="primary"
+                  size="lg"
+                  disabled={!inStock || isSeller}
+                  onClick={handleAddToCart}
+                >
+                  {addedNotice ? 'Added ✓' : inStock ? 'Add to Shopping Bag' : 'Sold Out'}
+                </Button>
+                <Button
+                  variant="gold"
+                  size="lg"
+                  disabled={!inStock || isSeller}
+                  onClick={handleBuyNow}
+                >
+                  Buy Now →
+                </Button>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem', flexWrap: 'wrap' }}>
                 <button
                   type="button"
-                  onClick={() => setShowInquiry(!showInquiry)}
-                  style={{ background: '#c49a45', color: '#fff', border: 'none', padding: '0.5rem 1rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem' }}
+                  className={`${styles.wishlistBtn} ${isSaved ? styles.wishlistSaved : ''}`}
+                  onClick={() => handleToggleWishlist(product)}
+                  style={{ margin: 0, flex: 1, minWidth: '160px' }}
                 >
-                  {showInquiry ? 'Close' : '💬 Ask Artisan'}
+                  <Icon name="heart" size={16} />
+                  <span>{isSaved ? 'Saved in Treasures' : 'Save to Treasures'}</span>
+                </button>
+                <button
+                  type="button"
+                  className={styles.wishlistBtn}
+                  onClick={handleShare}
+                  style={{ margin: 0, flex: 1, minWidth: '160px' }}
+                >
+                  <span>{shareNotice ? '✓' : '🔗'}</span>
+                  <span>{shareNotice ? 'Link Copied to Clipboard!' : 'Share Piece'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Story & Technical Accordion Tabs */}
+            <div className={styles.tabsContainer}>
+              <div className={styles.tabButtons}>
+                <button
+                  type="button"
+                  className={`${styles.tabBtn} ${activeTab === 'story' ? styles.tabBtnActive : ''}`}
+                  onClick={() => setActiveTab('story')}
+                >
+                  Heritage Story
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.tabBtn} ${activeTab === 'specs' ? styles.tabBtnActive : ''}`}
+                  onClick={() => setActiveTab('specs')}
+                >
+                  Specifications
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.tabBtn} ${activeTab === 'artisan' ? styles.tabBtnActive : ''}`}
+                  onClick={() => setActiveTab('artisan')}
+                >
+                  Artisan Maker
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.tabBtn} ${activeTab === 'shipping' ? styles.tabBtnActive : ''}`}
+                  onClick={() => setActiveTab('shipping')}
+                >
+                  Shipping & Origin
                 </button>
               </div>
 
-              {showInquiry && (
-                <form onSubmit={submitInquiry} style={{ marginTop: '1rem', display: 'grid', gap: '0.6rem' }}>
-                  {inquiryError && <p style={{ color: '#c02b2b', fontSize: '0.88rem', margin: 0 }}>{inquiryError}</p>}
-                  {inquirySuccess && <p style={{ color: '#0b3d2c', fontSize: '0.88rem', margin: 0 }}>{inquirySuccess}</p>}
-                  <textarea
-                    required
-                    placeholder="Type your question for the artisan..."
-                    value={inquiryMessage}
-                    onChange={(e) => setInquiryMessage(e.target.value)}
-                    style={{ minHeight: '80px', padding: '0.7rem', border: '1px solid #ccc', font: 'inherit', width: '100%', boxSizing: 'border-box' }}
-                  />
-                  <input
-                    type="tel"
-                    placeholder="Your phone number (optional, for direct contact)"
-                    value={inquiryPhone}
-                    onChange={(e) => setInquiryPhone(e.target.value)}
-                    style={{ padding: '0.6rem', border: '1px solid #ccc', font: 'inherit', width: '100%', boxSizing: 'border-box' }}
-                  />
-                  <button
-                    type="submit"
-                    disabled={inquiryLoading || !inquiryMessage.trim()}
-                    style={{ background: '#0b3d2c', color: '#fff', border: 'none', padding: '0.7rem', cursor: 'pointer', fontWeight: 600 }}
-                  >
-                    {inquiryLoading ? 'Sending inquiry...' : 'Send message to artisan →'}
-                  </button>
-                </form>
-              )}
-            </div>
-
-            <div className={styles.promise}>
-              <strong>Certified authentic Ethiopian heritage</strong>
-              <p>Every piece is handcrafted by local artisans and verified for ethical provenance and quality.</p>
-            </div>
-          </div>
-        </section>
-
-        <section className={styles.reviews}>
-          <div>
-            <span className={styles.category}>Community notes</span>
-            <h2>Reviews from the collection</h2>
-          </div>
-          <div className={styles.reviewList}>
-            {reviews.length ? reviews.map((item) => (
-              <article key={item._id}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <strong>{item.author?.name || 'Verified Collector'}</strong>
-                  <span style={{ color: '#c49a45' }}>{'★'.repeat(item.rating)}{'☆'.repeat(5 - item.rating)}</span>
-                </div>
-                {item.isVerified && (
-                  <small style={{ color: '#0b3d2c', fontWeight: 600, display: 'block', margin: '0.2rem 0' }}>✓ Verified Buyer</small>
+              <div className={styles.tabContent}>
+                {activeTab === 'story' && (
+                  <div>
+                    <p>{product.description}</p>
+                    <p style={{ marginTop: '0.75rem', fontStyle: 'italic', color: 'var(--color-gray)' }}>
+                      Each creation carries unique artisanal irregularities that testify to hand production without factory tooling.
+                    </p>
+                  </div>
                 )}
-                <h3>{item.title}</h3>
-                <p>{item.comment}</p>
-              </article>
-            )) : <p>No reviews yet. Be the first to share your experience with this piece.</p>}
+
+                {activeTab === 'specs' && (
+                  <table className={styles.specTable}>
+                    <tbody>
+                      <tr>
+                        <td>Origin</td>
+                        <td>Ethiopia (Highlands Region)</td>
+                      </tr>
+                      <tr>
+                        <td>Category</td>
+                        <td>{product.category?.toUpperCase()}</td>
+                      </tr>
+                      <tr>
+                        <td>Technique</td>
+                        <td>Traditional Ancestral Craftsmanship</td>
+                      </tr>
+                      <tr>
+                        <td>Stock Reference</td>
+                        <td>HB-{product._id.slice(0, 8).toUpperCase()}</td>
+                      </tr>
+                      <tr>
+                        <td>Care Instructions</td>
+                        <td>Gentle hand wash or dry dust; store away from prolonged direct moisture.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                )}
+
+                {activeTab === 'artisan' && (
+                  <div>
+                    <p>
+                      Crafted by <strong>{product.seller?.name || 'Local Artisan Guild'}</strong>. 
+                      Every purchase sends earnings directly to independent makers and preserves community weaving, pottery, and culinary arts.
+                    </p>
+                    <div style={{ marginTop: '1rem' }}>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => setShowInquiry(!showInquiry)}
+                      >
+                        {showInquiry ? 'Close Inquiry Form' : '💬 Send Message to Artisan'}
+                      </Button>
+                    </div>
+
+                    {showInquiry && (
+                      <form onSubmit={submitInquiry} style={{ marginTop: '1rem', display: 'grid', gap: '0.65rem' }}>
+                        {inquiryError && <p style={{ color: '#c02b2b', margin: 0 }}>{inquiryError}</p>}
+                        {inquirySuccess && <p style={{ color: 'var(--color-green)', margin: 0 }}>{inquirySuccess}</p>}
+                        <textarea
+                          required
+                          placeholder="Ask the artisan about sizing, materials, or custom crafts..."
+                          value={inquiryMessage}
+                          onChange={(e) => setInquiryMessage(e.target.value)}
+                          style={{ minHeight: '80px', padding: '0.75rem', border: '1px solid var(--color-line)', width: '100%', boxSizing: 'border-box' }}
+                        />
+                        <input
+                          type="tel"
+                          placeholder="Your phone number (optional)"
+                          value={inquiryPhone}
+                          onChange={(e) => setInquiryPhone(e.target.value)}
+                          style={{ padding: '0.6rem', border: '1px solid var(--color-line)', width: '100%', boxSizing: 'border-box' }}
+                        />
+                        <Button type="submit" variant="primary" size="sm" loading={inquiryLoading}>
+                          Submit Message to Artisan
+                        </Button>
+                      </form>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === 'shipping' && (
+                  <div>
+                    <p>
+                      <strong>Dispatched via Ethiopian Airlines Cargo:</strong> Carefully wrapped in protective organic fibers.
+                    </p>
+                    <p style={{ marginTop: '0.5rem' }}>
+                      ✦ Local Addis Ababa Delivery: 24–48 hours<br />
+                      ✦ Regional & International Flightway Cargo: 3–7 business days with live cargo tracking number provided upon dispatch.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Related Heritage Pieces */}
+        {relatedProducts.length > 0 && (
+          <section className={styles.relatedSection}>
+            <h2>Related Heritage Pieces</h2>
+            <div className={styles.relatedGrid}>
+              {relatedProducts.map((p) => (
+                <ProductCard key={p._id} product={p} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Community Reviews */}
+        <section className={styles.reviewsSection}>
+          <div className={styles.reviewsHeading}>
+            <div>
+              <span className={styles.categoryTag}>Verified Feedback</span>
+              <h2>Collector Reviews ({reviews.length})</h2>
+            </div>
           </div>
 
-          <form onSubmit={submitReview} className={styles.reviewForm}>
+          <div className={styles.reviewList}>
+            {reviews.length ? (
+              reviews.map((item) => (
+                <article key={item._id} className={styles.reviewCard}>
+                  <div className={styles.reviewCardHeader}>
+                    <strong>{item.author?.name || 'Verified Collector'}</strong>
+                    <span className={styles.reviewRating}>
+                      {'★'.repeat(item.rating)}{'☆'.repeat(5 - item.rating)}
+                    </span>
+                  </div>
+                  {item.isVerified && (
+                    <Badge variant="success" size="sm">✓ Verified Collector</Badge>
+                  )}
+                  <h3 className={styles.reviewTitle}>{item.title}</h3>
+                  <p className={styles.reviewComment}>{item.comment}</p>
+                </article>
+              ))
+            ) : (
+              <p style={{ gridColumn: '1 / -1', color: 'var(--color-gray)' }}>
+                No reviews yet for this piece. Be the first to share your notes on its craft and texture.
+              </p>
+            )}
+          </div>
+
+          {/* Leave a Review Form */}
+          <div className={styles.reviewFormBox}>
             <h3>Leave a review</h3>
-            {reviewError && <p style={{ color: '#c02b2b', margin: 0 }}>{reviewError}</p>}
-            {reviewSuccess && <p style={{ color: '#0b3d2c', margin: 0 }}>{reviewSuccess}</p>}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <label htmlFor="rating-select" style={{ fontSize: '0.9rem', color: '#444' }}>Rating:</label>
-              <select
-                id="rating-select"
-                value={review.rating}
-                onChange={(e) => setReview({ ...review, rating: Number(e.target.value) })}
-                style={{ padding: '0.5rem', border: '1px solid var(--color-line)', background: '#fff' }}
-              >
-                <option value={5}>★★★★★ (5 - Masterpiece)</option>
-                <option value={4}>★★★★☆ (4 - Great)</option>
-                <option value={3}>★★★☆☆ (3 - Good)</option>
-                <option value={2}>★★☆☆☆ (2 - Fair)</option>
-                <option value={1}>★☆☆☆☆ (1 - Poor)</option>
-              </select>
-            </div>
-            <input
-              required
-              placeholder="Review title (e.g. Stunning craftsmanship)"
-              value={review.title}
-              onChange={(e) => setReview({ ...review, title: e.target.value })}
-            />
-            <textarea
-              required
-              placeholder="Tell us about the texture, quality, and your experience with this piece..."
-              value={review.comment}
-              onChange={(e) => setReview({ ...review, comment: e.target.value })}
-            />
-            <button disabled={reviewLoading}>
-              {reviewLoading ? 'Submitting review...' : 'Submit review'}
-            </button>
-          </form>
+            {reviewError && <p style={{ color: '#c02b2b', margin: '0 0 1rem' }}>{reviewError}</p>}
+            {reviewSuccess && <p style={{ color: 'var(--color-green)', margin: '0 0 1rem' }}>{reviewSuccess}</p>}
+            <form onSubmit={submitReview} style={{ display: 'grid', gap: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <label htmlFor="rating-select" style={{ fontSize: '0.9rem', fontWeight: 600 }}>Rating:</label>
+                <select
+                  id="rating-select"
+                  value={review.rating}
+                  onChange={(e) => setReview({ ...review, rating: Number(e.target.value) })}
+                  style={{ padding: '0.5rem 0.75rem', border: '1px solid var(--color-line)', background: '#fff' }}
+                >
+                  <option value={5}>★★★★★ (5 - Masterpiece)</option>
+                  <option value={4}>★★★★☆ (4 - Excellent)</option>
+                  <option value={3}>★★★☆☆ (3 - Good)</option>
+                  <option value={2}>★★☆☆☆ (2 - Fair)</option>
+                  <option value={1}>★☆☆☆☆ (1 - Poor)</option>
+                </select>
+              </div>
+
+              <input
+                required
+                placeholder="Review headline (e.g. Magnificent weave and soft texture)"
+                value={review.title}
+                onChange={(e) => setReview({ ...review, title: e.target.value })}
+                style={{ padding: '0.75rem', border: '1px solid var(--color-line)', font: 'inherit' }}
+              />
+
+              <textarea
+                required
+                placeholder="Share notes on the weight, craftsmanship, and how you display or use this piece..."
+                value={review.comment}
+                onChange={(e) => setReview({ ...review, comment: e.target.value })}
+                style={{ minHeight: '110px', padding: '0.75rem', border: '1px solid var(--color-line)', font: 'inherit' }}
+              />
+
+              <Button type="submit" variant="primary" size="md" loading={reviewLoading}>
+                Submit Review
+              </Button>
+            </form>
+          </div>
         </section>
+
+        {/* Recently Viewed Rail */}
+        {recentlyViewed.length > 0 && (
+          <section className={styles.relatedSection} style={{ marginTop: '3.5rem' }}>
+            <span className={styles.categoryTag}>Collector Memory</span>
+            <h2>Recently Viewed Pieces</h2>
+            <div className={styles.relatedGrid}>
+              {recentlyViewed.map((item) => (
+                <ProductCard key={item.id} product={{ _id: item.id, ...item }} />
+              ))}
+            </div>
+          </section>
+        )}
       </main>
+
       <Footer />
     </>
   );

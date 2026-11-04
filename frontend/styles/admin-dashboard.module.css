@@ -1,0 +1,675 @@
+.dashboard {
+  background: #f7f8f4;
+  min-height: 100vh;
+  color: #111827;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* TOPBAR */
+.topbar {
+  background: #ffffff;
+  border-bottom: 1px solid #eae8df;
+  padding: 0.75rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.brandGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.brandLogo {
+  width: 38px;
+  height: 38px;
+  background: #84cc16;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: #112d26;
+  font-size: 1.25rem;
+  box-shadow: 0 2px 6px rgba(132, 204, 22, 0.3);
+}
+
+.brandName {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #111827;
+  letter-spacing: -0.02em;
+}
+
+.navPills {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #f3f4f0;
+  padding: 0.3rem 0.4rem;
+  border-radius: 30px;
+}
+
+.pill {
+  border: none;
+  background: transparent;
+  padding: 0.45rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+
+.pill:hover {
+  color: #111827;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.pillActive {
+  background: #111827 !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(17, 24, 39, 0.2);
+}
+
+.pillBadge {
+  background: #111827;
+  color: #ffffff;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.pillActive .pillBadge {
+  background: #84cc16;
+  color: #112d26;
+}
+
+.topbarActions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.storeLink {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #166534;
+  background: #dcfce7;
+  padding: 0.45rem 0.9rem;
+  border-radius: 20px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: background 0.2s;
+}
+
+.storeLink:hover {
+  background: #bbf7d0;
+}
+
+.iconBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #4b5563;
+  transition: all 0.2s;
+}
+
+.iconBtn:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.userMenu {
+  position: relative;
+}
+
+.userPill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.6rem 0.25rem 0.35rem;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  cursor: pointer;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.userAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #84cc16;
+  color: #112d26;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+/* CONTENT CONTAINER */
+.content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 2rem 4rem;
+}
+
+/* HEADER ROW */
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 1.75rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.headerTitle {
+  font-size: 1.95rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 0.25rem;
+  letter-spacing: -0.03em;
+}
+
+.headerSubtitle {
+  font-size: 0.88rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.headerControls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.selectRange {
+  padding: 0.55rem 1rem;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #111827;
+  cursor: pointer;
+  outline: none;
+}
+
+.exportBtn {
+  padding: 0.55rem 1.25rem;
+  background: #111827;
+  color: #ffffff;
+  border: none;
+  border-radius: 24px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: background 0.2s;
+}
+
+.exportBtn:hover {
+  background: #1f2937;
+}
+
+/* TOP METRICS & ANALYTICS GRID */
+.mainGrid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.kpiStack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.kpiCard {
+  background: #ffffff;
+  border: 1px solid #eae8df;
+  border-radius: 18px;
+  padding: 1.35rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.kpiLabel {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #4b5563;
+  margin-bottom: 0.4rem;
+}
+
+.kpiValueRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.35rem;
+}
+
+.kpiAmount {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.02em;
+}
+
+.kpiGrowthPill {
+  background: #111827;
+  color: #84cc16;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+}
+
+.kpiSubtext {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.kpiChartContainer {
+  width: 105px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* SALES ANALYTICS CHART */
+.analyticsCard {
+  background: #ffffff;
+  border: 1px solid #eae8df;
+  border-radius: 18px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.chartTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.chartLegend {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+
+.legendDotSold {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #84cc16;
+  display: inline-block;
+  margin-right: 0.3rem;
+}
+
+.legendDotReturn {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  display: inline-block;
+  margin-right: 0.3rem;
+}
+
+/* SVG BARS */
+.barChartWrapper {
+  flex: 1;
+  position: relative;
+  min-height: 220px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-bottom: 2rem;
+}
+
+.yAxisLabels {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.barsArea {
+  margin-left: 2.2rem;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  position: relative;
+}
+
+.barCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+  position: relative;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.barPillar {
+  width: 16px;
+  background: #f1f3ec;
+  border-radius: 8px 8px 0 0;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+.barSoldFill {
+  width: 100%;
+  background: #84cc16;
+  border-radius: 8px 8px 0 0;
+  transition: height 0.4s ease;
+}
+
+.barCol:hover .barSoldFill {
+  background: #65a30d;
+}
+
+.barLabel {
+  font-size: 0.7rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+  position: absolute;
+  bottom: -1.75rem;
+  white-space: nowrap;
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  top: -45px;
+  background: #111827;
+  color: #ffffff;
+  padding: 0.4rem 0.65rem;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  z-index: 10;
+  animation: fadeIn 0.15s ease;
+}
+
+/* BOTTOM 3-WIDGET ROW */
+.bottomGrid {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr 1.15fr;
+  gap: 1.25rem;
+}
+
+.widgetCard {
+  background: #ffffff;
+  border: 1px solid #eae8df;
+  border-radius: 18px;
+  padding: 1.35rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.widgetHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.widgetTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.seeAllBtn {
+  background: none;
+  border: none;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.seeAllBtn:hover {
+  color: #111827;
+}
+
+/* REGION / DESTINATION LIST */
+.regionList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.regionItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.regionFlag {
+  font-size: 1.4rem;
+  width: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.regionDetails {
+  flex: 1;
+}
+
+.regionMeta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.35rem;
+}
+
+.regionTrack {
+  width: 100%;
+  height: 6px;
+  background: #f1f3ec;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.regionFill {
+  height: 100%;
+  background: #84cc16;
+  border-radius: 6px;
+}
+
+/* PRODUCT SALES TABLE */
+.productTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.productTable th {
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #9ca3af;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.productTable td {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f9fafb;
+}
+
+.productRowInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.productRowThumb {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: #f3f4f6;
+}
+
+.productRowName {
+  font-weight: 600;
+  color: #111827;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* LAST ACTIVITY FEED */
+.activityList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.activityItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.activityLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.activityAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #e5e7eb;
+}
+
+.activityName {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.activityAction {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0.1rem 0 0;
+}
+
+/* PANEL VIEWS FOR TABS (Orders, Products, Settings, Users) */
+.tabPanel {
+  background: #ffffff;
+  border: 1px solid #eae8df;
+  border-radius: 18px;
+  padding: 1.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.panelTitle {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1100px) {
+  .mainGrid {
+    grid-template-columns: 1fr;
+  }
+  .bottomGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .topbar {
+    padding: 0.75rem 1rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .navPills {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+  }
+  .content {
+    padding: 1.25rem 1rem 3rem;
+  }
+}
+

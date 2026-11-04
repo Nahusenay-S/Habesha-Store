@@ -2,13 +2,15 @@
   background: transparent;
   border: 1px solid var(--color-line);
   overflow: hidden;
-  transition: transform 0.3s ease, border-color 0.3s ease;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
   cursor: pointer;
+  will-change: transform;
 }
 
 .card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-4px);
   border-color: #bca56e;
+  box-shadow: 0 8px 24px rgba(23, 63, 53, 0.08);
 }
 
 .cardLink { display: block; }
@@ -61,6 +63,42 @@
 }
 
 .saveButton.saved { color: #b3261e; }
+
+.quickViewBtn {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--color-dark);
+  border: 1px solid var(--color-line);
+  padding: 0.35rem 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 20px;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  z-index: 2;
+}
+
+.card:hover .quickViewBtn {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.quickViewBtn:hover {
+  background: var(--color-green);
+  color: #fff;
+  border-color: var(--color-green);
+}
 
 .content {
   padding: 1.15rem;

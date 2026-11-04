@@ -7,21 +7,31 @@ const productFields = `
 
 const getAllProducts = async (req, res) => {
   try {
-    const { category, minPrice, maxPrice, search, limit = 10, page = 1 } = req.query;
+    const { category, minPrice, maxPrice, search, minRating, inStock, sortBy, limit = 50, page = 1 } = req.query;
     const values = [];
     const conditions = ['p.is_active = TRUE'];
     const add = (value) => { values.push(value); return `$${values.length}`; };
     if (category) conditions.push(`p.category = ${add(category)}`);
     if (minPrice) conditions.push(`p.price >= ${add(Number(minPrice))}`);
     if (maxPrice) conditions.push(`p.price <= ${add(Number(maxPrice))}`);
+    if (minRating && Number(minRating) > 0) conditions.push(`p.rating >= ${add(Number(minRating))}`);
+    if (inStock === 'true' || inStock === true) conditions.push('p.stock > 0');
     if (search) conditions.push(`(p.name ILIKE ${add(`%${search}%`)} OR p.description ILIKE $${values.length})`);
-    const safeLimit = Math.min(Math.max(Number(limit) || 10, 1), 100);
+
+    let orderClause = 'ORDER BY p.created_at DESC';
+    if (sortBy === 'price_asc') orderClause = 'ORDER BY p.price ASC, p.created_at DESC';
+    else if (sortBy === 'price_desc') orderClause = 'ORDER BY p.price DESC, p.created_at DESC';
+    else if (sortBy === 'rating') orderClause = 'ORDER BY p.rating DESC, p.review_count DESC';
+    else if (sortBy === 'popularity') orderClause = 'ORDER BY p.review_count DESC, p.rating DESC';
+    else if (sortBy === 'name') orderClause = 'ORDER BY p.name ASC';
+
+    const safeLimit = Math.min(Math.max(Number(limit) || 50, 1), 100);
     const safePage = Math.max(Number(page) || 1, 1);
     const count = await query(`SELECT COUNT(*) FROM products p WHERE ${conditions.join(' AND ')}`, values);
     values.push(safeLimit, (safePage - 1) * safeLimit);
     const products = await query(
       `SELECT ${productFields} FROM products p JOIN users u ON u.id = p.seller_id
-       WHERE ${conditions.join(' AND ')} ORDER BY p.created_at DESC LIMIT $${values.length - 1} OFFSET $${values.length}`,
+       WHERE ${conditions.join(' AND ')} ${orderClause} LIMIT $${values.length - 1} OFFSET $${values.length}`,
       values
     );
     const total = Number(count.rows[0].count);

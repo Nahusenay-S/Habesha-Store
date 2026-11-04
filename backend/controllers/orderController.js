@@ -107,7 +107,7 @@ const updateOrderStatus = async (req, res) => {
     return res.status(409).json({ error: 'Shipped or delivered orders cannot be cancelled' });
   }
   const result = await query(
-    "UPDATE orders SET status = $1, cancellation_reason = CASE WHEN $1 = 'cancelled' THEN $4 ELSE cancellation_reason END, updated_at = NOW() WHERE id = $2 AND buyer_id = $3 RETURNING id AS \"_id\", status",
+    "UPDATE orders SET status = $1::varchar, cancellation_reason = CASE WHEN $1::varchar = 'cancelled' THEN $4::text ELSE cancellation_reason END, updated_at = NOW() WHERE id = $2 AND buyer_id = $3 RETURNING id AS \"_id\", status",
     [req.body.status, req.params.id, req.userId, req.body.reason || null]
   );
   if (req.body.status === 'cancelled') {

@@ -1,104 +1,236 @@
 .container {
   max-width: 1320px;
   margin: 0 auto;
-  padding: 4rem 2rem;
+  padding: 3rem 2rem 5rem;
   min-height: 70vh;
 }
 
-.pageTitle {
-  color: var(--color-green);
-  font-size: 3rem;
+.headerRow {
   margin-bottom: 2rem;
-  text-align: left;
 }
 
 .eyebrow {
   color: var(--color-gold);
-  font-size: .75rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: .16em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.pageTitle {
+  color: var(--color-green);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.8rem;
+  margin: 0 0 0.5rem;
+  line-height: 1.15;
+}
+
+.pageDescription {
+  color: var(--color-gray);
+  font-size: 1rem;
+  max-width: 640px;
+  line-height: 1.6;
 }
 
 .filtersSection {
-  display: flex;
-  gap: 1rem;
+  background: var(--color-white);
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  padding: 1.25rem 1.5rem;
   margin-bottom: 2rem;
-  flex-wrap: wrap;
-  padding: 1rem 0;
-  border-top: 1px solid var(--color-line);
-  border-bottom: 1px solid var(--color-line);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.searchInput,
-.filterSelect {
-  padding: 0.8rem 1rem;
-  border: 1px solid var(--color-line);
-  border-radius: 2px;
-  background: var(--color-white);
-  font-family: inherit;
-  font-size: .9rem;
-  transition: border-color 0.3s;
+.primaryFilters {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .searchInput {
-  flex: 1;
-  min-width: 200px;
+  flex: 2;
+  min-width: 240px;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-line);
+  border-radius: 3px;
+  background: var(--color-cream);
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: border-color 0.25s, background 0.25s;
 }
 
 .filterSelect {
-  min-width: 150px;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-line);
+  border-radius: 3px;
+  background: var(--color-cream);
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: var(--color-dark);
+  min-width: 170px;
+  cursor: pointer;
 }
 
 .searchInput:focus,
-.filterSelect:focus {
+.filterSelect:focus,
+.priceInput:focus {
   outline: none;
   border-color: var(--color-green);
+  background: #fff;
+}
+
+.secondaryFilters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0eae1;
+  flex-wrap: wrap;
+}
+
+.priceGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-gray);
+}
+
+.priceInput {
+  width: 90px;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--color-line);
+  border-radius: 3px;
+  background: var(--color-cream);
+  font-family: inherit;
+  font-size: 0.85rem;
+}
+
+.checkboxLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-dark);
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkboxLabel input[type="checkbox"] {
+  accent-color: var(--color-green);
+  width: 16px;
+  height: 16px;
+}
+
+.countBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+  color: var(--color-gray);
+  padding: 0 0.25rem;
+}
+
+.countNumber {
+  font-weight: 700;
+  color: var(--color-dark);
+}
+
+.activeFiltersRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.filterPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--color-light);
+  border: 1px solid var(--color-line);
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  color: var(--color-dark);
+}
+
+.removePillBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-gray);
+  font-size: 0.85rem;
+  line-height: 1;
+  padding: 0 0.1rem;
+}
+
+.removePillBtn:hover {
+  color: var(--color-red);
+}
+
+.clearAllBtn {
+  background: none;
+  border: none;
+  color: var(--color-gold);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0.2rem 0.5rem;
+}
+
+.clearAllBtn:hover {
+  color: var(--color-green);
 }
 
 .productGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.25rem;
-}
-
-.loading,
-.noProducts {
-  text-align: center;
-  padding: 3rem;
-  font-size: 1.2rem;
-  color: var(--color-gray);
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.75rem;
 }
 
 @media (max-width: 768px) {
   .container {
-    padding: 1.5rem 1rem;
+    padding: 2rem 1.25rem 4rem;
   }
 
   .pageTitle {
-    font-size: 1.8rem;
+    font-size: 2rem;
+  }
+
+  .secondaryFilters {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .productGrid {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.25rem;
   }
 }
 
 @media (max-width: 480px) {
   .productGrid {
     grid-template-columns: 1fr;
-    gap: 1.25rem;
   }
 
-  .filtersSection {
+  .primaryFilters {
     flex-direction: column;
-    gap: 0.65rem;
+    align-items: stretch;
   }
 
   .searchInput,
   .filterSelect {
     width: 100%;
-    min-width: 0;
+    min-width: auto;
   }
 }

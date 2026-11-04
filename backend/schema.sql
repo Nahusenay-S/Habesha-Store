@@ -150,3 +150,7 @@ CREATE INDEX IF NOT EXISTS orders_buyer_idx ON orders(buyer_id, created_at DESC)
 CREATE INDEX IF NOT EXISTS orders_seller_idx ON orders(seller_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS orders_parent_idx ON orders(parent_order_id);
 CREATE INDEX IF NOT EXISTS notifications_user_idx ON notifications(user_id, is_read, created_at DESC);
+
+ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_password_token VARCHAR(255);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_password_expires TIMESTAMPTZ;
+

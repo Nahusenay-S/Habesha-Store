@@ -2,38 +2,109 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import Button from '../components/Button';
+import Breadcrumbs from '../components/Breadcrumbs';
 import styles from '../styles/about.module.css';
 
 const AboutPage = () => (
   <>
     <Head>
-      <title>Our Story | Habesha Store</title>
-      <meta name="description" content="The people and traditions behind Habesha Store." />
+      <title>Our Story & Artisan Heritage | Habesha Store</title>
+      <meta
+        name="description"
+        content="Discover the makers, ancestral traditions, and fair trade mission behind Habesha Store, connecting Ethiopian artisans with the world."
+      />
     </Head>
+
     <Header />
+
     <main className={styles.page}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 2rem 0' }}>
+        <Breadcrumbs items={[{ label: 'Our Story' }]} />
+      </div>
+
       <section className={styles.hero}>
-        <span className={styles.eyebrow}>The Heritage Collection</span>
+        <span className={styles.eyebrow}>The Heritage Sanctuary</span>
         <h1>Every object carries a piece of home.</h1>
-        <p>Habesha Store connects the world with Ethiopia's makers, preserving traditional craft while giving it a thoughtful place in modern life.</p>
+        <p>
+          Habesha Store was founded to bridge the ancient craft communities of Ethiopia with patrons worldwide, preserving time-honored artisanal traditions while honoring the hands that shape them.
+        </p>
       </section>
+
+      {/* Editorial Photo Showcase */}
+      <section className={styles.photoShowcase}>
+        <img
+          src="/images/artisan.jpg"
+          alt="Ethiopian master artisan weaver at handloom"
+          className={styles.showcaseImg}
+        />
+        <img
+          src="/images/portrait.jpg"
+          alt="Traditional Ethiopian artisan portrait"
+          className={styles.showcaseImg}
+        />
+      </section>
+
+      {/* Narrative Section 1 */}
       <section className={styles.story}>
         <div>
-          <span className={styles.eyebrow}>Our promise</span>
-          <h2>Trade that honors the hands behind the work.</h2>
+          <span className={styles.eyebrow}>Why We Exist</span>
+          <h2>Ancestral knowledge in a modern world.</h2>
         </div>
         <div>
-          <p>From hand-woven cotton in Addis Ababa to coffee grown in the highlands of Sidamo, every collection is selected for its provenance, quality, and cultural meaning.</p>
-          <p>We work with independent artisans and small producers to make their work discoverable, fairly represented, and delivered with care.</p>
-          <Link href="/products" className={styles.link}>Explore the collection →</Link>
+          <p>
+            From the gossamer hand-spun cotton woven in Gulele to the single-origin Arabica harvested on misty slopes in Sidama, Ethiopia’s creative output is among the richest in human history.
+          </p>
+          <p>
+            Yet for generations, independent makers have had limited access to global collectors, often losing fair compensation to multi-tier broker chains. Habesha Store creates a transparent, direct bridge that honors both the artisan and the collector.
+          </p>
+          <Link href="/products" style={{ display: 'inline-block', marginTop: '1.25rem', color: 'var(--color-green)', fontWeight: 700, textDecoration: 'underline' }}>
+            Explore the Collection →
+          </Link>
         </div>
       </section>
+
+      {/* Values Grid */}
       <section className={styles.values}>
-        <article><strong>01</strong><h3>Certified authentic</h3><p>We know where each piece comes from and who made it.</p></article>
-        <article><strong>02</strong><h3>Direct partnerships</h3><p>More value reaches the makers and their communities.</p></article>
-        <article><strong>03</strong><h3>Made to last</h3><p>Objects chosen for daily use, ritual, and generations ahead.</p></article>
+        <article>
+          <strong>01</strong>
+          <h3>Ethical Provenance</h3>
+          <p>We trace every textile, jebena, and spice blend back to its artisan creator and geographical terroir.</p>
+        </article>
+        <article>
+          <strong>02</strong>
+          <h3>Direct Artisan Guilds</h3>
+          <p>Over 80% of sales margin flows directly to independent makers, funding community looms and family workshops.</p>
+        </article>
+        <article>
+          <strong>03</strong>
+          <h3>Made for Generations</h3>
+          <p>Heirloom pieces designed for daily ritual, crafted with natural highland fibers, clays, and stone-ground spices.</p>
+        </article>
+      </section>
+
+      {/* Join the Marketplace Banner */}
+      <section className={styles.joinBanner}>
+        <span className={styles.eyebrow} style={{ color: 'var(--color-gold)' }}>Artisan Partnerships</span>
+        <h2>Are you an Ethiopian artisan or creator?</h2>
+        <p>
+          Join our curated marketplace to showcase your handcrafted textiles, coffee harvests, pottery, and art to a worldwide community of collectors.
+        </p>
+        <div className={styles.joinBtnRow}>
+          <Link href="/register?role=seller">
+            <Button variant="gold" size="lg">
+              Join as an Artisan Maker →
+            </Button>
+          </Link>
+          <Link href="/products">
+            <Button variant="secondary" size="lg">
+              Explore Collection
+            </Button>
+          </Link>
+        </div>
       </section>
     </main>
+
     <Footer />
   </>
 );

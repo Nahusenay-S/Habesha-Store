@@ -11,6 +11,7 @@ const LoginPage = () => {
   const router = useRouter();
   const { login } = useAuth();
   const [formData, setFormData] = useState({ email: '', password: '' });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -47,12 +48,33 @@ const LoginPage = () => {
             <Link href="/" className={styles.brand}>Habesha Store</Link>
             <h1 className={styles.title}>Welcome Back</h1>
             <p className={styles.subtitle}>Access the finest Ethiopian craftsmanship and heritage.</p>
-            <div className={styles.socialRow}>
-              <button type="button"><strong className={styles.googleMark}>G</strong> Google</button>
-              <button type="button">Apple</button>
+            <div style={{ margin: '1rem 0 1.5rem', display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'var(--color-cream)', padding: '0.65rem 1rem', borderRadius: '4px', border: '1px solid var(--color-line)' }}>
+              <span style={{ color: 'var(--color-gold)', fontSize: '1.1rem' }}>✦</span>
+              <span style={{ fontSize: '0.82rem', color: 'var(--color-dark)', fontWeight: 500 }}>
+                Certified Ethiopian Artisan & Collector Network
+              </span>
             </div>
-            <div className={styles.divider}>or with email</div>
-          {error && <div className={styles.error}>{error}</div>}
+
+            {router.query.reason === 'cart' && (
+              <div style={{ background: '#fdf9f0', border: '1px solid #d8be8d', padding: '0.75rem 1rem', borderRadius: '4px', marginBottom: '1rem', color: '#684a14', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span>🔒</span>
+                <span><strong>Collector Sign-in Required</strong>: Please sign in to add pieces to your shopping bag.</span>
+              </div>
+            )}
+            {router.query.reason === 'wishlist' && (
+              <div style={{ background: '#fdf9f0', border: '1px solid #d8be8d', padding: '0.75rem 1rem', borderRadius: '4px', marginBottom: '1rem', color: '#684a14', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span>♡</span>
+                <span><strong>Treasures & Wishlist</strong>: Please sign in to save pieces to your favorite treasures.</span>
+              </div>
+            )}
+            {router.query.reason === 'checkout' && (
+              <div style={{ background: '#fdf9f0', border: '1px solid #d8be8d', padding: '0.75rem 1rem', borderRadius: '4px', marginBottom: '1rem', color: '#684a14', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span>🛍️</span>
+                <span><strong>Checkout Sanctuary</strong>: Please sign in to finalize your delivery and secure your order.</span>
+              </div>
+            )}
+
+            {error && <div className={styles.error}>{error}</div>}
           <form className={styles.authForm} onSubmit={handleSubmit}>
             <div className={styles.formGroup}>
               <label htmlFor="email">Email address</label>
@@ -67,9 +89,18 @@ const LoginPage = () => {
               />
             </div>
             <div className={styles.formGroup}>
-              <label htmlFor="password">Password</label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label htmlFor="password">Password</label>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ background: 'none', border: 'none', color: 'var(--color-gold)', fontSize: '0.78rem', cursor: 'pointer', padding: 0 }}
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 id="password"
                 name="password"
                 value={formData.password}
@@ -77,6 +108,11 @@ const LoginPage = () => {
                 placeholder="••••••••"
                 required
               />
+              <div style={{ textAlign: 'right', marginTop: '0.4rem' }}>
+                <Link href="/forgot-password" style={{ fontSize: '0.8rem', color: 'var(--color-gold)', textDecoration: 'none' }}>
+                  Forgot password?
+                </Link>
+              </div>
             </div>
             <button type="submit" className={styles.submitBtn} disabled={loading}>
               {loading ? 'Signing in...' : 'Sign In'}
