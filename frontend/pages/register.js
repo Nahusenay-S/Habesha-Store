@@ -67,7 +67,7 @@ const RegisterPage = () => {
           <div className={styles.imageOverlay}><h2>Heritage Redefined.</h2><p>Join a global community dedicated to the finest Ethiopian crafts.</p></div>
         </div>
         <div className={styles.authPanel}>
-        <Link href="/" className={styles.brand}>Habesha Modern</Link>
+        <Link href="/" className={styles.brand}>Habesha Store</Link>
         <h1 className={styles.title}>Create Your Account</h1>
         <p className={styles.subtitle}>Step into the world of luxury Ethiopian artisanry.</p>
 

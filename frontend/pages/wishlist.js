@@ -45,7 +45,7 @@ const WishlistPage = () => {
 
   return (
     <>
-      <Head><title>Saved Treasures - Habesha Modern</title></Head>
+      <Head><title>Saved Treasures - Habesha Store</title></Head>
       <Header />
       <main className={styles.container}>
         <div className={styles.heading}>

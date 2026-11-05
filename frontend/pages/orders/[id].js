@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import LoadingScreen from '../../components/LoadingScreen';
 import { orderAPI, paymentAPI } from '../../lib/api';
 import styles from '../../styles/orders.module.css';
 
@@ -59,8 +61,30 @@ const OrderDetailPage = () => {
     }
   };
 
-  if (order === false) return <><Header /><main className={styles.message}><h1>Order not found</h1><p>We could not locate this order in your account.</p><Link href="/orders" className={styles.back}>← Back to all orders</Link></main><Footer /></>;
-  if (!order) return <><Header /><main className={styles.message}>Loading order details...</main><Footer /></>;
+  if (order === false) {
+    return (
+      <>
+        <Head><title>Order Not Found - Habesha Store</title></Head>
+        <Header />
+        <main className={styles.message}>
+          <h1>Order not found</h1>
+          <p>We could not locate this order in your account.</p>
+          <Link href="/orders" className={styles.back}>← Back to all orders</Link>
+        </main>
+        <Footer />
+      </>
+    );
+  }
+  if (!order) {
+    return (
+      <>
+        <Head><title>Loading Order - Habesha Store</title></Head>
+        <Header />
+        <LoadingScreen label="Loading order details..." />
+        <Footer />
+      </>
+    );
+  }
 
   // Map database status to tracker step index
   // Lifecycle: 0: Pending -> 1: Processing / Confirmed -> 2: Shipped -> 3: Delivered
@@ -81,6 +105,9 @@ const OrderDetailPage = () => {
 
   return (
     <>
+      <Head>
+        <title>Order #{(order._id || id || '').toString().slice(0, 8).toUpperCase()} - Habesha Store</title>
+      </Head>
       <Header />
       <main className={styles.page}>
         <Link href="/orders" className={styles.back}>← Order history</Link>

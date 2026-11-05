@@ -1,21 +1,38 @@
-.container { background: var(--color-cream); }
+.container { background: var(--color-cream); min-height: 100vh; }
 .hero { padding: 4.5rem 1rem 5rem; text-align: center; background-image: radial-gradient(#e9dfd0 1px, transparent 1px); background-size: 16px 16px; }
-.hero h1, .faq > h2 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 1.5rem; }
-.hero input { width: min(600px, 90%); padding: 1rem; border: 1px solid var(--color-line); border-radius: 6px; background: white; }
-.hero div { margin-top: 1rem; display: flex; justify-content: center; gap: .6rem; flex-wrap: wrap; }
-.hero span { background: #f0e9dd; border-radius: 1rem; padding: .3rem .8rem; font-size: .65rem; }
+.hero h1, .faq > h2 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 1.5rem; color: var(--color-dark); }
+.searchWrapper { position: relative; display: inline-block; width: min(600px, 90%); }
+.hero input { width: 100%; padding: 1rem 2.8rem 1rem 1.2rem; border: 1px solid var(--color-line); border-radius: 8px; background: white; font-size: 0.95rem; box-shadow: 0 4px 14px rgba(0,0,0,0.04); outline: none; }
+.hero input:focus { border-color: var(--color-gold); box-shadow: 0 0 0 3px rgba(197, 161, 90, 0.2); }
+.clearBtn { position: absolute; right: 0.8rem; top: 50%; transform: translateY(-50%); background: transparent; border: none; font-size: 1.1rem; color: var(--color-gray); cursor: pointer; padding: 0.2rem 0.5rem; }
+.clearBtn:hover { color: var(--color-dark); }
+.pillRow { margin-top: 1.25rem; display: flex; justify-content: center; align-items: center; gap: .6rem; flex-wrap: wrap; }
+.pillLabel { font-size: 0.78rem; color: var(--color-gray); font-weight: 500; }
+.heroPill { background: #f0e9dd; border: 1px solid #dfd6c5; border-radius: 1rem; padding: .35rem .85rem; font-size: .75rem; color: var(--color-dark); cursor: pointer; transition: all 0.2s ease; font-family: inherit; }
+.heroPill:hover { background: var(--color-green); color: white; border-color: var(--color-green); }
+.heroPillActive { background: var(--color-green); color: white; border-color: var(--color-green); }
 .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; max-width: 1320px; margin: -1rem auto 0; padding: 0 2rem 4rem; }
-.cards article { background: white; padding: 1.5rem; min-height: 200px; border: 1px solid #eee6d9; }
-.cards b { display: grid; place-items: center; width: 2rem; height: 2rem; background: #e7f4ed; color: var(--color-green); }
-.cards h2 { font-size: 1.1rem; margin: 1rem 0; }
-.cards p, .cards a, .faq p, .contact p { color: var(--color-gray); font-size: .78rem; }
-.cards a { color: var(--color-gold); display: block; margin-top: 1rem; }
-.faq { background: #f8efdf; padding: 4rem max(1rem, calc((100% - 760px) / 2)); text-align: center; }
+.cards article { background: white; padding: 1.5rem; min-height: 200px; border: 1px solid #eee6d9; border-radius: 8px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.cards article:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+.cards b { display: grid; place-items: center; width: 2.2rem; height: 2.2rem; background: #e7f4ed; color: var(--color-green); border-radius: 6px; }
+.cards h2 { font-size: 1.1rem; margin: 1rem 0; color: var(--color-dark); }
+.cards p, .cards a, .faq p, .contact p { color: var(--color-gray); font-size: .82rem; line-height: 1.5; }
+.cards a, .cardsLink { color: var(--color-gold); display: block; margin-top: 1rem; font-weight: 600; text-decoration: none; }
+.cards a:hover, .cardsLink:hover { text-decoration: underline; color: #a3823d; }
+.faq { background: #f8efdf; padding: 4rem max(1rem, calc((100% - 780px) / 2)); text-align: center; }
 .faq > p { margin: -1rem 0 2rem; }
-.faq button { width: 100%; display: grid; grid-template-columns: 1fr auto; text-align: left; gap: .6rem; margin: .55rem 0; padding: 1.1rem 1.2rem; background: white; border-radius: 5px; }
-.faq small { grid-column: 1 / -1; color: var(--color-gray); font-size: .75rem; }
-.contact { max-width: 1000px; margin: 4rem auto 5rem; padding: 3rem; text-align: center; color: white; background: var(--color-green); border-radius: 16px; }
-.contact h2 { color: white; font-size: 2rem; margin-bottom: .6rem; }
-.contact a { display: inline-block; margin-top: 1.5rem; padding: .8rem 1.5rem; background: #d7ae26; color: var(--color-dark); border-radius: 3px; font-size: .8rem; }
+.faq button { width: 100%; display: grid; grid-template-columns: 1fr auto; text-align: left; gap: .6rem; margin: .55rem 0; padding: 1.1rem 1.25rem; background: white; border-radius: 8px; border: 1px solid #e9e0d2; cursor: pointer; transition: background-color 0.15s ease, border-color 0.15s ease; font-family: inherit; }
+.faq button:hover { border-color: var(--color-gold); background-color: #fffdf9; }
+.faq button strong { color: var(--color-dark); font-size: 0.95rem; font-weight: 600; }
+.faq button span { color: var(--color-gold); font-size: 1.1rem; transition: transform 0.2s ease; }
+.faq button.active span { transform: rotate(180deg); }
+.faq small { grid-column: 1 / -1; color: var(--color-gray); font-size: .85rem; line-height: 1.6; margin-top: 0.4rem; padding-top: 0.6rem; border-top: 1px solid #f2ece1; }
+.noResults { background: white; padding: 2.5rem 1.5rem; border-radius: 8px; border: 1px dashed #d8cebd; color: var(--color-gray); margin-top: 1rem; text-align: center; }
+.resetSearchBtn { display: inline-block; margin-top: 1rem; padding: 0.5rem 1.2rem; background: var(--color-green); color: white; border-radius: 4px; font-size: 0.8rem; cursor: pointer; border: none; font-family: inherit; }
+.contact { max-width: 1000px; margin: 4rem auto 5rem; padding: 3.5rem 2rem; text-align: center; color: white; background: var(--color-green); border-radius: 16px; box-shadow: 0 12px 36px rgba(23, 63, 53, 0.2); }
+.contact h2 { color: white; font-size: 2.2rem; margin-bottom: .6rem; }
+.contact p { color: #d0e4dc; max-width: 580px; margin: 0 auto; }
+.contact a { display: inline-block; margin-top: 1.75rem; padding: .85rem 1.8rem; background: var(--color-gold); color: var(--color-dark); border-radius: 6px; font-size: .85rem; font-weight: 700; text-decoration: none; transition: transform 0.15s ease, filter 0.15s ease; }
+.contact a:hover { filter: brightness(1.08); transform: translateY(-2px); }
 @media (max-width: 800px) { .cards { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 520px) { .cards { grid-template-columns: 1fr; padding: 0 1rem 3rem; } .contact { margin: 2rem 1rem 3rem; } }
+@media (max-width: 520px) { .cards { grid-template-columns: 1fr; padding: 0 1rem 3rem; } .contact { margin: 2rem 1rem 3rem; padding: 2.5rem 1.5rem; } }

@@ -88,7 +88,7 @@ const Header = () => {
           </button>
           <div className={styles.logo}>
             <Link href="/">
-              <span className={styles.logoText}>Habesha Modern</span>
+              <span className={styles.logoText}>Habesha Store</span>
             </Link>
           </div>
         </div>
@@ -246,7 +246,7 @@ const Header = () => {
       {/* Mobile Navigation Drawer */}
       <aside className={`${styles.mobileDrawer} ${mobileMenuOpen ? styles.mobileDrawerOpen : ''}`}>
         <div className={styles.drawerHeader}>
-          <span className={styles.logoText} style={{ fontSize: '1.2rem' }}>Habesha Modern</span>
+          <span className={styles.logoText} style={{ fontSize: '1.2rem' }}>Habesha Store</span>
           <button
             type="button"
             className={styles.drawerCloseBtn}

@@ -8,7 +8,7 @@ function MyApp({ Component, pageProps }) {
     <AuthProvider>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Habesha Modern | Authentic Ethiopian Heritage & Craftsmanship</title>
+        <title>Habesha Store | Authentic Ethiopian Heritage & Craftsmanship</title>
       </Head>
       <Component {...pageProps} />
     </AuthProvider>
