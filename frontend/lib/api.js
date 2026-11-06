@@ -64,6 +64,9 @@ export const reviewAPI = {
 };
 
 export const paymentAPI = {
+  // Chapa
+  initiateChapaPayment: (data) => api.post('/payments/chapa/initialize', data),
+  verifyChapaPayment: (txRef) => api.get(`/payments/chapa/verify/${txRef}`),
   // Stripe
   createStripePaymentIntent: (data) => api.post('/payments/stripe/create-intent', data),
   confirmStripePayment: (data) => api.post('/payments/stripe/confirm', data),

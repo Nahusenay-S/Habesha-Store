@@ -4,8 +4,9 @@ const defaultConfig = {
   currency: 'ETB',
   shipping: { flatRate: 50, freeThreshold: 1000 },
   paymentMethods: {
-    stripe: { enabled: Boolean(process.env.STRIPE_SECRET_KEY), publishableKey: process.env.STRIPE_PUBLISHABLE_KEY || '', currency: process.env.STRIPE_CURRENCY || 'usd' },
+    chapa: { enabled: true, merchantName: 'Habesha Store', publicKey: process.env.CHAPA_PUBLIC_KEY || '' },
     telebirr: { enabled: process.env.TELEBIRR_ENABLED !== 'false', merchantName: process.env.TELEBIRR_MERCHANT_NAME || 'Habesha Store' },
+    stripe: { enabled: Boolean(process.env.STRIPE_SECRET_KEY), publishableKey: process.env.STRIPE_PUBLISHABLE_KEY || '', currency: process.env.STRIPE_CURRENCY || 'usd' },
     paypal: { enabled: Boolean(process.env.PAYPAL_CLIENT_ID), clientId: process.env.PAYPAL_CLIENT_ID || '' },
   },
 };

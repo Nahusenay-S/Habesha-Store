@@ -63,6 +63,24 @@ const OrderDetailPage = () => {
     }
   };
 
+  const handleVerifyChapa = async () => {
+    setVerifying(true);
+    setVerifyNotice('');
+    try {
+      const initRes = await paymentAPI.initiateChapaPayment({ orderId: id });
+      const txRef = initRes.data?.txRef;
+      if (txRef) {
+        await paymentAPI.verifyChapaPayment(txRef);
+        setVerifyNotice(language === 'am' ? 'የቻፓ ክፍያ ተረጋግጧል!' : 'Chapa payment successfully verified!');
+        loadOrder();
+      }
+    } catch (err) {
+      setVerifyNotice(err.response?.data?.error || 'Verification failed. Please try again.');
+    } finally {
+      setVerifying(false);
+    }
+  };
+
   if (order === false) {
     return (
       <>
@@ -164,6 +182,18 @@ const OrderDetailPage = () => {
               {order.paymentStatus === 'completed' ? t('order_detail.paid_confirmed', 'Paid & Confirmed ✓') : t('order_detail.payment_pending', 'Payment Pending')}
             </strong>
           </div>
+          {order.paymentStatus !== 'completed' && order.paymentMethod === 'chapa' && !isCancelled && (
+            <div>
+              <button
+                type="button"
+                onClick={handleVerifyChapa}
+                disabled={verifying}
+                style={{ background: '#0b3d2c', color: '#fff', border: 'none', padding: '0.4rem 0.9rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem' }}
+              >
+                {verifying ? t('order_detail.verifying', 'Verifying...') : (language === 'am' ? '✓ ቻፓ ክፍያ አረጋግጥ' : '✓ Verify Chapa Payment')}
+              </button>
+            </div>
+          )}
           {order.paymentStatus !== 'completed' && order.paymentMethod === 'telebirr' && !isCancelled && (
             <div>
               <button

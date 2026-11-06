@@ -39,7 +39,7 @@ const CheckoutPage = () => {
     // Step 3: Delivery Method
     deliveryMethod: 'standard', // 'standard' | 'express_cargo'
     // Step 4: Payment
-    paymentMethod: 'telebirr',
+    paymentMethod: 'chapa',
   });
 
   // Pre-fill user data if logged in
@@ -63,7 +63,7 @@ const CheckoutPage = () => {
       .then((res) => {
         setConfig(res.data);
         const methods = res.data.paymentMethods || {};
-        const firstEnabled = ['telebirr', 'stripe', 'paypal'].find((m) => methods[m]?.enabled);
+        const firstEnabled = ['chapa', 'telebirr', 'stripe', 'paypal'].find((m) => methods[m]?.enabled);
         if (firstEnabled) {
           setFormData((prev) => ({ ...prev, paymentMethod: firstEnabled }));
         }
@@ -165,7 +165,20 @@ const CheckoutPage = () => {
       clearCart();
       const createdOrder = response.data.order;
 
-      // Telebirr payment initiation
+      // Chapa payment initiation (Telebirr, CBE Birr, Awash, Cards)
+      if (formData.paymentMethod === 'chapa') {
+        try {
+          const chapaRes = await paymentAPI.initiateChapaPayment({ orderId: createdOrder._id });
+          if (chapaRes.data?.checkoutUrl) {
+            window.location.href = chapaRes.data.checkoutUrl;
+            return;
+          }
+        } catch (chapaErr) {
+          console.warn('Chapa initiation warning, routing to confirmation:', chapaErr);
+        }
+      }
+
+      // Telebirr direct payment initiation
       if (formData.paymentMethod === 'telebirr') {
         try {
           const teleRes = await paymentAPI.initiateTelebirrPayment({ orderId: createdOrder._id });
@@ -477,6 +490,28 @@ const CheckoutPage = () => {
                     {language === 'am' ? 'ሁሉም ክፍያዎች ደህንነታቸው በተጠበቀ እና በተረጋገጡ የክፍያ ኔትወርኮች ይስተናገዳሉ።' : 'Transactions are encrypted and processed through compliant financial gateways.'}
                   </p>
                 </div>
+
+                {/* Chapa Payment Gateway (All Ethiopian Banks, Telebirr & Cards) */}
+                <label
+                  className={`${styles.optionCard} ${
+                    formData.paymentMethod === 'chapa' ? styles.optionSelected : ''
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="chapa"
+                    checked={formData.paymentMethod === 'chapa'}
+                    onChange={handleChange}
+                  />
+                  <div className={styles.optionInfo}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.25rem' }}>
+                      <h4 style={{ margin: 0 }}>{language === 'am' ? 'ቻፓ - Chapa (ቴሌብር፣ ንግድ ባንክ፣ አዋሽ፣ ካርድ)' : 'Chapa Gateway (Telebirr, CBE Birr, Awash, Cards)'}</h4>
+                      <Badge variant="gold" size="sm">{language === 'am' ? '★ ተመራጭ' : '★ Recommended'}</Badge>
+                    </div>
+                    <p>{language === 'am' ? 'በቴሌብር፣ በኢትዮጵያ ንግድ ባንክ (CBE Birr)፣ በአዋሽ ባንክ ወይም በቪዛ/ማስተርካርድ በቻፓ በኩል ይክፈሉ።' : 'Unified Ethiopian payment gateway: Telebirr, CBE Birr, Awash Birr, and international cards.'}</p>
+                  </div>
+                </label>
 
                 {paymentMethods.telebirr?.enabled && (
                   <label

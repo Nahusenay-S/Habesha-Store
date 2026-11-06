@@ -47,6 +47,8 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/payments/telebirr', telebirrRoutes);
+const chapaRoutes = require('./routes/chapaRoutes');
+app.use('/api/payments/chapa', chapaRoutes);
 app.use('/api/vendor', vendorRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);

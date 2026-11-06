@@ -11,6 +11,7 @@ describe('Habesha Store API & Communication Flow Tests', () => {
   let sellerId;
   let productId;
   let testOrderId;
+  let chapaOrderId;
 
   const testBuyerEmail = `testbuyer_${Date.now()}@example.com`;
   const testSellerEmail = `testseller_${Date.now()}@example.com`;
@@ -66,6 +67,12 @@ describe('Habesha Store API & Communication Flow Tests', () => {
 
   afterAll(async () => {
     // Cleanup created data in proper foreign-key order
+    if (chapaOrderId) {
+      await query('DELETE FROM payments WHERE order_id = $1', [chapaOrderId]);
+      await query('DELETE FROM notifications WHERE order_id = $1', [chapaOrderId]);
+      await query('DELETE FROM order_items WHERE order_id = $1', [chapaOrderId]);
+      await query('DELETE FROM orders WHERE id = $1', [chapaOrderId]);
+    }
     if (testOrderId) {
       await query('DELETE FROM payments WHERE order_id = $1', [testOrderId]);
       await query('DELETE FROM notifications WHERE order_id = $1', [testOrderId]);
@@ -173,6 +180,52 @@ describe('Habesha Store API & Communication Flow Tests', () => {
     const checkOrder = await query('SELECT status, payment_status FROM orders WHERE id = $1', [testOrderId]);
     expect(checkOrder.rows[0].status).toBe('confirmed');
     expect(checkOrder.rows[0].payment_status).toBe('completed');
+  });
+
+  test('Chapa Payment Flow: initializes checkout and verifies payment', async () => {
+    // 1. Create a second order for Chapa test
+    const chapaOrderRes = await request(app)
+      .post('/api/orders')
+      .set('Authorization', `Bearer ${buyerToken}`)
+      .send({
+        items: [{ product: productId, quantity: 1 }],
+        shippingAddress: {
+          street: 'Churchill Ave 5',
+          city: 'Addis Ababa',
+          region: 'Addis Ababa',
+          phone: '+251911999888',
+        },
+        paymentMethod: 'chapa',
+      });
+    expect(chapaOrderRes.status).toBe(201);
+    chapaOrderId = chapaOrderRes.body.order._id;
+
+    // 2. Initialize Chapa checkout
+    const initRes = await request(app)
+      .post('/api/payments/chapa/initialize')
+      .set('Authorization', `Bearer ${buyerToken}`)
+      .send({ orderId: chapaOrderId });
+    expect(initRes.status).toBe(200);
+    expect(initRes.body.checkoutUrl).toBeDefined();
+    expect(initRes.body.txRef).toMatch(/^HB-/);
+
+    // 3. Verify Chapa payment
+    const verifyRes = await request(app)
+      .get(`/api/payments/chapa/verify/${initRes.body.txRef}`)
+      .set('Authorization', `Bearer ${buyerToken}`);
+    expect(verifyRes.status).toBe(200);
+    expect(verifyRes.body.status).toBe('completed');
+
+    // 4. Verify order is confirmed
+    const checkOrder = await query('SELECT status, payment_status FROM orders WHERE id = $1', [chapaOrderId]);
+    expect(checkOrder.rows[0].status).toBe('confirmed');
+    expect(checkOrder.rows[0].payment_status).toBe('completed');
+
+    // Cleanup
+    await query('DELETE FROM payments WHERE order_id = $1', [chapaOrderId]);
+    await query('DELETE FROM notifications WHERE order_id = $1', [chapaOrderId]);
+    await query('DELETE FROM order_items WHERE order_id = $1', [chapaOrderId]);
+    await query('DELETE FROM orders WHERE id = $1', [chapaOrderId]);
   });
 
   test('Artisan Fulfillment: updates fulfillment status and cargo tracking number and notifies buyer', async () => {
