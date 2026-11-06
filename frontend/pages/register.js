@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import { authAPI } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import styles from './auth.module.css';
 import Link from 'next/link';
 import Icon from '../components/Icon';
@@ -9,6 +11,7 @@ import Icon from '../components/Icon';
 const RegisterPage = () => {
   const router = useRouter();
   const { login } = useAuth();
+  const { t, language } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -62,24 +65,30 @@ const RegisterPage = () => {
 
   return (
     <div className={styles.authContainer}>
+      <Head>
+        <title>{t('auth.register_title', 'Create Your Account')} - Habesha Store</title>
+      </Head>
       <div className={`${styles.authBox} ${styles.registerBox}`}>
         <div className={styles.authImage} style={{ backgroundImage: "url('/images/portrait.jpg')" }}>
-          <div className={styles.imageOverlay}><h2>Heritage Redefined.</h2><p>Join a global community dedicated to the finest Ethiopian crafts.</p></div>
+          <div className={styles.imageOverlay}>
+            <h2>{language === 'am' ? 'የትውልድ ቅርስ በዘመናዊ መንገድ።' : 'Heritage Redefined.'}</h2>
+            <p>{language === 'am' ? 'የኢትዮጵያን ባህላዊ ጥበቦች ወደሚያደንቀው ዓለም አቀፍ ማህበረሰብ ይቀላቀሉ።' : 'Join a global community dedicated to the finest Ethiopian crafts.'}</p>
+          </div>
         </div>
         <div className={styles.authPanel}>
         <Link href="/" className={styles.brand}>Habesha Store</Link>
-        <h1 className={styles.title}>Create Your Account</h1>
-        <p className={styles.subtitle}>Step into the world of luxury Ethiopian artisanry.</p>
+        <h1 className={styles.title}>{t('auth.register_title', 'Create Your Account')}</h1>
+        <p className={styles.subtitle}>{t('auth.register_sub', 'Step into the world of luxury Ethiopian artisanry.')}</p>
 
         {error && <div className={styles.error}>{error}</div>}
 
         <form className={styles.authForm} onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
-            <label>Full Name</label>
+            <label>{t('auth.name_label', 'Full Name')}</label>
             <input
               type="text"
               name="name"
-              placeholder="Your name"
+              placeholder={language === 'am' ? 'ስምዎትን ያስገቡ' : 'Your name'}
               value={formData.name}
               onChange={handleChange}
               required
@@ -87,7 +96,7 @@ const RegisterPage = () => {
           </div>
 
           <div className={styles.formGroup}>
-            <label>Email</label>
+            <label>{t('auth.email_label', 'Email')}</label>
             <input
               type="email"
               name="email"
@@ -99,19 +108,19 @@ const RegisterPage = () => {
           </div>
 
           <div className={styles.formGroup}>
-            <label>Account Type</label>
+            <label>{language === 'am' ? 'የመለያ አይነት' : 'Account Type'}</label>
             <select
               name="role"
               value={formData.role}
               onChange={handleChange}
             >
-              <option value="buyer">Buyer</option>
-              <option value="seller">Seller</option>
+              <option value="buyer">{t('auth.buyer_role', 'Buyer / Collector')}</option>
+              <option value="seller">{t('auth.seller_role', 'Artisan / Maker')}</option>
             </select>
           </div>
 
           <div className={styles.formGroup}>
-            <label>Password</label>
+            <label>{t('auth.password_label', 'Password')}</label>
             <input
               type="password"
               name="password"
@@ -123,7 +132,7 @@ const RegisterPage = () => {
           </div>
 
           <div className={styles.formGroup}>
-            <label>Confirm Password</label>
+            <label>{t('auth.confirm_password_label', 'Confirm Password')}</label>
             <input
               type="password"
               name="confirmPassword"
@@ -135,12 +144,18 @@ const RegisterPage = () => {
           </div>
 
           <button type="submit" className={styles.submitBtn} disabled={loading}>
-            {loading ? 'Creating Account...' : 'Create Account'}
+            {loading ? (language === 'am' ? 'መለያ በመፍጠር ላይ...' : 'Creating Account...') : t('auth.register_btn', 'Create Account')}
           </button>
         </form>
 
-        <p className={styles.link}>Already have an account? <Link href="/login">Sign In</Link></p>
-        <div className={styles.artistCard}><strong><Icon name="edit" size={16} /> &nbsp; Are you an Artisan?</strong><p>Showcase your craftsmanship to the world and grow your legacy.</p><Link href="/register?role=seller">Join as Artisan →</Link></div>
+        <p className={styles.link}>
+          {t('auth.have_account', 'Already have an account?')} <Link href="/login">{t('auth.sign_in_btn', 'Sign In')}</Link>
+        </p>
+        <div className={styles.artistCard}>
+          <strong><Icon name="edit" size={16} /> &nbsp; {language === 'am' ? 'የእደ-ጥበብ ባለሙያ ነዎት?' : 'Are you an Artisan?'}</strong>
+          <p>{language === 'am' ? 'የእጅ ጥበብዎን ለዓለም በማሳየት ገቢዎትን ያሳድጉ።' : 'Showcase your craftsmanship to the world and grow your legacy.'}</p>
+          <Link href="/register?role=seller">{language === 'am' ? 'እንደ ባለሙያ ይቀላቀሉ →' : 'Join as Artisan →'}</Link>
+        </div>
         </div>
       </div>
     </div>

@@ -6,12 +6,14 @@ import Button from './Button';
 import Badge from './Badge';
 import { useCartStore } from '../store/cartStore';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import styles from './QuickViewModal.module.css';
 
 const QuickViewModal = ({ product, isOpen, onClose }) => {
   const router = useRouter();
   const addToCart = useCartStore((state) => state.addToCart);
   const { user } = useAuth();
+  const { t, language } = useLanguage();
   const [addedNotice, setAddedNotice] = useState(false);
   const [quantity, setQuantity] = useState(1);
 
@@ -57,29 +59,29 @@ const QuickViewModal = ({ product, isOpen, onClose }) => {
           <div className={styles.tagsRow}>
             <Badge variant="gold">{product.category}</Badge>
             {inStock ? (
-              <Badge variant="success">In Stock ({product.stock})</Badge>
+              <Badge variant="success">{t('product.in_stock', 'In Stock')} ({product.stock})</Badge>
             ) : (
-              <Badge variant="danger">Sold Out</Badge>
+              <Badge variant="danger">{t('product.out_of_stock', 'Sold Out')}</Badge>
             )}
           </div>
 
           <h2 className={styles.title}>{product.name}</h2>
           <p className={styles.artisan}>
-            Crafted by <strong>{product.seller?.name || 'Ethiopian Artisan'}</strong>
+            {language === 'am' ? 'የተሠራው በ ' : 'Crafted by '}<strong>{product.seller?.name || (language === 'am' ? 'የኢትዮጵያ እደ-ጥበብ ባለሙያ' : 'Ethiopian Artisan')}</strong>
           </p>
 
           <div className={styles.priceRow}>
-            <span className={styles.price}>ETB {price.toFixed(2)}</span>
+            <span className={styles.price}>{t('common.currency', 'ETB')} {price.toFixed(2)}</span>
             <span className={styles.rating}>★ {Number(product.rating || 5).toFixed(1)}</span>
           </div>
 
           <p className={styles.description}>
-            {product.description || 'Authentic handcrafted Ethiopian heritage piece, thoughtfully curated for ethical provenance.'}
+            {product.description || (language === 'am' ? 'እውነተኛ የኢትዮጵያ ባህላዊ ቅርስ፣ በባለሙያዎች በጥንቃቄ የተዘጋጀ።' : 'Authentic handcrafted Ethiopian heritage piece, thoughtfully curated for ethical provenance.')}
           </p>
 
           {inStock && !isSeller && (
             <div className={styles.quantityRow}>
-              <span className={styles.quantityLabel}>Quantity:</span>
+              <span className={styles.quantityLabel}>{t('cart.quantity', 'Quantity')}:</span>
               <div className={styles.quantityControls}>
                 <button
                   type="button"
@@ -108,14 +110,14 @@ const QuickViewModal = ({ product, isOpen, onClose }) => {
               disabled={!inStock || isSeller}
               onClick={handleAddToCart}
             >
-              {addedNotice ? 'Added to Bag ✓' : inStock ? 'Add to Shopping Bag' : 'Sold Out'}
+              {addedNotice ? t('product.added', 'Added ✓') : inStock ? t('product.add_to_cart', 'Add to Shopping Bag') : t('product.out_of_stock', 'Sold Out')}
             </Button>
             <Link
               href={`/products/${product._id}`}
               className={styles.viewDetailsLink}
               onClick={onClose}
             >
-              View Full Details & Story →
+              {language === 'am' ? 'ሙሉ ታሪኩንና ዝርዝሩን ይመልከቱ →' : 'View Full Details & Story →'}
             </Link>
           </div>
         </div>

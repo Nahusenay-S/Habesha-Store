@@ -9,6 +9,7 @@ const paths = {
   edit: <><path d="m4 16.5-.8 4.3 4.3-.8L18 9.5 14.5 6 4 16.5Z" /><path d="m13 7.5 3.5 3.5M19 3a2 2 0 0 1 2 2c0 .6-.2 1-.6 1.4L19 7.8 15.5 4.3 16.9 2.9A2 2 0 0 1 19 3Z" /></>,
   truck: <><path d="M3 6h11v10H3zM14 10h4l3 3v3h-7z" /><circle cx="7" cy="18" r="2" /><circle cx="18" cy="18" r="2" /></>,
   check: <path d="m5 12 4 4L19 6" />,
+  globe: <><circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /><path d="M2 12h20" /></>,
 };
 
 export default function Icon({ name, size = 18, strokeWidth = 1.7, title }) {

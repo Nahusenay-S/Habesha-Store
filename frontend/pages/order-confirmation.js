@@ -4,12 +4,14 @@ import Link from 'next/link';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import { orderAPI, paymentAPI } from '../lib/api';
+import { useLanguage } from '../context/LanguageContext';
 import styles from '../styles/order-confirmation.module.css';
 import Icon from '../components/Icon';
 
 const OrderConfirmationPage = () => {
   const router = useRouter();
   const { id, ref, pid } = router.query;
+  const { t, language } = useLanguage();
   const [order, setOrder] = useState(null);
   const [verifying, setVerifying] = useState(false);
   const [verifiedNotice, setVerifiedNotice] = useState('');
@@ -60,8 +62,8 @@ const OrderConfirmationPage = () => {
     }
   };
 
-  if (order === false) return <><Header /><main className={styles.message}><h1>Order not found</h1><p>We could not find this order.</p><Link href="/products">Browse the collection</Link></main><Footer /></>;
-  if (!order) return <><Header /><main className={styles.message}>Loading your order...</main><Footer /></>;
+  if (order === false) return <><Header /><main className={styles.message}><h1>{t('order_detail.not_found', 'Order not found')}</h1><p>{t('order_detail.not_found_desc', 'We could not find this order.')}</p><Link href="/products">{t('cart.continue_shopping', 'Browse the collection')}</Link></main><Footer /></>;
+  if (!order) return <><Header /><main className={styles.message}>{t('common.loading', 'Loading your order...')}</main><Footer /></>;
 
   const isPaid = order.paymentStatus === 'completed';
 
@@ -71,9 +73,11 @@ const OrderConfirmationPage = () => {
       <main className={styles.page}>
         <div className={styles.check}><Icon name="check" size={28} /></div>
         <div className={styles.amharic}>አመሰግናለሁ</div>
-        <h1>Ameseginalehu!</h1>
+        <h1>{language === 'am' ? 'እናመሰግናለን!' : 'Ameseginalehu!'}</h1>
         <p className={styles.intro}>
-          Your order has been placed successfully. We are honoring your support of Ethiopian craftsmanship and preparing your package with care.
+          {language === 'am'
+            ? 'ትዕዛዝዎ በተሳካ ሁኔታ ተጠናቋል። ለኢትዮጵያ ባህላዊ ጥበባት ለሰጡት ድጋፍ እያመሰገንን ትዕዛዝዎን በጥንቃቄ በማዘጋጀት ላይ ነን።'
+            : 'Your order has been placed successfully. We are honoring your support of Ethiopian craftsmanship and preparing your package with care.'}
         </p>
 
         {/* Telebirr Payment Action Card */}
@@ -82,26 +86,30 @@ const OrderConfirmationPage = () => {
             {isPaid ? (
               <div style={{ color: '#0b3d2c' }}>
                 <strong style={{ fontSize: '1.05rem', display: 'block', marginBottom: '0.4rem' }}>
-                  ✓ Telebirr Payment Completed
+                  ✓ {language === 'am' ? 'የቴሌብር ክፍያ ተጠናቋል' : 'Telebirr Payment Completed'}
                 </strong>
                 <p style={{ margin: 0, fontSize: '0.9rem' }}>
-                  Your payment of <strong>ETB {Number(order.totalAmount).toFixed(2)}</strong> has been verified. The maker has been notified.
+                  {language === 'am'
+                    ? `የ ${t('common.currency', 'ETB')} ${Number(order.totalAmount).toFixed(2)} ክፍያዎ ተረጋግጧል። ባለሙያው ዕቃዎን እንዲያዘጋጅ ተነግሮታል።`
+                    : `Your payment of ETB ${Number(order.totalAmount).toFixed(2)} has been verified. The maker has been notified.`}
                 </p>
               </div>
             ) : (
               <div>
                 <span style={{ background: '#d97706', color: '#fff', fontSize: '0.72rem', fontWeight: 700, padding: '0.2rem 0.5rem', borderRadius: '3px', textTransform: 'uppercase' }}>
-                  Action Required
+                  {language === 'am' ? 'ክፍያ ያስፈልጋል' : 'Action Required'}
                 </span>
                 <h3 style={{ margin: '0.6rem 0 0.4rem', color: '#854d0e', fontSize: '1.2rem' }}>
-                  Complete Your Telebirr Payment
+                  {language === 'am' ? 'የቴሌብር ክፍያዎን ያጠናቁ' : 'Complete Your Telebirr Payment'}
                 </h3>
                 <p style={{ margin: '0 0 1rem', fontSize: '0.88rem', color: '#713f12' }}>
-                  To finalize this purchase, transfer to merchant <strong>Habesha Store</strong> or approve reference <strong>{telebirrData.ref || 'HB-PENDING'}</strong> on Telebirr (*127# or Telebirr App).
+                  {language === 'am'
+                    ? `ይህንን ግዢ ለማጠናቀቅ ወደ "ሀበሻ ስቶር" ወይም በቴሌብር (*127# ወይም አፕሊኬሽን) የክፍያ መለያ ቁጥር ${telebirrData.ref || 'HB-PENDING'} በመጠቀም ይክፈሉ።`
+                    : `To finalize this purchase, transfer to merchant Habesha Store or approve reference ${telebirrData.ref || 'HB-PENDING'} on Telebirr (*127# or Telebirr App).`}
                 </p>
                 <div style={{ background: '#fff', padding: '0.75rem 1rem', borderRadius: '4px', border: '1px solid #ebd9ab', marginBottom: '1rem', fontSize: '0.88rem' }}>
-                  <div>Payment Reference: <strong>{telebirrData.ref || 'Generating...'}</strong></div>
-                  <div>Amount to Pay: <strong>ETB {Number(order.totalAmount).toFixed(2)}</strong></div>
+                  <div>{language === 'am' ? 'የክፍያ መለያ ቁጥር:' : 'Payment Reference:'} <strong>{telebirrData.ref || (language === 'am' ? 'በመዘጋጀት ላይ...' : 'Generating...')}</strong></div>
+                  <div>{language === 'am' ? 'የሚከፈለው ጠቅላላ ገንዘብ:' : 'Amount to Pay:'} <strong>{t('common.currency', 'ETB')} {Number(order.totalAmount).toFixed(2)}</strong></div>
                 </div>
                 {verifyError && <p style={{ color: '#c02b2b', fontSize: '0.88rem', margin: '0 0 0.75rem' }}>{verifyError}</p>}
                 {verifiedNotice && <p style={{ color: '#0b3d2c', fontSize: '0.88rem', margin: '0 0 0.75rem' }}>{verifiedNotice}</p>}
@@ -111,7 +119,7 @@ const OrderConfirmationPage = () => {
                   disabled={verifying || !telebirrData.ref}
                   style={{ background: '#0b3d2c', color: '#fff', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 600, fontSize: '0.9rem' }}
                 >
-                  {verifying ? 'Verifying with Telebirr...' : '✓ Confirm & Verify Telebirr Payment'}
+                  {verifying ? (language === 'am' ? 'በቴሌብር በማረጋገጥ ላይ...' : 'Verifying with Telebirr...') : (language === 'am' ? '✓ የቴሌብር ክፍያዬን አረጋግጥ' : '✓ Confirm & Verify Telebirr Payment')}
                 </button>
               </div>
             )}
@@ -120,54 +128,58 @@ const OrderConfirmationPage = () => {
 
         <div className={styles.cards}>
           <div>
-            <span>Order number</span>
+            <span>{language === 'am' ? 'የትዕዛዝ ቁጥር' : 'Order number'}</span>
             <strong>#{order._id.slice(0, 8).toUpperCase()}</strong>
-            <small><Icon name="check" size={13} /> Order confirmed in your account</small>
+            <small><Icon name="check" size={13} /> {language === 'am' ? 'ትዕዛዝዎ በመለያዎ ተመዝግቧል' : 'Order confirmed in your account'}</small>
           </div>
           <div>
-            <span>Estimated delivery</span>
-            <strong>3–5 business days</strong>
-            <small><Icon name="truck" size={13} /> Via Ethiopian Airlines Cargo</small>
+            <span>{language === 'am' ? 'የመድረሻ ጊዜ' : 'Estimated delivery'}</span>
+            <strong>{language === 'am' ? 'ከ3 እስከ 5 የስራ ቀናት' : '3–5 business days'}</strong>
+            <small><Icon name="truck" size={13} /> {language === 'am' ? 'በኢትዮጵያ አየር መንገድ ካርጎ' : 'Via Ethiopian Airlines Cargo'}</small>
           </div>
         </div>
 
         <section className={styles.summary}>
           <header>
-            <h2>Order summary</h2>
-            <span>{order.items?.length || 0} items</span>
+            <h2>{t('cart.order_summary', 'Order summary')}</h2>
+            <span>{order.items?.length || 0} {language === 'am' ? 'ቅርሶች' : 'items'}</span>
           </header>
           {order.items?.map((item) => (
             <div className={styles.item} key={item.product?.id}>
               <div>
-                <small>{item.product?.seller?.name || 'Habesha artisan'}</small>
+                <small>{item.product?.seller?.name || (language === 'am' ? 'የሀበሻ እደ-ጥበብ ባለሙያ' : 'Habesha artisan')}</small>
                 <span>{item.product?.name} × {item.quantity}</span>
               </div>
-              <strong>ETB {(Number(item.price) * item.quantity).toFixed(2)}</strong>
+              <strong>{t('common.currency', 'ETB')} {(Number(item.price) * item.quantity).toFixed(2)}</strong>
             </div>
           ))}
           <div className={styles.paid}>
             <span>
-              Payment Method: <strong style={{ textTransform: 'capitalize' }}>{order.paymentMethod || 'secure checkout'}</strong>
-              {' '}(<em style={{ color: isPaid ? '#078930' : '#d97706' }}>{isPaid ? 'Completed' : 'Pending'}</em>)
+              {language === 'am' ? 'የክፍያ ዘዴ:' : 'Payment Method:'} <strong style={{ textTransform: 'capitalize' }}>{order.paymentMethod || 'secure checkout'}</strong>
+              {' '}(<em style={{ color: isPaid ? '#078930' : '#d97706' }}>{isPaid ? (language === 'am' ? 'ተጠናቋል' : 'Completed') : (language === 'am' ? 'በመጠባበቅ ላይ' : 'Pending')}</em>)
             </span>
-            <small>Transaction ID: #{order._id.slice(0, 8).toUpperCase()}</small>
+            <small>{t('payments.transaction_id', 'Transaction ID:')} #{order._id.slice(0, 8).toUpperCase()}</small>
             <div>
-              <span>Total amount</span>
-              <strong>ETB {Number(order.totalAmount).toFixed(2)}</strong>
+              <span>{t('cart.total', 'Total amount')}</span>
+              <strong>{t('common.currency', 'ETB')} {Number(order.totalAmount).toFixed(2)}</strong>
             </div>
           </div>
         </section>
 
         <div className={styles.actions}>
           <Link href={`/orders/${order._id}`}>
-            <Icon name="truck" size={15} /> Track order
+            <Icon name="truck" size={15} /> {language === 'am' ? 'ትዕዛዝ ተከታተል' : 'Track order'}
           </Link>
-          <Link href="/products">Back to collection</Link>
+          <Link href="/products">{language === 'am' ? 'ወደ ስብስቦች ተመለስ' : 'Back to collection'}</Link>
         </div>
 
         <div className={styles.sustainability}>
-          <strong><Icon name="heart" size={15} /> Direct artisan partnership</strong>
-          <p>Your order supports direct trade with Ethiopian artisans. We use carbon-neutral logistics and recyclable packaging for all orders.</p>
+          <strong><Icon name="heart" size={15} /> {language === 'am' ? 'ቀጥተኛ የባለሙያዎች አጋርነት' : 'Direct artisan partnership'}</strong>
+          <p>
+            {language === 'am'
+              ? 'የእርስዎ ትዕዛዝ በቀጥታ ከኢትዮጵያ እደ-ጥበብ ባለሙያዎች ጋር የሚደረገውን የፍትሃዊ ንግድ ግንኙነት ይደግፋል። ሁሉም ዕቃዎች በባህላዊ እና ለአካባቢ ተስማሚ በሆኑ እቃዎች ተጠቅልለው ይላካሉ።'
+              : 'Your order supports direct trade with Ethiopian artisans. We use carbon-neutral logistics and recyclable packaging for all orders.'}
+          </p>
         </div>
       </main>
       <Footer />

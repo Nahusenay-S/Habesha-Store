@@ -27,16 +27,19 @@ export const LanguageProvider = ({ children }) => {
     setLanguage(language === 'en' ? 'am' : 'en');
   };
 
-  const t = (key, fallback = '') => {
+  const t = (key, fallbackOrVars = '', maybeVars = {}) => {
+    let fallback = typeof fallbackOrVars === 'string' ? fallbackOrVars : '';
+    let vars = typeof fallbackOrVars === 'object' && fallbackOrVars !== null ? fallbackOrVars : maybeVars;
+
     const dict = translations[language] || translations.en;
-    if (dict && dict[key] !== undefined) {
-      return dict[key];
+    let template = dict?.[key] ?? translations.en?.[key] ?? fallback ?? key;
+
+    if (vars && typeof template === 'string') {
+      Object.keys(vars).forEach((varKey) => {
+        template = template.replace(new RegExp(`\\{${varKey}\\}`, 'g'), vars[varKey]);
+      });
     }
-    // Fallback to English if missing in target
-    if (translations.en && translations.en[key] !== undefined) {
-      return translations.en[key];
-    }
-    return fallback || key;
+    return template;
   };
 
   return (

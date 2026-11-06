@@ -6,10 +6,12 @@ import Button from '../components/Button';
 import Badge from '../components/Badge';
 import { vendorAPI, productAPI, orderAPI, notificationAPI, authAPI, uploadAPI } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import styles from '../styles/vendor.module.css';
 
 const VendorPage = () => {
   const { user, loading } = useAuth();
+  const { t, language } = useLanguage();
   const [activeTab, setActiveTab] = useState('inventory'); // 'inventory' | 'fulfillment' | 'profile'
   const [data, setData] = useState({ stats: {}, products: [] });
   const [orders, setOrders] = useState([]);
@@ -229,7 +231,7 @@ const VendorPage = () => {
   return (
     <>
       <Head>
-        <title>Artisan Terminal | Habesha Store</title>
+        <title>{t('vendor.title', 'Artisan Studio Terminal')} | Habesha Store</title>
       </Head>
 
       <Header />
@@ -237,8 +239,8 @@ const VendorPage = () => {
       <main className={styles.page}>
         <div className={styles.pageHeader}>
           <div>
-            <span className={styles.eyebrow}>Artisan Guild Operations</span>
-            <h1>Workshop Terminal</h1>
+            <span className={styles.eyebrow}>{language === 'am' ? 'የእደ-ጥበብ ማህበር ስራዎች' : 'Artisan Guild Operations'}</span>
+            <h1>{t('vendor.title', 'Workshop Terminal')}</h1>
           </div>
           <Button
             variant="gold"
@@ -249,7 +251,7 @@ const VendorPage = () => {
               setShowForm(!showForm);
             }}
           >
-            {showForm ? 'Close Form' : '+ New Heritage Listing'}
+            {showForm ? (language === 'am' ? 'ቅጹን ዝጋ' : 'Close Form') : t('vendor.add_product', '+ Publish New Creation')}
           </Button>
         </div>
 
@@ -260,21 +262,21 @@ const VendorPage = () => {
             className={`${styles.tabBtn} ${activeTab === 'inventory' ? styles.tabBtnActive : ''}`}
             onClick={() => setActiveTab('inventory')}
           >
-            📦 Products & Stock ({data.products?.length || 0})
+            📦 {t('vendor.inventory_tab', 'Workshop Catalog')} ({data.products?.length || 0})
           </button>
           <button
             type="button"
             className={`${styles.tabBtn} ${activeTab === 'fulfillment' ? styles.tabBtnActive : ''}`}
             onClick={() => setActiveTab('fulfillment')}
           >
-            ✈️ Fulfillment Queue ({orders.length})
+            ✈️ {t('vendor.fulfillment_tab', 'Fulfillment Queue')} ({orders.length})
           </button>
           <button
             type="button"
             className={`${styles.tabBtn} ${activeTab === 'profile' ? styles.tabBtnActive : ''}`}
             onClick={() => setActiveTab('profile')}
           >
-            🏛️ Artisan Profile
+            🏛️ {t('vendor.profile_tab', 'Artisan Profile')}
           </button>
         </div>
 
@@ -282,7 +284,7 @@ const VendorPage = () => {
         {notifications.some((item) => !item.isRead) && (
           <section className={styles.notifications}>
             <div className={styles.sectionHeader}>
-              <h2>Live Artisan Alerts</h2>
+              <h2>{language === 'am' ? 'የእደ-ጥበብ ባለሙያ ማሳወቂያዎች' : 'Live Artisan Alerts'}</h2>
               <button
                 type="button"
                 onClick={async () => {
@@ -291,7 +293,7 @@ const VendorPage = () => {
                 }}
                 style={{ background: 'none', border: 'none', color: 'var(--color-gold)', cursor: 'pointer', fontWeight: 600 }}
               >
-                Mark all read
+                {language === 'am' ? 'ሁሉንም እንደተነበበ ምልክት አድርግ' : 'Mark all read'}
               </button>
             </div>
             {notifications.filter((item) => !item.isRead).slice(0, 4).map((item) => (
@@ -306,24 +308,24 @@ const VendorPage = () => {
         {/* Metrics Grid */}
         <section className={styles.stats}>
           <article>
-            <span>Settled Sales</span>
-            <strong>ETB {Number(data.stats?.sales || 0).toFixed(2)}</strong>
-            <small>Across confirmed buyer orders</small>
+            <span>{language === 'am' ? 'የተጣራ ሽያጭ' : 'Settled Sales'}</span>
+            <strong>{t('common.currency', 'ETB')} {Number(data.stats?.sales || 0).toFixed(2)}</strong>
+            <small>{language === 'am' ? 'ከተረጋገጡ የደንበኞች ትዕዛዞች' : 'Across confirmed buyer orders'}</small>
           </article>
           <article>
-            <span>Units Sold</span>
+            <span>{language === 'am' ? 'የተሸጡ ቅርሶች ብዛት' : 'Units Sold'}</span>
             <strong>{data.stats?.units || 0}</strong>
-            <small>Handcrafted pieces delivered</small>
+            <small>{language === 'am' ? 'በሰላም የደረሱ ቅርሶች' : 'Handcrafted pieces delivered'}</small>
           </article>
           <article>
-            <span>Active Listings</span>
+            <span>{language === 'am' ? 'በሽያጭ ላይ ያሉ ዕቃዎች' : 'Active Listings'}</span>
             <strong>{data.products?.filter((p) => p.isActive).length || 0}</strong>
-            <small>Live on public marketplace</small>
+            <small>{language === 'am' ? 'በሱቁ ውስጥ የሚገኙ' : 'Live on public marketplace'}</small>
           </article>
           <article>
-            <span>Fulfillment Orders</span>
+            <span>{language === 'am' ? 'የሚዘጋጁ ትዕዛዞች' : 'Fulfillment Orders'}</span>
             <strong>{orders.filter((o) => !['delivered', 'cancelled'].includes(o.status)).length}</strong>
-            <small>Awaiting packing or transit</small>
+            <small>{language === 'am' ? 'ማሸግ ወይም መላክ የሚጠብቁ' : 'Awaiting packing or transit'}</small>
           </article>
         </section>
 
@@ -333,19 +335,19 @@ const VendorPage = () => {
         {/* Add/Edit Product Form */}
         {showForm && (
           <form className={styles.productForm} onSubmit={handleSaveProduct}>
-            <h2>{editingId ? 'Edit Heritage Listing' : 'Publish New Handcrafted Piece'}</h2>
+            <h2>{editingId ? (language === 'am' ? 'የቅርሱን መረጃ አሻሽል' : 'Edit Heritage Listing') : (language === 'am' ? 'አዲስ ጥበባዊ ስራ ለገበያ አቅርብ' : 'Publish New Handcrafted Piece')}</h2>
             <div className={styles.formGrid}>
               <div className={styles.field}>
-                <label>Product Name</label>
+                <label>{t('vendor.product_name', 'Piece Title')}</label>
                 <input
                   required
-                  placeholder="e.g. Traditional Handwoven Tibeb Gabi"
+                  placeholder={language === 'am' ? 'ለምሳሌ ባህላዊ በእጅ የተሸመነ የጥበብ ጋቢ' : 'e.g. Traditional Handwoven Tibeb Gabi'}
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                 />
               </div>
               <div className={styles.field}>
-                <label>Price (ETB)</label>
+                <label>{t('vendor.product_price', 'Price (ETB)')}</label>
                 <input
                   required
                   type="number"
@@ -357,21 +359,21 @@ const VendorPage = () => {
                 />
               </div>
               <div className={styles.field}>
-                <label>Category</label>
+                <label>{t('vendor.product_category', 'Category')}</label>
                 <select
                   value={form.category}
                   onChange={(e) => setForm({ ...form, category: e.target.value })}
                 >
-                  <option value="textiles">Handwoven Textiles 🧣</option>
-                  <option value="coffee">Highland Coffee ☕</option>
-                  <option value="spices">Traditional Spices 🌶️</option>
-                  <option value="crafts">Pottery & Crafts 🏺</option>
-                  <option value="jewelry">Filigree Jewelry 💎</option>
-                  <option value="art">Fine Art & Icons 🖼️</option>
+                  <option value="textiles">{t('catalog.cat_textiles', 'Handwoven Textiles')} 🧣</option>
+                  <option value="coffee">{t('catalog.cat_coffee', 'Highland Coffee')} ☕</option>
+                  <option value="spices">{t('catalog.cat_spices', 'Traditional Spices')} 🌶️</option>
+                  <option value="crafts">{t('catalog.cat_crafts', 'Pottery & Crafts')} 🏺</option>
+                  <option value="jewelry">{t('catalog.cat_jewelry', 'Filigree Jewelry')} 💎</option>
+                  <option value="art">{t('catalog.cat_art', 'Fine Art & Icons')} 🖼️</option>
                 </select>
               </div>
               <div className={styles.field}>
-                <label>Stock Units Available</label>
+                <label>{t('vendor.product_stock', 'Units Available')}</label>
                 <input
                   required
                   type="number"
@@ -382,14 +384,14 @@ const VendorPage = () => {
                 />
               </div>
               <div className={`${styles.field} ${styles.wide}`}>
-                <label>Product Photography</label>
+                <label>{t('vendor.upload_photos', 'Product Photography')}</label>
 
                 {/* Direct File Upload Zone */}
                 <label className={styles.uploadZone}>
                   <span className={styles.uploadIcon}>📷</span>
-                  <strong>{uploadingImages ? 'Uploading photos...' : 'Click or Drop Photos to Upload'}</strong>
+                  <strong>{uploadingImages ? (language === 'am' ? 'ፎቶዎችን በመጫን ላይ...' : 'Uploading photos...') : t('vendor.drop_photos', 'Click or Drop Photos to Upload')}</strong>
                   <p style={{ margin: '0.25rem 0 0', fontSize: '0.78rem', color: 'var(--color-gray)' }}>
-                    PNG, JPG, or WEBP up to 5MB. Select one or multiple craft photos.
+                    {language === 'am' ? 'PNG፣ JPG፣ ወይም WEBP እስከ 5MB። አንድ ወይም በርካታ ፎቶዎችን ይምረጡ።' : 'PNG, JPG, or WEBP up to 5MB. Select one or multiple craft photos.'}
                   </p>
                   <input
                     type="file"
@@ -408,7 +410,7 @@ const VendorPage = () => {
                 {/* Uploaded Photos Preview Thumbnails */}
                 {form.imagesText.trim() && (
                   <div style={{ marginBottom: '0.75rem' }}>
-                    <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--color-gray)' }}>Attached Photos:</span>
+                    <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--color-gray)' }}>{language === 'am' ? 'የተያያዙ ፎቶዎች:' : 'Attached Photos:'}</span>
                     <div className={styles.previewGrid}>
                       {form.imagesText.split('\n').map((u) => u.trim()).filter(Boolean).map((imgUrl, i) => (
                         <div key={imgUrl + i} className={styles.previewCard}>
@@ -421,7 +423,7 @@ const VendorPage = () => {
                             type="button"
                             className={styles.removeThumbBtn}
                             onClick={() => handleRemoveImage(imgUrl)}
-                            title="Remove photo"
+                            title={language === 'am' ? 'ፎቶውን አስወግድ' : 'Remove photo'}
                           >
                             ✕
                           </button>
@@ -432,7 +434,7 @@ const VendorPage = () => {
                 )}
 
                 <label style={{ fontSize: '0.78rem', color: 'var(--color-gray)', marginTop: '0.25rem' }}>
-                  Or enter photo URLs directly (one per line):
+                  {language === 'am' ? 'ወይም የፎቶ ሊንኮችን በቀጥታ ያስገቡ (በየመስመሩ አንዱን):' : 'Or enter photo URLs directly (one per line):'}
                 </label>
                 <textarea
                   placeholder="https://images.unsplash.com/... or /images/heritage-textile.jpg"
@@ -442,10 +444,10 @@ const VendorPage = () => {
                 />
               </div>
               <div className={`${styles.field} ${styles.wide}`}>
-                <label>Artisan Story & Provenance Description</label>
+                <label>{t('vendor.product_desc', 'Artisan Story & Provenance Description')}</label>
                 <textarea
                   required
-                  placeholder="Describe the weaving technique, cotton origin, dyes, and cultural meaning..."
+                  placeholder={language === 'am' ? 'ስለ ሽመናው ዘዴ፣ ስለ ጥጡ አመጣጥ፣ ስለ ቀለሙ እና ባህላዊ ትርጉሙ ይግለጹ...' : 'Describe the weaving technique, cotton origin, dyes, and cultural meaning...'}
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                 />
@@ -454,10 +456,10 @@ const VendorPage = () => {
 
             <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem' }}>
               <Button type="submit" variant="primary" size="md">
-                {editingId ? 'Save Listing Changes' : 'Publish Piece to Store'}
+                {editingId ? (language === 'am' ? 'ለውጦቹን አስቀምጥ' : 'Save Listing Changes') : t('vendor.publish_btn', 'Publish Piece to Store')}
               </Button>
               <Button type="button" variant="ghost" size="md" onClick={() => setShowForm(false)}>
-                Cancel
+                {t('common.cancel', 'Cancel')}
               </Button>
             </div>
           </form>
@@ -467,7 +469,7 @@ const VendorPage = () => {
         {activeTab === 'inventory' && (
           <section className={styles.inventory}>
             <header>
-              <h2>Your Public Collection ({data.products?.length || 0})</h2>
+              <h2>{language === 'am' ? `የስራዎች ዝርዝር (${data.products?.length || 0})` : `Your Public Collection (${data.products?.length || 0})`}</h2>
             </header>
             {data.products?.length ? (
               data.products.map((product) => (
@@ -483,25 +485,25 @@ const VendorPage = () => {
                   <div>
                     <strong>{product.name}</strong>
                     <span>
-                      {product.category} • ETB {Number(product.price).toFixed(2)}
+                      {product.category} • {t('common.currency', 'ETB')} {Number(product.price).toFixed(2)}
                     </span>
                   </div>
                   <b className={product.stock < 3 ? styles.low : ''}>
-                    {product.stock} in stock {product.stock < 3 ? '⚠️ Low' : ''}
+                    {product.stock} {language === 'am' ? 'በመጋዘን አለ' : 'in stock'} {product.stock < 3 ? (language === 'am' ? '⚠️ ሊያልቅ ነው' : '⚠️ Low') : ''}
                   </b>
                   <div className={styles.actionBtnGroup}>
                     <Button variant="secondary" size="sm" onClick={() => startEditProduct(product)}>
-                      Edit
+                      {t('common.edit', 'Edit')}
                     </Button>
                     <Button variant="ghost" size="sm" onClick={() => archiveProduct(product._id)}>
-                      Archive
+                      {language === 'am' ? 'አስቀምጥ' : 'Archive'}
                     </Button>
                   </div>
                 </div>
               ))
             ) : (
               <p style={{ color: 'var(--color-gray)' }}>
-                No active listings yet. Click &quot;+ New Heritage Listing&quot; above to add your first handcrafted piece.
+                {language === 'am' ? 'እስካሁን ያቀረቡት ዕቃ የለም። የመጀመሪያውን ጥበባዊ ስራ ለመጨመር ከላይ ያለውን "+ አዲስ ጥበባዊ ስራ ለጥፍ" ይጫኑ።' : 'No active listings yet. Click "+ New Heritage Listing" above to add your first handcrafted piece.'}
               </p>
             )}
           </section>
@@ -511,7 +513,7 @@ const VendorPage = () => {
         {activeTab === 'fulfillment' && (
           <section className={styles.fulfillment}>
             <div className={styles.sectionHeader}>
-              <h2>Order Fulfillment & Cargo Operations</h2>
+              <h2>{language === 'am' ? 'የትዕዛዝ ማዘጋጃ እና የበረራ ካርጎ ስራዎች' : 'Order Fulfillment & Cargo Operations'}</h2>
             </div>
 
             {/* Filter buttons */}
@@ -523,7 +525,7 @@ const VendorPage = () => {
                   className={`${styles.queueFilterBtn} ${orderFilter === f ? styles.queueFilterBtnActive : ''}`}
                   onClick={() => setOrderFilter(f)}
                 >
-                  {f.toUpperCase()}
+                  {f === 'all' ? (language === 'am' ? 'ሁሉም' : 'ALL') : f === 'pending' ? (language === 'am' ? 'በመጠባበቅ ላይ' : 'PENDING') : f === 'transit' ? (language === 'am' ? 'በጉዞ ላይ' : 'TRANSIT') : (language === 'am' ? 'የደረሱ' : 'DELIVERED')}
                 </button>
               ))}
             </div>
@@ -542,33 +544,33 @@ const VendorPage = () => {
                       </Badge>
                     </div>
                     <span style={{ display: 'block', margin: '0.35rem 0', color: 'var(--color-gray)', fontSize: '0.85rem' }}>
-                      Buyer: {order.buyer?.name} ({order.buyer?.email})
+                      {language === 'am' ? 'ገዢ:' : 'Buyer:'} {order.buyer?.name} ({order.buyer?.email})
                     </span>
                     <small style={{ color: 'var(--color-green)', fontWeight: 600 }}>
-                      Items: {order.items?.map((item) => `${item.product?.name} × ${item.quantity}`).join(', ')}
+                      {language === 'am' ? 'የታዘዙ ዕቃዎች:' : 'Items:'} {order.items?.map((item) => `${item.product?.name} × ${item.quantity}`).join(', ')}
                     </small>
                     {order.shippingAddress && (
                       <p style={{ margin: '0.4rem 0 0', fontSize: '0.8rem', color: '#666' }}>
-                        Destination: {order.shippingAddress.street}, {order.shippingAddress.city}, {order.shippingAddress.region}
-                        {order.shippingAddress.phone ? ` • Tel: ${order.shippingAddress.phone}` : ''}
+                        {language === 'am' ? 'መድረሻ አድራሻ:' : 'Destination:'} {order.shippingAddress.street}, {order.shippingAddress.city}, {order.shippingAddress.region}
+                        {order.shippingAddress.phone ? ` • ${language === 'am' ? 'ስልክ:' : 'Tel:'} ${order.shippingAddress.phone}` : ''}
                       </p>
                     )}
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <label style={{ fontSize: '0.78rem', color: '#666' }}>Status:</label>
+                      <label style={{ fontSize: '0.78rem', color: '#666' }}>{language === 'am' ? 'ሁኔታ:' : 'Status:'}</label>
                       <select
                         value={order.status}
                         onChange={(e) => updateFulfillment(order, e.target.value)}
                         style={{ flex: 1, padding: '0.4rem', border: '1px solid var(--color-line)' }}
                       >
-                        <option value="pending">Pending</option>
-                        <option value="confirmed">Confirmed</option>
-                        <option value="processing">Processing</option>
-                        <option value="shipped">Shipped</option>
-                        <option value="delivered">Delivered</option>
-                        <option value="cancelled">Cancelled</option>
+                        <option value="pending">{t('orders.status_pending', 'Pending')}</option>
+                        <option value="confirmed">{t('orders.status_confirmed', 'Confirmed')}</option>
+                        <option value="processing">{t('orders.status_processing', 'Processing')}</option>
+                        <option value="shipped">{t('orders.status_shipped', 'Shipped')}</option>
+                        <option value="delivered">{t('orders.status_delivered', 'Delivered')}</option>
+                        <option value="cancelled">{t('orders.status_cancelled', 'Cancelled')}</option>
                       </select>
                     </div>
 
@@ -576,7 +578,7 @@ const VendorPage = () => {
                       <input
                         type="text"
                         defaultValue={order.trackingNumber || ''}
-                        placeholder="Ethiopian Cargo Tracking #"
+                        placeholder={language === 'am' ? 'የአየር መንገድ ካርጎ መከታተያ ቁጥር' : 'Ethiopian Cargo Tracking #'}
                         id={`track-${order._id}`}
                         style={{ flex: 1, padding: '0.4rem', border: '1px solid var(--color-line)', fontSize: '0.8rem' }}
                       />
@@ -588,14 +590,14 @@ const VendorPage = () => {
                           if (input) updateFulfillment(order, order.status, input.value.trim());
                         }}
                       >
-                        Save
+                        {t('common.save', 'Save')}
                       </Button>
                     </div>
                   </div>
                 </article>
               ))
             ) : (
-              <p style={{ color: 'var(--color-gray)' }}>No orders in this fulfillment queue filter.</p>
+              <p style={{ color: 'var(--color-gray)' }}>{language === 'am' ? 'በዚህ ማጣሪያ ውስጥ ምንም ትዕዛዝ የለም።' : 'No orders in this fulfillment queue filter.'}</p>
             )}
           </section>
         )}
@@ -603,14 +605,14 @@ const VendorPage = () => {
         {/* TAB 3: ARTISAN PROFILE */}
         {activeTab === 'profile' && (
           <section className={styles.storeProfile}>
-            <h2>Artisan Store Identity</h2>
+            <h2>{language === 'am' ? 'የእደ-ጥበብ ባለሙያው መለያ' : 'Artisan Store Identity'}</h2>
             <p style={{ color: 'var(--color-gray)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-              Your brand name and location are displayed on your product pages and public artisan cards.
+              {language === 'am' ? 'የስራዎ መጠሪያ ስም እና አካባቢ በምርት ገጾችዎ እና በባለሙያዎች ማህደር ላይ ይታያል።' : 'Your brand name and location are displayed on your product pages and public artisan cards.'}
             </p>
 
             <form onSubmit={handleSaveStoreProfile} style={{ maxWidth: '600px', display: 'grid', gap: '1rem' }}>
               <div className={styles.field}>
-                <label>Artisan / Workshop Name</label>
+                <label>{language === 'am' ? 'የባለሙያው / የማህበሩ ስም' : 'Artisan / Workshop Name'}</label>
                 <input
                   required
                   value={storeProfile.name}
@@ -618,7 +620,7 @@ const VendorPage = () => {
                 />
               </div>
               <div className={styles.field}>
-                <label>Contact Phone</label>
+                <label>{language === 'am' ? 'የመገኛ ስልክ ቁጥር' : 'Contact Phone'}</label>
                 <input
                   type="tel"
                   value={storeProfile.phone}
@@ -626,14 +628,14 @@ const VendorPage = () => {
                 />
               </div>
               <div className={styles.field}>
-                <label>Workshop City</label>
+                <label>{language === 'am' ? 'ከተማ' : 'Workshop City'}</label>
                 <input
                   value={storeProfile.city}
                   onChange={(e) => setStoreProfile({ ...storeProfile, city: e.target.value })}
                 />
               </div>
               <div className={styles.field}>
-                <label>Highlands Region</label>
+                <label>{language === 'am' ? 'ክልል / አካባቢ' : 'Highlands Region'}</label>
                 <input
                   value={storeProfile.region}
                   onChange={(e) => setStoreProfile({ ...storeProfile, region: e.target.value })}
@@ -642,7 +644,7 @@ const VendorPage = () => {
 
               <div style={{ marginTop: '1rem' }}>
                 <Button type="submit" variant="primary" size="md" loading={profileSaving}>
-                  Update Artisan Profile
+                  {language === 'am' ? 'የባለሙያ መገለጫን አሻሽል' : 'Update Artisan Profile'}
                 </Button>
               </div>
             </form>

@@ -26,7 +26,7 @@ const CartPage = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [config, setConfig] = useState(null);
 
   // Promo code state
@@ -141,7 +141,7 @@ const CartPage = () => {
       <main className={styles.container}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
           <div>
-            <span className={styles.eyebrow}>CURATED SELECTION</span>
+            <span className={styles.eyebrow}>{language === 'am' ? 'የተመረጡ ስብስቦች' : 'CURATED SELECTION'}</span>
             <h1 style={{ margin: '0.4rem 0 0' }}>{t('cart.title', 'Shopping Bag')}</h1>
           </div>
           {items.length > 0 && (
@@ -152,13 +152,13 @@ const CartPage = () => {
               <button
                 type="button"
                 onClick={() => {
-                  if (window.confirm('Clear all items from your shopping bag?')) {
+                  if (window.confirm(language === 'am' ? 'ሁሉንም ዕቃዎች ከቅርጫትዎ ማስወገድ ይፈልጋሉ?' : 'Clear all items from your shopping bag?')) {
                     clearCart();
                   }
                 }}
                 style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '0.85rem' }}
               >
-                Clear Bag
+                {t('cart.clear_bag', 'Clear Bag')}
               </button>
             </div>
           )}
@@ -180,12 +180,12 @@ const CartPage = () => {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', fontSize: '0.88rem' }}>
                   <strong style={{ color: 'var(--color-green)' }}>
                     {amountToFreeShipping === 0 ? (
-                      <span>✓ You have qualified for Free Highland Delivery!</span>
+                      <span>✓ {language === 'am' ? 'ነፃ ፈጣን ማጓጓዣ አግኝተዋል!' : 'You have qualified for Free Highland Delivery!'}</span>
                     ) : (
-                      <span>Add {config?.currency || 'ETB'} {amountToFreeShipping.toFixed(2)} more for Free Shipping</span>
+                      <span>{language === 'am' ? `ለነፃ ማጓጓዣ ተጨማሪ ${t('common.currency', 'ETB')} ${amountToFreeShipping.toFixed(2)} ቅርሶችን ይጨምሩ` : `Add ${t('common.currency', 'ETB')} ${amountToFreeShipping.toFixed(2)} more for Free Shipping`}</span>
                     )}
                   </strong>
-                  <span style={{ fontSize: '0.78rem', color: 'var(--color-gray)' }}>{progressPercent}% towards goal</span>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--color-gray)' }}>{progressPercent}% {language === 'am' ? 'ተጠናቋል' : 'towards goal'}</span>
                 </div>
                 <div style={{ width: '100%', height: '7px', background: '#e0d8c8', borderRadius: '4px', overflow: 'hidden' }}>
                   <div
@@ -214,7 +214,7 @@ const CartPage = () => {
                       <h3 style={{ margin: '0 0 0.3rem', fontSize: '1.05rem', color: 'var(--color-green)' }}>{item.name}</h3>
                     </Link>
                     <p style={{ margin: 0, color: 'var(--color-gray)', fontSize: '0.88rem' }}>
-                      Price: {config?.currency || 'ETB'} {Number(item.price || 0).toFixed(2)}
+                      {t('cart.price', 'Price')}: {t('common.currency', 'ETB')} {Number(item.price || 0).toFixed(2)}
                     </p>
                   </div>
                   <div className={styles.itemControls}>
@@ -240,7 +240,7 @@ const CartPage = () => {
                     </button>
                   </div>
                   <div className={styles.itemPrice}>
-                    {config?.currency || 'ETB'} {(Number(item.price || 0) * item.quantity).toFixed(2)}
+                    {t('common.currency', 'ETB')} {(Number(item.price || 0) * item.quantity).toFixed(2)}
                   </div>
                   <button
                     type="button"
@@ -255,36 +255,36 @@ const CartPage = () => {
             </div>
 
             <div className={styles.orderSummary}>
-              <h2 style={{ fontSize: '1.25rem', marginBottom: '1.2rem', color: 'var(--color-green)' }}>Order Summary</h2>
+              <h2 style={{ fontSize: '1.25rem', marginBottom: '1.2rem', color: 'var(--color-green)' }}>{t('cart.order_summary', 'Order Summary')}</h2>
 
               <div className={styles.summaryRow}>
-                <span>Subtotal</span>
-                <strong>{config?.currency || 'ETB'} {total.toFixed(2)}</strong>
+                <span>{t('cart.subtotal', 'Subtotal')}</span>
+                <strong>{t('common.currency', 'ETB')} {total.toFixed(2)}</strong>
               </div>
 
               {appliedCoupon && (
                 <div className={styles.summaryRow} style={{ color: '#134e35' }}>
-                  <span>Discount ({appliedCoupon.code})</span>
-                  <span>- {config?.currency || 'ETB'} {discountAmount.toFixed(2)}</span>
+                  <span>{language === 'am' ? 'ቅናሽ' : 'Discount'} ({appliedCoupon.code})</span>
+                  <span>- {t('common.currency', 'ETB')} {discountAmount.toFixed(2)}</span>
                 </div>
               )}
 
               <div className={styles.summaryRow}>
-                <span>Shipping Estimate</span>
-                <span>{shipping === 0 ? <Badge variant="success" size="sm">Free</Badge> : `${config?.currency || 'ETB'} ${shipping.toFixed(2)}`}</span>
+                <span>{t('cart.shipping', 'Shipping Estimate')}</span>
+                <span>{shipping === 0 ? <Badge variant="success" size="sm">{language === 'am' ? 'ነፃ' : 'Free'}</Badge> : `${t('common.currency', 'ETB')} ${shipping.toFixed(2)}`}</span>
               </div>
 
               <div className={styles.summaryTotal} style={{ borderTop: '2px solid var(--color-line)', paddingTop: '1rem', marginTop: '1rem' }}>
-                <span style={{ fontSize: '1.1rem', fontWeight: 600 }}>Total</span>
+                <span style={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('cart.total', 'Total Amount')}</span>
                 <span style={{ fontSize: '1.3rem', color: 'var(--color-green)', fontWeight: 700 }}>
-                  {config?.currency || 'ETB'} {finalTotal.toFixed(2)}
+                  {t('common.currency', 'ETB')} {finalTotal.toFixed(2)}
                 </span>
               </div>
 
               {/* Promo Code Form */}
               <div style={{ margin: '1.5rem 0', borderTop: '1px solid var(--color-line)', paddingTop: '1.25rem' }}>
                 <span style={{ fontSize: '0.8rem', color: 'var(--color-gray)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                  Voucher / Promo Code
+                  {t('cart.voucher_label', 'Voucher / Promo Code')}
                 </span>
                 {appliedCoupon ? (
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f5faf7', border: '1px solid #bce3cb', padding: '0.6rem 0.8rem', borderRadius: '4px', marginTop: '0.5rem' }}>
@@ -297,20 +297,20 @@ const CartPage = () => {
                       onClick={handleRemoveCoupon}
                       style={{ background: 'none', border: 'none', color: '#c02b2b', fontSize: '0.78rem', cursor: 'pointer', fontWeight: 600 }}
                     >
-                      Remove
+                      {t('cart.remove', 'Remove')}
                     </button>
                   </div>
                 ) : (
                   <form onSubmit={handleApplyCoupon} style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
                     <input
                       type="text"
-                      placeholder="e.g. HABESHA10"
+                      placeholder={t('cart.promo_placeholder', 'e.g. HABESHA10')}
                       value={promoInput}
                       onChange={(e) => setPromoInput(e.target.value)}
                       style={{ flex: 1, padding: '0.5rem 0.75rem', border: '1px solid var(--color-line)', font: 'inherit', fontSize: '0.88rem' }}
                     />
                     <Button type="submit" variant="outline" size="sm">
-                      Apply
+                      {t('cart.apply_btn', 'Apply')}
                     </Button>
                   </form>
                 )}

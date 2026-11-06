@@ -416,6 +416,52 @@
   background: #f7f3ec;
 }
 
+.langSwitch {
+  display: inline-flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid var(--color-line);
+  border-radius: 24px;
+  padding: 2px 4px;
+  gap: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.langGlobe {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gold);
+  padding: 0 3px 0 6px;
+}
+
+.langOption {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 8px;
+  border-radius: 16px;
+  border: none;
+  background: transparent;
+  color: #666;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.langOption:hover {
+  color: var(--color-dark);
+}
+
+.langOptionActive {
+  background: var(--color-green);
+  color: #ffffff !important;
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(23, 63, 53, 0.25);
+}
+
 .langBtn {
   display: inline-flex;
   align-items: center;

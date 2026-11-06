@@ -9,12 +9,14 @@ import LoadingScreen from '../components/LoadingScreen';
 import { useWishlistStore } from '../store/wishlistStore';
 import { useCartStore } from '../store/cartStore';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import styles from '../styles/wishlist.module.css';
 import Icon from '../components/Icon';
 
 const WishlistPage = () => {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
+  const { t, language } = useLanguage();
   const products = useWishlistStore((state) => state.items);
   const addToCart = useCartStore((state) => state.addToCart);
   const [feedback, setFeedback] = useState('');
@@ -50,19 +52,19 @@ const WishlistPage = () => {
       <main className={styles.container}>
         <div className={styles.heading}>
           <div>
-            <h1>Saved Treasures</h1>
-            <p>A curated collection of your favorite Ethiopian craftsmanship.</p>
+            <h1>{t('wishlist.title', 'Saved Treasures')}</h1>
+            <p>{t('wishlist.sub', 'A curated collection of your favorite Ethiopian craftsmanship.')}</p>
           </div>
           {products.length > 0 && (
             <button type="button" className={styles.moveButton} onClick={handleMoveAll}>
-              <Icon name="cart" size={15} /> &nbsp; Move all to Cart
+              <Icon name="cart" size={15} /> &nbsp; {t('wishlist.move_all', 'Move all to Cart')}
             </button>
           )}
         </div>
         {feedback && (
           <div style={{ background: '#eaf5ee', color: '#0b3d2c', border: '1px solid #b7dfca', padding: '0.8rem 1.2rem', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span>✓ {feedback}</span>
-            <Link href="/cart" style={{ color: '#0b3d2c', fontWeight: 600, textDecoration: 'underline' }}>View Shopping Bag →</Link>
+            <Link href="/cart" style={{ color: '#0b3d2c', fontWeight: 600, textDecoration: 'underline' }}>{t('cart.title', 'View Shopping Bag')} →</Link>
           </div>
         )}
         {products.length ? (
@@ -74,9 +76,9 @@ const WishlistPage = () => {
         ) : (
           <div className={styles.empty}>
             <span>♡</span>
-            <h2>Your treasure chest is waiting.</h2>
-            <p>Save pieces that speak to you while exploring our collection.</p>
-            <Link href="/products">Explore the collection →</Link>
+            <h2>{t('wishlist.empty_title', 'Your treasure chest is waiting.')}</h2>
+            <p>{t('wishlist.empty_desc', 'Save pieces that speak to you while exploring our collection.')}</p>
+            <Link href="/products">{t('wishlist.start_exploring', 'Explore the collection →')}</Link>
           </div>
         )}
       </main>

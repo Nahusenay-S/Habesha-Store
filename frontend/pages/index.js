@@ -37,7 +37,7 @@ const TESTIMONIALS = [
 
 const HomePage = () => {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [featuredProducts, setFeaturedProducts] = useState([]);
 
   useEffect(() => {
@@ -100,11 +100,11 @@ const HomePage = () => {
         <section style={{ maxWidth: '1320px', margin: '0 auto', padding: '4.5rem 2rem 2rem' }}>
           <div className={styles.sectionHeading} style={{ marginBottom: '2rem' }}>
             <div>
-              <span className={styles.eyebrow}>Curated Selection</span>
-              <h2>Featured Heritage Pieces</h2>
+              <span className={styles.eyebrow}>{t('home.curated_title', 'Curated Selection')}</span>
+              <h2>{t('home.curated_sub', 'Featured Heritage Pieces')}</h2>
             </div>
             <Link href="/products" style={{ color: 'var(--color-green)', fontWeight: 600, textDecoration: 'underline' }}>
-              View full collection →
+              {t('home.view_all', 'View full collection →')}
             </Link>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '2rem' }}>
@@ -119,11 +119,11 @@ const HomePage = () => {
       <section className={styles.categories}>
         <div className={styles.sectionHeading}>
           <div>
-            <span className={styles.eyebrow}>Shop by Story</span>
-            <h2>Curated Categories</h2>
+            <span className={styles.eyebrow}>{t('home.categories_title', 'Curated Categories')}</span>
+            <h2>{t('home.categories_sub', 'Shop by cultural story and ancestral craft.')}</h2>
           </div>
           <Link href="/collections" style={{ color: 'var(--color-green)', fontWeight: 600, textDecoration: 'underline' }}>
-            Explore editorial collections →
+            {t('home.view_all', 'Explore editorial collections →')}
           </Link>
         </div>
         <div className={styles.categoryGrid}>
@@ -133,9 +133,9 @@ const HomePage = () => {
           >
             <img src="/images/coffee.jpg" alt="Ethiopian coffee ceremony and jebena" />
             <div className={styles.categoryOverlay}>
-              <span>Origin Coffee</span>
-              <h3>Highland Ritual</h3>
-              <p>Single-origin Sidama & Yirgacheffe</p>
+              <span>{t('home.cat_coffee_title', 'Origin Coffee')}</span>
+              <h3>{language === 'am' ? 'የደጋው ስነ-ስርዓት' : 'Highland Ritual'}</h3>
+              <p>{t('home.cat_coffee_sub', 'Single-origin Sidama & Yirgacheffe')}</p>
             </div>
           </div>
           <div
@@ -144,9 +144,9 @@ const HomePage = () => {
           >
             <img src="/images/textiles.jpg" alt="Handwoven Ethiopian tibeb textile" />
             <div className={styles.categoryOverlay}>
-              <span>Textiles & Tibeb</span>
-              <h3>Woven Heritage</h3>
-              <p>Gossamer cotton spun by hand</p>
+              <span>{t('home.cat_textiles_title', 'Textiles & Tibeb')}</span>
+              <h3>{language === 'am' ? 'የሽመና ቅርስ' : 'Woven Heritage'}</h3>
+              <p>{t('home.cat_textiles_sub', 'Gossamer cotton spun by hand')}</p>
             </div>
           </div>
           <div
@@ -155,9 +155,9 @@ const HomePage = () => {
           >
             <img src="/images/crafts.jpg" alt="Handcrafted Ethiopian pottery and cross" />
             <div className={styles.categoryOverlay}>
-              <span>Pottery & Art</span>
-              <h3>Made with Meaning</h3>
-              <p>Objects for sacred everyday ritual</p>
+              <span>{t('home.cat_crafts_title', 'Pottery & Art')}</span>
+              <h3>{language === 'am' ? 'ጥልቅ ትርጉም ያለው ጥበብ' : 'Made with Meaning'}</h3>
+              <p>{t('home.cat_crafts_sub', 'Objects for sacred everyday living and home ritual')}</p>
             </div>
           </div>
           <div
@@ -166,9 +166,9 @@ const HomePage = () => {
           >
             <img src="/images/spices.jpg" alt="Authentic Ethiopian berbere spices" />
             <div className={styles.categoryOverlay}>
-              <span>Culinary Spices</span>
-              <h3>Highland Flavors</h3>
-              <p>Stone-ground korarima & berbere</p>
+              <span>{t('home.cat_spices_title', 'Highland Spices')}</span>
+              <h3>{language === 'am' ? 'የደጋው ጣዕም' : 'Highland Flavors'}</h3>
+              <p>{t('home.cat_spices_sub', 'Stone-ground berbere, sacred korarima, and sun-dried blends')}</p>
             </div>
           </div>
         </div>
@@ -180,13 +180,11 @@ const HomePage = () => {
           <img src="/images/artisan.jpg" alt="Ethiopian master weaver crafting textile" />
         </div>
         <div className={styles.spotlightCopy}>
-          <span className={styles.eyebrow} style={{ color: '#e4c675' }}>Artisan Spotlight</span>
-          <h2>Three generations of craft in every thread.</h2>
-          <p>
-            Meet the highland weavers of Addis Ababa preserving Ethiopia&apos;s ancient handloom techniques, ensuring fair wages and cultural continuity.
-          </p>
+          <span className={styles.eyebrow} style={{ color: '#e4c675' }}>{t('home.artisan_spotlight_badge', 'Artisan Spotlight')}</span>
+          <h2>{t('home.artisan_spotlight_title', 'Three generations of craft in every thread.')}</h2>
+          <p>{t('home.artisan_spotlight_desc', 'Meet the highland weavers preserving ancient techniques.')}</p>
           <button type="button" onClick={() => router.push('/about')}>
-            Read their story →
+            {t('home.artisan_spotlight_btn', 'Read their story →')}
           </button>
         </div>
       </section>
@@ -194,21 +192,21 @@ const HomePage = () => {
       {/* Editorial Grid */}
       <section className={styles.editorial}>
         <div className={styles.editorialHeading}>
-          <span className={styles.eyebrow}>Curated for the Home</span>
-          <h2>Small objects.<br />Deep roots.</h2>
+          <span className={styles.eyebrow}>{t('home.editorial_sub', 'Curated for the mindful home')}</span>
+          <h2>{t('home.editorial_title', 'Small objects. Deep roots.')}</h2>
         </div>
         <div className={styles.editorialGrid}>
           <div>
             <img src="/images/ceramics.jpg" alt="Traditional Ethiopian clay ceramics" />
-            <span>Traditional Ceramics</span>
+            <span>{t('home.editorial_ceramics', 'Traditional Ceramics')}</span>
           </div>
           <div>
             <img src="/images/heritage-textile.jpg" alt="Natural woven cotton fabric" />
-            <span>Natural Handloom Textiles</span>
+            <span>{t('home.editorial_textiles', 'Natural Handloom Textiles')}</span>
           </div>
           <div>
             <img src="/images/coffee.jpg" alt="Traditional Jebena coffee brewing" />
-            <span>The Coffee Ceremony</span>
+            <span>{t('home.editorial_ceremony', 'The Coffee Ceremony')}</span>
           </div>
         </div>
       </section>
@@ -217,24 +215,32 @@ const HomePage = () => {
       <section className={styles.testimonials}>
         <div className={styles.sectionHeading}>
           <div>
-            <span className={styles.eyebrow}>Verified Feedback</span>
-            <h2>Stories from Collectors</h2>
+            <span className={styles.eyebrow}>{t('home.testimonials_badge', 'Verified Feedback')}</span>
+            <h2>{t('home.testimonials_title', 'Stories from Global Collectors')}</h2>
           </div>
         </div>
         <div className={styles.testimonialsGrid}>
-          {TESTIMONIALS.map((t, idx) => (
+          {TESTIMONIALS.map((testimonial, idx) => (
             <article key={idx} className={styles.testimonialCard}>
               <div style={{ color: 'var(--color-gold)', marginBottom: '0.75rem', fontSize: '1rem' }}>
-                {'★'.repeat(t.rating)}
+                {'★'.repeat(testimonial.rating)}
               </div>
-              <p className={styles.quoteText}>{t.quote}</p>
+              <p className={styles.quoteText}>
+                {language === 'am' && idx === 0
+                  ? '“የተሸመነው ጋቢ ጥራት በእውነት አስደናቂ ነው። የጥበብ ጥልፈቱ ትክክለኛውን የኢትዮጵያ ባህል ያንፀባርቃል። በኢትዮጵያ አየር መንገድ ካርጎ በአራት ቀናት ውስጥ በሰላም ደርሶኛል።”'
+                  : language === 'am' && idx === 1
+                  ? '“እንደ ቡና አፍቃሪ፣ ይርጋጨፌን በሸክላ ጀበና ማፍላት የጠዋት ኑሮአችንን ቀይሮታል። እጅግ አስደናቂ መዓዛና ጥራት ያለው አገልግሎት።”'
+                  : language === 'am' && idx === 2
+                  ? '“ከአዲስ አበባ ውጭ ትክክለኛ የኢትዮጵያ ደጋ በርበሬ ከነኮረሪማውና በሶብላው ማግኘት የማይቻል መስሎኝ ነበር። መዓዛው ቤቱን በሙሉ ይሞላዋል።”'
+                  : testimonial.quote}
+              </p>
               <div className={styles.authorMeta}>
                 <div>
-                  <span className={styles.authorName}>{t.author}</span>
-                  <span className={styles.authorLocation}>{t.location}</span>
+                  <span className={styles.authorName}>{testimonial.author}</span>
+                  <span className={styles.authorLocation}>{testimonial.location}</span>
                 </div>
                 <span style={{ fontSize: '0.75rem', color: 'var(--color-green)', fontWeight: 600 }}>
-                  ✓ Verified Collector
+                  ✓ {t('home.verified_collector', 'Verified Collector')}
                 </span>
               </div>
             </article>

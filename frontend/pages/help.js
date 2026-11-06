@@ -4,8 +4,9 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import styles from '../styles/help.module.css';
 import Icon from '../components/Icon';
+import { useLanguage } from '../context/LanguageContext';
 
-const faqList = [
+const faqListEn = [
   {
     category: 'shipping',
     q: 'How do I track my order via Ethiopian Airlines Cargo?',
@@ -48,28 +49,70 @@ const faqList = [
   },
 ];
 
-const popularQueries = [
-  'Shipping status',
-  'Telebirr help',
-  'Artisan authenticity',
-  'Return policy',
-  'Care instructions',
+const faqListAm = [
+  {
+    category: 'shipping',
+    q: 'ትዕዛዜን በኢትዮጵያ አየር መንገድ ካርጎ እንዴት መከታተል እችላለሁ?',
+    a: 'ባለሙያው ዕቃዎን አዘጋጅቶ ሲልክ፣ የካርጎ መከታተያ ቁጥር (AWB) በትዕዛዝ ታሪክዎ ውስጥ ወዲያውኑ ይዘጋጃል። በተጨማሪም የበረራውን ሂደት የሚያሳይ የኢሜይል ማሳወቂያ ይደርስዎታል።',
+  },
+  {
+    category: 'payments',
+    q: 'በቴሌብር ወይም በሲቢኢ ብር (CBE Birr) መክፈል ይቻላል?',
+    a: 'አዎ! ቴሌብርን እና ሲቢኢ ብርን ጨምሮ በቪዛ፣ ማስተርካርድ እና በዓለም አቀፍ የክፍያ መንገዶች መክፈል ይችላሉ። በክፍያ ገጹ ላይ የሚፈልጉትን አማራጭ ይምረጡ።',
+  },
+  {
+    category: 'authenticity',
+    q: 'የእደ-ጥበብ ባለሙያዎች ማረጋገጫና አመጣጥ እንዴት ይፈተሻል?',
+    a: 'በሀበሻ ስቶር የሚሳተፉ ሁሉም ባለሙያዎች በእጅ የሚሰሩ (ሸማኔዎች)፣ የተፈጥሮ ሸክላ የሚጠቀሙ እና ጥራት ያላቸው ቅመሞች አቅራቢ መሆናቸው በአካል ተረጋግጦ እውቅና ይሰጣቸዋል።',
+  },
+  {
+    category: 'returns',
+    q: 'የዕቃ መመለስ እና የተከፈለ ገንዘብ ተመላሽ እንዴት ይሰራል?',
+    a: 'ዕቃው ከደረሰዎት ቀን ጀምሮ ለ7 ቀናት የይግባኝ ጊዜ አለዎት። ዕቃው ላይ ጉዳት ከደረሰ ወይም ካዘዙት የተለየ ከሆነ የዕቃውን ፎቶ ለደንበኞች አገልግሎት በመላክ አዲስ እንዲላክልዎ ወይም ሙሉ ገንዘብዎ እንዲመለስ ማድረግ ይችላሉ።',
+  },
+  {
+    category: 'shipping',
+    q: 'ዓለም አቀፍ ማጓጓዣ ስንት ጊዜ ይወስዳል?',
+    a: 'በኢትዮጵያ አየር መንገድ ካርጎ ቀጥታ በረራ ከአዲስ አበባ ተነስቶ ወደ አሜሪካ እና አውሮፓ ዋና ከተሞች ከ4 እስከ 7 የስራ ቀናት ውስጥ ይደርሳል። በአዲስ አበባ ውስጥ ከ24 እስከ 48 ሰዓታት ውስጥ ይደርሳል።',
+  },
+  {
+    category: 'care',
+    q: 'የሀበሻ ቀሚስ እና የጥበብ አልባሳት እንዴት ይያዛሉ?',
+    a: 'ከ100% ጥጥ እና ከጥበብ ክር የተሸመኑ አልባሳት በቀዝቃዛ ውሃ በቀስታ በእጅ መታጠብ ወይም በደረቅ ጽዳት (Dry Cleaning) መጽዳት አለባቸው። በማጠቢያ ማሽን ውስጥ ማድረቅ አይመከርም።',
+  },
+  {
+    category: 'sellers',
+    q: 'የእደ-ጥበብ ባለሙያ ወይም ሸማኔ በሀበሻ ስቶር ላይ እንዴት መሸጥ ይችላል?',
+    a: 'ትውልድ ሸማኔዎችን፣ የሸክላ ሰሪዎችን፣ የብር አንጥረኞችን እና የቡና አዘጋጆችን በደስታ እንቀበላለን። "ተመዝገብ" በሚለው ገጽ ላይ "የእደ-ጥበብ ባለሙያ" የሚለውን በመምረጥ ማመልከት ይችላሉ። ቡድናችን በ48 ሰዓት ውስጥ ያነጋግርዎታል።',
+  },
+  {
+    category: 'orders',
+    q: 'ትዕዛዝ ከሰጠሁ በኋላ መሰረዝ ወይም ማሻሻል እችላለሁ?',
+    a: 'ትዕዛዝዎ "በመጠባበቅ ላይ" ባለበት ወቅት ከትዕዛዝ ዝርዝር ገጽዎ በቀጥታ መሰረዝ ይችላሉ። ባለሙያው መሸመን ከጀመረ ግን የደንበኞች አገልግሎትን ማነጋገር ያስፈልጋል።',
+  },
 ];
 
 export default function HelpPage() {
+  const { t, language } = useLanguage();
   const [openIndex, setOpenIndex] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const currentFaqList = language === 'am' ? faqListAm : faqListEn;
+
+  const popularQueries = language === 'am'
+    ? ['የካርጎ ሁኔታ', 'የቴሌብር ክፍያ', 'የእደ-ጥበብ ትክክለኛነት', 'የዕቃ መመለስ', 'የአያያዝ መመሪያ']
+    : ['Shipping status', 'Telebirr help', 'Artisan authenticity', 'Return policy', 'Care instructions'];
+
   const filteredFaqs = useMemo(() => {
     const trimmed = searchQuery.trim().toLowerCase();
-    if (!trimmed) return faqList;
-    return faqList.filter(
+    if (!trimmed) return currentFaqList;
+    return currentFaqList.filter(
       (item) =>
         item.q.toLowerCase().includes(trimmed) ||
         item.a.toLowerCase().includes(trimmed) ||
         item.category.toLowerCase().includes(trimmed)
     );
-  }, [searchQuery]);
+  }, [searchQuery, currentFaqList]);
 
   const handlePillClick = (query) => {
     if (searchQuery.toLowerCase() === query.toLowerCase()) {
@@ -92,21 +135,21 @@ export default function HelpPage() {
   return (
     <>
       <Head>
-        <title>Help Center - Habesha Store</title>
+        <title>{t('help.title', 'Help Center')} - Habesha Store</title>
         <meta
           name="description"
-          content="Find answers about shipping, payments, Ethiopian artisan provenance, and returns at Habesha Store."
+          content={t('help.hero_title', 'Find answers about shipping, payments, Ethiopian artisan provenance, and returns at Habesha Store.')}
         />
       </Head>
       <Header />
       <main className={styles.container}>
         <section className={styles.hero}>
-          <h1>How can we help you today?</h1>
+          <h1>{t('help.hero_title', 'How can we help you today?')}</h1>
           <div className={styles.searchWrapper}>
             <input
               type="text"
               aria-label="Search help center"
-              placeholder="Search for tracking, payments, or authenticity..."
+              placeholder={t('help.search_placeholder', 'Search for tracking, payments, or authenticity...')}
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -125,7 +168,7 @@ export default function HelpPage() {
             )}
           </div>
           <div className={styles.pillRow}>
-            <span className={styles.pillLabel}>Popular topics:</span>
+            <span className={styles.pillLabel}>{t('help.popular_label', 'Popular topics:')}</span>
             {popularQueries.map((pill) => {
               const isActive = searchQuery.toLowerCase() === pill.toLowerCase();
               return (
@@ -144,10 +187,10 @@ export default function HelpPage() {
 
         <section className={styles.cards}>
           {[
-            ['truck', 'Shipping & Delivery', 'Global logistics powered by Ethiopian Airlines Cargo for authentic delivery.', 'shipping'],
-            ['check', 'Payments & Birr', 'Secure transactions via Telebirr, CBE Birr, and international cards.', 'payments'],
-            ['edit', 'Artisan Policies', 'Responsible production guidelines and ethical artisan compensation.', 'sellers'],
-            ['heart', 'Artisan Authenticity', 'Ensuring every textile and spice is ethically sourced and verified.', 'authenticity'],
+            ['truck', t('help.shipping_card_title', 'Shipping & Delivery'), t('help.shipping_card_desc', 'Global logistics powered by Ethiopian Airlines Cargo for authentic delivery.'), 'shipping'],
+            ['check', t('help.payments_card_title', 'Payments & Birr'), t('help.payments_card_desc', 'Secure transactions via Telebirr, CBE Birr, and international cards.'), 'payments'],
+            ['edit', t('help.artisan_card_title', 'Artisan Policies'), t('help.artisan_card_desc', 'Responsible production guidelines and ethical artisan compensation.'), 'sellers'],
+            ['heart', t('help.authenticity_card_title', 'Artisan Authenticity'), t('help.authenticity_card_desc', 'Ensuring every textile and spice is ethically sourced and verified.'), 'authenticity'],
           ].map(([icon, title, copy, cat]) => (
             <article key={title}>
               <b><Icon name={icon} /></b>
@@ -159,32 +202,32 @@ export default function HelpPage() {
                 style={{ background: 'none', border: 'none', padding: 0, font: 'inherit', textAlign: 'left', cursor: 'pointer' }}
                 onClick={() => handleCategoryCardClick(cat)}
               >
-                Explore answers →
+                {language === 'am' ? 'መልሶችን ይመልከቱ →' : 'Explore answers →'}
               </button>
             </article>
           ))}
         </section>
 
         <section className={styles.faq} id="faq">
-          <h2>Frequently Asked Questions</h2>
+          <h2>{t('help.faq_heading', 'Frequently Asked Questions')}</h2>
           <p>
             {searchQuery
-              ? `Showing results for "${searchQuery}" (${filteredFaqs.length} found)`
-              : 'Quick answers to common questions from our community.'}
+              ? (language === 'am' ? `ለ "${searchQuery}" የተገኙ ውጤቶች (${filteredFaqs.length} ተገኝተዋል)` : `Showing results for "${searchQuery}" (${filteredFaqs.length} found)`)
+              : (language === 'am' ? 'ከማህበረሰባችን ለሚነሱ ጥያቄዎች ፈጣን መልሶች።' : 'Quick answers to common questions from our community.')}
           </p>
 
           {filteredFaqs.length === 0 ? (
             <div className={styles.noResults}>
-              <p>No answers found matching &ldquo;{searchQuery}&rdquo;.</p>
+              <p>{language === 'am' ? `ለ "${searchQuery}" የተገኘ መልስ የለም።` : `No answers found matching "${searchQuery}".`}</p>
               <p style={{ fontSize: '0.8rem', marginTop: '0.4rem' }}>
-                Try searching for general keywords like &ldquo;cargo&rdquo;, &ldquo;telebirr&rdquo;, or &ldquo;cotton&rdquo;.
+                {language === 'am' ? 'እንደ "ካርጎ"፣ "ቴሌብር" ወይም "ጥጥ" ያሉ ቃላትን ተጠቅመው ይፈልጉ።' : 'Try searching for general keywords like "cargo", "telebirr", or "cotton".'}
               </p>
               <button
                 type="button"
                 className={styles.resetSearchBtn}
                 onClick={() => setSearchQuery('')}
               >
-                Reset Search Filter
+                {language === 'am' ? 'ፍለጋውን መልስ' : 'Reset Search Filter'}
               </button>
             </div>
           ) : (
@@ -208,9 +251,9 @@ export default function HelpPage() {
         </section>
 
         <section className={styles.contact}>
-          <h2>Still need assistance?</h2>
-          <p>Our concierge support team in Addis Ababa and Washington D.C. is available 24/7 to help with your Habesha Store experience.</p>
-          <a href="mailto:support@habeshastore.test">✉ &nbsp; Email Support Concierge</a>
+          <h2>{t('help.still_need_help', 'Still need assistance?')}</h2>
+          <p>{t('help.contact_support', 'Our concierge support team in Addis Ababa and Washington D.C. is available 24/7 to help with your Habesha Store experience.')}</p>
+          <a href="mailto:support@habeshastore.test">{t('help.email_support', '✉ Email Support Concierge')}</a>
         </section>
       </main>
       <Footer />

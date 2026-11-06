@@ -7,6 +7,7 @@ import Badge from '../components/Badge';
 import Icon from '../components/Icon';
 import { adminAPI } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import styles from '../styles/admin-dashboard.module.css';
 
 const SALES_DATA = [
@@ -26,6 +27,7 @@ const SALES_DATA = [
 const AdminDashboardPage = () => {
   const router = useRouter();
   const { user, loading: authLoading, logout } = useAuth();
+  const { t, language } = useLanguage();
   const [data, setData] = useState(null);
   const [form, setForm] = useState(null);
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'analytics' | 'orders' | 'products' | 'transactions' | 'shipping' | 'users'
@@ -188,21 +190,21 @@ const AdminDashboardPage = () => {
               className={`${styles.pill} ${activeTab === 'overview' ? styles.pillActive : ''}`}
               onClick={() => setActiveTab('overview')}
             >
-              Overview
+              {t('admin.tab_overview', 'Overview')}
             </button>
             <button
               type="button"
               className={`${styles.pill} ${activeTab === 'analytics' ? styles.pillActive : ''}`}
               onClick={() => setActiveTab('analytics')}
             >
-              Analytics
+              {t('admin.tab_analytics', 'Analytics')}
             </button>
             <button
               type="button"
               className={`${styles.pill} ${activeTab === 'orders' ? styles.pillActive : ''}`}
               onClick={() => setActiveTab('orders')}
             >
-              Order <span className={styles.pillBadge}>{recentOrdersCount}</span>
+              {t('admin.tab_orders', 'Order')} <span className={styles.pillBadge}>{recentOrdersCount}</span>
             </button>
             <button
               type="button"
@@ -212,21 +214,21 @@ const AdminDashboardPage = () => {
                 loadProducts();
               }}
             >
-              Product
+              {t('admin.tab_products', 'Product')}
             </button>
             <button
               type="button"
               className={`${styles.pill} ${activeTab === 'transactions' ? styles.pillActive : ''}`}
               onClick={() => setActiveTab('transactions')}
             >
-              Transaction
+              {t('admin.tab_transactions', 'Transaction')}
             </button>
             <button
               type="button"
               className={`${styles.pill} ${activeTab === 'shipping' ? styles.pillActive : ''}`}
               onClick={() => setActiveTab('shipping')}
             >
-              Shipping & Gateway
+              {t('admin.tab_shipping', 'Shipping & Gateway')}
             </button>
             <button
               type="button"
@@ -236,14 +238,14 @@ const AdminDashboardPage = () => {
                 loadUsers();
               }}
             >
-              Users
+              {t('admin.tab_users', 'Users')}
             </button>
           </nav>
 
           {/* Topbar Actions */}
           <div className={styles.topbarActions}>
             <Link href="/" target="_blank" className={styles.storeLink} title="Open customer-facing marketplace in a new tab">
-              <span>View Storefront</span>
+              <span>{language === 'am' ? 'ሱቁን እይ' : 'View Storefront'}</span>
               <span>↗</span>
             </Link>
 
@@ -334,8 +336,8 @@ const AdminDashboardPage = () => {
               {/* Header Title & Date Range / Export */}
               <div className={styles.headerRow}>
                 <div>
-                  <h1 className={styles.headerTitle}>Overview</h1>
-                  <p className={styles.headerSubtitle}>Detailed information about your store</p>
+                  <h1 className={styles.headerTitle}>{t('admin.title', 'Overview')}</h1>
+                  <p className={styles.headerSubtitle}>{t('admin.subtitle', 'Detailed information about your store')}</p>
                 </div>
                 <div className={styles.headerControls}>
                   <select
@@ -343,13 +345,13 @@ const AdminDashboardPage = () => {
                     value={timeRange}
                     onChange={(e) => setTimeRange(e.target.value)}
                   >
-                    <option value="month">This month</option>
-                    <option value="week">This week</option>
-                    <option value="year">All time</option>
+                    <option value="month">{language === 'am' ? 'በዚህ ወር' : 'This month'}</option>
+                    <option value="week">{language === 'am' ? 'በዚህ ሳምንት' : 'This week'}</option>
+                    <option value="year">{language === 'am' ? 'ሁሉም ጊዜ' : 'All time'}</option>
                   </select>
 
                   <button type="button" className={styles.exportBtn} onClick={handleExport}>
-                    <span>Export</span>
+                    <span>{t('admin.export', 'Export')}</span>
                     <span>⭳</span>
                   </button>
                 </div>
@@ -362,12 +364,12 @@ const AdminDashboardPage = () => {
                   {/* Card 1: Total Revenue */}
                   <div className={styles.kpiCard}>
                     <div>
-                      <div className={styles.kpiLabel}>Total Revenue</div>
+                      <div className={styles.kpiLabel}>{t('admin.total_revenue', 'Total Revenue')}</div>
                       <div className={styles.kpiValueRow}>
-                        <span className={styles.kpiAmount}>{form.currency} {totalRevenueNumber}</span>
+                        <span className={styles.kpiAmount}>{t('common.currency', 'ETB')} {totalRevenueNumber}</span>
                         <span className={styles.kpiGrowthPill}>+30.4%</span>
                       </div>
-                      <span className={styles.kpiSubtext}>{form.currency} 12,000 last month</span>
+                      <span className={styles.kpiSubtext}>{t('common.currency', 'ETB')} 12,000 {language === 'am' ? 'ባለፈው ወር' : 'last month'}</span>
                     </div>
                     {/* SVG Sparkline Bars */}
                     <div className={styles.kpiChartContainer}>
@@ -391,12 +393,12 @@ const AdminDashboardPage = () => {
                   {/* Card 2: Total Customers */}
                   <div className={styles.kpiCard}>
                     <div>
-                      <div className={styles.kpiLabel}>Total Customers</div>
+                      <div className={styles.kpiLabel}>{t('admin.total_customers', 'Total Customers')}</div>
                       <div className={styles.kpiValueRow}>
                         <span className={styles.kpiAmount}>{totalCustomersCount}</span>
                         <span className={styles.kpiGrowthPill}>+79.6%</span>
                       </div>
-                      <span className={styles.kpiSubtext}>683 users last month</span>
+                      <span className={styles.kpiSubtext}>683 {language === 'am' ? 'ባለፈው ወር' : 'users last month'}</span>
                     </div>
                     {/* Donut Chart */}
                     <div className={styles.kpiChartContainer}>
@@ -420,8 +422,8 @@ const AdminDashboardPage = () => {
                         </span>
                       </div>
                       <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.65rem', color: '#6b7280', marginTop: '4px' }}>
-                        <span>● Collectors</span>
-                        <span>○ Artisans</span>
+                        <span>● {language === 'am' ? 'ገዢዎች' : 'Collectors'}</span>
+                        <span>○ {language === 'am' ? 'ባለሙያዎች' : 'Artisans'}</span>
                       </div>
                     </div>
                   </div>
@@ -429,12 +431,12 @@ const AdminDashboardPage = () => {
                   {/* Card 3: Total Orders */}
                   <div className={styles.kpiCard}>
                     <div>
-                      <div className={styles.kpiLabel}>Total Orders</div>
+                      <div className={styles.kpiLabel}>{t('admin.total_orders', 'Total Orders')}</div>
                       <div className={styles.kpiValueRow}>
                         <span className={styles.kpiAmount}>{totalOrdersCount}</span>
                         <span className={styles.kpiGrowthPill}>+51.3%</span>
                       </div>
-                      <span className={styles.kpiSubtext}>10,056 orders last month</span>
+                      <span className={styles.kpiSubtext}>10,056 {language === 'am' ? 'ባለፈው ወር' : 'orders last month'}</span>
                     </div>
                     {/* Spline Wave Trendline */}
                     <div className={styles.kpiChartContainer}>
@@ -460,10 +462,10 @@ const AdminDashboardPage = () => {
                 {/* Right Column: Sales Analytics Chart */}
                 <div className={styles.analyticsCard}>
                   <div className={styles.chartHeader}>
-                    <h3 className={styles.chartTitle}>Sales Analytics</h3>
+                    <h3 className={styles.chartTitle}>{t('admin.sales_analytics', 'Sales Analytics')}</h3>
                     <div className={styles.chartLegend}>
-                      <span><span className={styles.legendDotSold} /> Products sold</span>
-                      <span><span className={styles.legendDotReturn} /> Product returns</span>
+                      <span><span className={styles.legendDotSold} /> {t('admin.products_sold', 'Products sold')}</span>
+                      <span><span className={styles.legendDotReturn} /> {t('admin.product_returns', 'Product returns')}</span>
                     </div>
                   </div>
 
@@ -522,9 +524,9 @@ const AdminDashboardPage = () => {
                 {/* Widget 1: Top sales by region / destination */}
                 <div className={styles.widgetCard}>
                   <div className={styles.widgetHeader}>
-                    <h4 className={styles.widgetTitle}>Top sales by region</h4>
+                    <h4 className={styles.widgetTitle}>{t('admin.top_sales_country', 'Top sales by region')}</h4>
                     <button type="button" className={styles.seeAllBtn} onClick={() => setActiveTab('analytics')}>
-                      See all
+                      {t('admin.see_all', 'See all')}
                     </button>
                   </div>
                   <div className={styles.regionList}>
@@ -532,7 +534,7 @@ const AdminDashboardPage = () => {
                       <span className={styles.regionFlag}>🇪🇹</span>
                       <div className={styles.regionDetails}>
                         <div className={styles.regionMeta}>
-                          <span>Addis Ababa & Central</span>
+                          <span>{language === 'am' ? 'አዲስ አበባ እና ማዕከላዊ' : 'Addis Ababa & Central'}</span>
                           <span>53%</span>
                         </div>
                         <div className={styles.regionTrack}>
@@ -545,7 +547,7 @@ const AdminDashboardPage = () => {
                       <span className={styles.regionFlag}>🇺🇸</span>
                       <div className={styles.regionDetails}>
                         <div className={styles.regionMeta}>
-                          <span>Diaspora (North America)</span>
+                          <span>{language === 'am' ? 'ዲያስፖራ (ሰሜን አሜሪካ)' : 'Diaspora (North America)'}</span>
                           <span>28%</span>
                         </div>
                         <div className={styles.regionTrack}>
@@ -558,7 +560,7 @@ const AdminDashboardPage = () => {
                       <span className={styles.regionFlag}>🌿</span>
                       <div className={styles.regionDetails}>
                         <div className={styles.regionMeta}>
-                          <span>Highland Guilds & Hawassa</span>
+                          <span>{language === 'am' ? 'የደጋ ማህበራት እና ሀዋሳ' : 'Highland Guilds & Hawassa'}</span>
                           <span>19%</span>
                         </div>
                         <div className={styles.regionTrack}>
@@ -572,18 +574,18 @@ const AdminDashboardPage = () => {
                 {/* Widget 2: Product sales table */}
                 <div className={styles.widgetCard}>
                   <div className={styles.widgetHeader}>
-                    <h4 className={styles.widgetTitle}>Product sales</h4>
+                    <h4 className={styles.widgetTitle}>{t('admin.product_sales', 'Product sales')}</h4>
                     <button type="button" className={styles.seeAllBtn} onClick={() => { setActiveTab('products'); loadProducts(); }}>
-                      See all
+                      {t('admin.see_all', 'See all')}
                     </button>
                   </div>
                   <table className={styles.productTable}>
                     <thead>
                       <tr>
-                        <th>Item</th>
-                        <th>Stock</th>
-                        <th>Price</th>
-                        <th style={{ textAlign: 'right' }}>Items sold</th>
+                        <th>{t('admin.item', 'Item')}</th>
+                        <th>{t('admin.stock', 'Stock')}</th>
+                        <th>{t('admin.price', 'Price')}</th>
+                        <th style={{ textAlign: 'right' }}>{t('admin.items_sold', 'Items sold')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -591,33 +593,33 @@ const AdminDashboardPage = () => {
                         <td>
                           <div className={styles.productRowInfo}>
                             <img src="/images/heritage-textile.jpg" alt="Tibeb Dress" className={styles.productRowThumb} />
-                            <span className={styles.productRowName}>Handwoven Tibeb Dress</span>
+                            <span className={styles.productRowName}>{language === 'am' ? 'የእጅ ሽመና የጥበብ ቀሚስ' : 'Handwoven Tibeb Dress'}</span>
                           </div>
                         </td>
                         <td>118</td>
-                        <td>{form.currency} 3,850</td>
+                        <td>{t('common.currency', 'ETB')} 3,850</td>
                         <td style={{ textAlign: 'right', fontWeight: 600 }}>294</td>
                       </tr>
                       <tr>
                         <td>
                           <div className={styles.productRowInfo}>
                             <img src="/images/coffee.jpg" alt="Highland Roast" className={styles.productRowThumb} />
-                            <span className={styles.productRowName}>Yirgacheffe Roast</span>
+                            <span className={styles.productRowName}>{language === 'am' ? 'የይርጋጨፌ የተቆላ ቡና' : 'Yirgacheffe Roast'}</span>
                           </div>
                         </td>
                         <td>29</td>
-                        <td>{form.currency} 1,450</td>
+                        <td>{t('common.currency', 'ETB')} 1,450</td>
                         <td style={{ textAlign: 'right', fontWeight: 600 }}>569</td>
                       </tr>
                       <tr>
                         <td>
                           <div className={styles.productRowInfo}>
                             <img src="/images/pottery.jpg" alt="Jebena" className={styles.productRowThumb} />
-                            <span className={styles.productRowName}>Ceremonial Clay Jebena</span>
+                            <span className={styles.productRowName}>{language === 'am' ? 'ባህላዊ የሸክላ ጀበና' : 'Ceremonial Clay Jebena'}</span>
                           </div>
                         </td>
                         <td>98</td>
-                        <td>{form.currency} 2,200</td>
+                        <td>{t('common.currency', 'ETB')} 2,200</td>
                         <td style={{ textAlign: 'right', fontWeight: 600 }}>162</td>
                       </tr>
                     </tbody>
@@ -626,6 +628,12 @@ const AdminDashboardPage = () => {
 
                 {/* Widget 3: Last activity feed */}
                 <div className={styles.widgetCard}>
+                  <div className={styles.widgetHeader}>
+                    <h4 className={styles.widgetTitle}>{t('admin.last_activity', 'Last activity')}</h4>
+                    <button type="button" className={styles.seeAllBtn} onClick={() => setActiveTab('orders')}>
+                      {t('admin.see_all', 'See all')}
+                    </button>
+                  </div>
                   <div className={styles.widgetHeader}>
                     <h4 className={styles.widgetTitle}>Last activity</h4>
                     <button type="button" className={styles.seeAllBtn} onClick={() => setActiveTab('orders')}>

@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { paymentAPI } from '../../lib/api';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
@@ -13,6 +14,7 @@ import styles from '../../styles/payment-detail.module.css';
 const PaymentDetailPage = () => {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
+  const { t, language } = useLanguage();
   const { id } = router.query;
   const [payment, setPayment] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -117,16 +119,16 @@ const PaymentDetailPage = () => {
     return (
       <>
         <Head>
-          <title>Payment Not Found - Habesha Store</title>
+          <title>{t('payment_detail.not_found', 'Payment Record Not Found')} - Habesha Store</title>
         </Head>
         <Header />
         <div className={styles.container}>
           <div className={styles.errorCard}>
             <span style={{ fontSize: '3rem' }}>📜</span>
-            <h2>Payment Record Not Found</h2>
-            <p>We could not locate this payment record or you do not have permission to view it.</p>
+            <h2>{t('payment_detail.not_found', 'Payment Record Not Found')}</h2>
+            <p>{t('payment_detail.not_found_desc', 'We could not locate this payment record or you do not have permission to view it.')}</p>
             <Link href="/payment-history" className={styles.downloadBtn}>
-              ← Return to Payment History
+              {t('payment_detail.back', '← Return to Payment Records')}
             </Link>
           </div>
         </div>
@@ -143,7 +145,7 @@ const PaymentDetailPage = () => {
   return (
     <>
       <Head>
-        <title>Payment #{id} - Habesha Store</title>
+        <title>{language === 'am' ? 'የክፍያ መዝገብ' : 'Payment'} #{id} - Habesha Store</title>
         <meta name="description" content="Detailed receipt and payment transaction record on Habesha Store." />
       </Head>
       <Header />
@@ -153,14 +155,14 @@ const PaymentDetailPage = () => {
           className={styles.backBtn}
           onClick={() => router.push('/payment-history')}
         >
-          ← Return to Payment Records
+          {t('payment_detail.back', '← Return to Payment Records')}
         </button>
 
         <div className={styles.paymentDetail}>
           <div className={styles.header}>
             <div>
-              <span className={styles.eyebrow}>Transaction Receipt</span>
-              <h1>Payment Details</h1>
+              <span className={styles.eyebrow}>{t('payment_detail.receipt_eyebrow', 'Transaction Receipt')}</span>
+              <h1>{t('payment_detail.title', 'Payment Details')}</h1>
             </div>
             <Badge variant={getStatusBadgeVariant(payment.status)} size="lg">
               {payment.status?.toUpperCase()}
@@ -175,21 +177,21 @@ const PaymentDetailPage = () => {
 
           <div className={styles.grid}>
             <div className={styles.card}>
-              <h3>Payment Summary</h3>
+              <h3>{t('payment_detail.summary', 'Payment Summary')}</h3>
               <div className={styles.detail}>
-                <span>Amount:</span>
-                <strong>ETB {Number(payment.amount || 0).toFixed(2)}</strong>
+                <span>{t('payment_detail.amount', 'Amount:')}</span>
+                <strong>{t('common.currency', 'ETB')} {Number(payment.amount || 0).toFixed(2)}</strong>
               </div>
               <div className={styles.detail}>
-                <span>Currency:</span>
-                <strong>{payment.currency || 'ETB'}</strong>
+                <span>{t('payment_detail.currency', 'Currency:')}</span>
+                <strong>{language === 'am' ? 'ብር (ETB)' : (payment.currency || 'ETB')}</strong>
               </div>
               <div className={styles.detail}>
-                <span>Payment Method:</span>
+                <span>{t('payment_detail.method', 'Payment Method:')}</span>
                 <strong className={styles.method}>{payment.paymentMethod || 'Online'}</strong>
               </div>
               <div className={styles.detail}>
-                <span>Transaction ID:</span>
+                <span>{t('payment_detail.tx_id', 'Transaction ID:')}</span>
                 <strong className={styles.transactionId}>
                   {payment.transactionId || payment.stripePaymentIntentId || id}
                 </strong>
@@ -197,55 +199,55 @@ const PaymentDetailPage = () => {
             </div>
 
             <div className={styles.card}>
-              <h3>Timestamps</h3>
+              <h3>{t('payment_detail.timestamps', 'Timestamps')}</h3>
               <div className={styles.detail}>
-                <span>Created:</span>
+                <span>{t('payment_detail.created', 'Created:')}</span>
                 <strong>{payment.createdAt ? new Date(payment.createdAt).toLocaleString() : '—'}</strong>
               </div>
               {payment.paidAt && (
                 <div className={styles.detail}>
-                  <span>Settled / Paid:</span>
+                  <span>{t('payment_detail.settled', 'Settled / Paid:')}</span>
                   <strong>{new Date(payment.paidAt).toLocaleString()}</strong>
                 </div>
               )}
               {payment.refundedAt && (
                 <div className={styles.detail}>
-                  <span>Refunded:</span>
+                  <span>{t('payment_detail.refunded', 'Refunded:')}</span>
                   <strong>{new Date(payment.refundedAt).toLocaleString()}</strong>
                 </div>
               )}
             </div>
 
             <div className={styles.card}>
-              <h3>Associated Order</h3>
+              <h3>{t('payment_detail.associated_order', 'Associated Order')}</h3>
               <div className={styles.detail}>
-                <span>Order ID:</span>
+                <span>{t('payment_detail.order_id', 'Order ID:')}</span>
                 <strong>
                   {orderIdentifier !== 'N/A' ? (
                     <Link href={`/orders/${orderIdentifier}`} style={{ color: 'var(--color-gold)', textDecoration: 'underline' }}>
                       #{orderIdentifier.toString().slice(0, 8).toUpperCase()}
                     </Link>
                   ) : (
-                    'Not attached'
+                    language === 'am' ? 'አልተያያዘም' : 'Not attached'
                   )}
                 </strong>
               </div>
               <div className={styles.detail}>
-                <span>Invoice Number:</span>
-                <strong>{payment.invoiceNumber || 'Pending Generation'}</strong>
+                <span>{t('payment_detail.invoice_no', 'Invoice Number:')}</span>
+                <strong>{payment.invoiceNumber || (language === 'am' ? 'በመዘጋጀት ላይ' : 'Pending Generation')}</strong>
               </div>
             </div>
 
             {payment.refundAmount && (
               <div className={styles.card}>
-                <h3>Refund Information</h3>
+                <h3>{t('payment_detail.refund_info', 'Refund Information')}</h3>
                 <div className={styles.detail}>
-                  <span>Refund Amount:</span>
-                  <strong>ETB {Number(payment.refundAmount || 0).toFixed(2)}</strong>
+                  <span>{t('payment_detail.refund_amount', 'Refund Amount:')}</span>
+                  <strong>{t('common.currency', 'ETB')} {Number(payment.refundAmount || 0).toFixed(2)}</strong>
                 </div>
                 <div className={styles.detail}>
-                  <span>Reason:</span>
-                  <strong>{payment.refundReason || 'Standard Refund'}</strong>
+                  <span>{t('payment_detail.refund_reason', 'Reason:')}</span>
+                  <strong>{payment.refundReason || (language === 'am' ? 'መደበኛ ተመላሽ' : 'Standard Refund')}</strong>
                 </div>
               </div>
             )}
@@ -259,17 +261,17 @@ const PaymentDetailPage = () => {
                 onClick={handleRefund}
                 disabled={refunding}
               >
-                {refunding ? 'Processing Refund...' : 'Request Transaction Refund'}
+                {refunding ? t('payment_detail.processing_refund', 'Processing Refund...') : t('payment_detail.request_refund', 'Request Transaction Refund')}
               </button>
             )}
             {payment.invoiceNumber && (
               <a href={`/invoices/${payment.invoiceNumber}`} className={styles.downloadBtn}>
-                Download Tax Invoice PDF
+                {t('payment_detail.download_invoice', 'Download Tax Invoice PDF')}
               </a>
             )}
             {orderIdentifier !== 'N/A' && (
               <Link href={`/orders/${orderIdentifier}`} className={styles.downloadBtn} style={{ background: '#222' }}>
-                View Full Order Details →
+                {t('payment_detail.view_order', 'View Full Order Details →')}
               </Link>
             )}
           </div>

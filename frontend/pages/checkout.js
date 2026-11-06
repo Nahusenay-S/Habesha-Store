@@ -10,12 +10,14 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import { orderAPI, configAPI, paymentAPI } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import { useCartStore } from '../store/cartStore';
+import { useLanguage } from '../context/LanguageContext';
 import styles from '../styles/checkout.module.css';
 
 const CheckoutPage = () => {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const { items, clearCart } = useCartStore();
+  const { t, language } = useLanguage();
 
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -235,16 +237,16 @@ const CheckoutPage = () => {
         <Breadcrumbs items={[{ label: 'Bag', href: '/cart' }, { label: 'Secure Checkout' }]} />
 
         <span className={styles.eyebrow}>Highland Craftsmanship</span>
-        <h1 className={styles.pageTitle}>Complete Your Order.</h1>
+        <h1 className={styles.pageTitle}>{t('checkout.title', 'Complete Your Order.')}</h1>
 
         {/* 5-Step Progress Stepper */}
         <div className={styles.stepper} aria-label="Checkout Progress">
           {[
-            { num: 1, label: 'Customer' },
-            { num: 2, label: 'Destination' },
-            { num: 3, label: 'Delivery' },
-            { num: 4, label: 'Payment' },
-            { num: 5, label: 'Review' },
+            { num: 1, label: language === 'am' ? 'መረጃ' : 'Customer' },
+            { num: 2, label: language === 'am' ? 'አድራሻ' : 'Destination' },
+            { num: 3, label: language === 'am' ? 'ማጓጓዣ' : 'Delivery' },
+            { num: 4, label: language === 'am' ? 'ክፍያ' : 'Payment' },
+            { num: 5, label: language === 'am' ? 'ማጠቃለያ' : 'Review' },
           ].map((s) => (
             <div
               key={s.num}
@@ -269,13 +271,13 @@ const CheckoutPage = () => {
             {step === 1 && (
               <div className={styles.fieldGroup}>
                 <div>
-                  <h2 className={styles.stepHeading}>1. Customer Information</h2>
+                  <h2 className={styles.stepHeading}>{language === 'am' ? '1. የተቀባይ መረጃ' : '1. Customer Information'}</h2>
                   <p className={styles.stepSubtext}>
-                    We will send order receipts, tracking numbers, and artisan craft notes here.
+                    {language === 'am' ? 'ደረሰኝ፣ የካርጎ መከታተያ ቁጥር እና ማሳወቂያዎችን የምንልክበትን መረጃ ያስገቡ።' : 'We will send order receipts, tracking numbers, and artisan craft notes here.'}
                   </p>
                 </div>
                 <div className={styles.field}>
-                  <label htmlFor="fullName">Full Name</label>
+                  <label htmlFor="fullName">{t('checkout.full_name', 'Full Name')}</label>
                   <input
                     id="fullName"
                     name="fullName"
@@ -288,7 +290,7 @@ const CheckoutPage = () => {
                 </div>
                 <div className={styles.row}>
                   <div className={styles.field}>
-                    <label htmlFor="email">Email Address</label>
+                    <label htmlFor="email">{t('checkout.email', 'Email Address')}</label>
                     <input
                       id="email"
                       name="email"
@@ -300,7 +302,7 @@ const CheckoutPage = () => {
                     />
                   </div>
                   <div className={styles.field}>
-                    <label htmlFor="phone">Phone Number</label>
+                    <label htmlFor="phone">{t('checkout.phone', 'Phone Number')}</label>
                     <input
                       id="phone"
                       name="phone"
@@ -314,10 +316,10 @@ const CheckoutPage = () => {
                 </div>
                 <div className={styles.buttonRow}>
                   <Link href="/cart">
-                    <Button variant="ghost" size="md">← Return to Bag</Button>
+                    <Button variant="ghost" size="md">← {t('cart.title', 'Return to Bag')}</Button>
                   </Link>
                   <Button variant="primary" size="md" onClick={nextStep}>
-                    Continue to Destination →
+                    {language === 'am' ? 'ወደ መላኪያ አድራሻ ቀጥል →' : 'Continue to Destination →'}
                   </Button>
                 </div>
               </div>
@@ -327,34 +329,34 @@ const CheckoutPage = () => {
             {step === 2 && (
               <div className={styles.fieldGroup}>
                 <div>
-                  <h2 className={styles.stepHeading}>2. Delivery Destination</h2>
+                  <h2 className={styles.stepHeading}>{language === 'am' ? '2. የመላኪያ አድራሻ' : '2. Delivery Destination'}</h2>
                   <p className={styles.stepSubtext}>
-                    Where should our carrier dispatch your handcrafted pieces?
+                    {language === 'am' ? 'የተሸመኑትን እና የተዘጋጁትን ቅርሶች ወዴት እንላክልዎ?' : 'Where should our carrier dispatch your handcrafted pieces?'}
                   </p>
                 </div>
                 <div className={styles.row}>
                   <div className={styles.field}>
-                    <label htmlFor="country">Country</label>
+                    <label htmlFor="country">{t('checkout.country', 'Country')}</label>
                     <select
                       id="country"
                       name="country"
                       value={formData.country}
                       onChange={handleChange}
                     >
-                      <option value="Ethiopia">Ethiopia</option>
-                      <option value="United States">United States</option>
-                      <option value="United Kingdom">United Kingdom</option>
-                      <option value="Canada">Canada</option>
-                      <option value="Germany">Germany</option>
+                      <option value="Ethiopia">{language === 'am' ? 'ኢትዮጵያ' : 'Ethiopia'}</option>
+                      <option value="United States">{language === 'am' ? 'አሜሪካ' : 'United States'}</option>
+                      <option value="United Kingdom">{language === 'am' ? 'እንግሊዝ' : 'United Kingdom'}</option>
+                      <option value="Canada">{language === 'am' ? 'ካናዳ' : 'Canada'}</option>
+                      <option value="Germany">{language === 'am' ? 'ጀርመን' : 'Germany'}</option>
                     </select>
                   </div>
                   <div className={styles.field}>
-                    <label htmlFor="region">Region / State</label>
+                    <label htmlFor="region">{t('checkout.region', 'Region / State')}</label>
                     <input
                       id="region"
                       name="region"
                       type="text"
-                      placeholder="e.g. Addis Ababa / Oromia"
+                      placeholder={language === 'am' ? 'ለምሳሌ አዲስ አበባ / ኦሮሚያ' : 'e.g. Addis Ababa / Oromia'}
                       value={formData.region}
                       onChange={handleChange}
                     />
@@ -362,19 +364,19 @@ const CheckoutPage = () => {
                 </div>
                 <div className={styles.row}>
                   <div className={styles.field}>
-                    <label htmlFor="city">City / Sub-City</label>
+                    <label htmlFor="city">{t('checkout.city', 'City / Sub-City')}</label>
                     <input
                       id="city"
                       name="city"
                       type="text"
                       required
-                      placeholder="e.g. Bole / Addis Ababa"
+                      placeholder={language === 'am' ? 'ለምሳሌ ቦሌ / አዲስ አበባ' : 'e.g. Bole / Addis Ababa'}
                       value={formData.city}
                       onChange={handleChange}
                     />
                   </div>
                   <div className={styles.field}>
-                    <label htmlFor="postalCode">Postal Code (Optional)</label>
+                    <label htmlFor="postalCode">{language === 'am' ? 'የፖስታ ሳጥን ቁጥር (አስገዳጅ ያልሆነ)' : 'Postal Code (Optional)'}</label>
                     <input
                       id="postalCode"
                       name="postalCode"
@@ -386,21 +388,21 @@ const CheckoutPage = () => {
                   </div>
                 </div>
                 <div className={styles.field}>
-                  <label htmlFor="street">Street Address & Residence</label>
+                  <label htmlFor="street">{t('checkout.street', 'Street Address & Residence')}</label>
                   <input
                     id="street"
                     name="street"
                     type="text"
                     required
-                    placeholder="e.g. Namibia St, House 42 / Behind Edna Mall"
+                    placeholder={language === 'am' ? 'የመንገድ ስም፣ የቤት ቁጥር ወይም አቅራቢያ የሚገኝ ህንፃ' : 'e.g. Namibia St, House 42 / Behind Edna Mall'}
                     value={formData.street}
                     onChange={handleChange}
                   />
                 </div>
                 <div className={styles.buttonRow}>
-                  <Button variant="ghost" size="md" onClick={prevStep}>← Back</Button>
+                  <Button variant="ghost" size="md" onClick={prevStep}>← {t('common.back', 'Back')}</Button>
                   <Button variant="primary" size="md" onClick={nextStep}>
-                    Continue to Delivery Method →
+                    {language === 'am' ? 'ወደ ማጓጓዣ ምርጫ ቀጥል →' : 'Continue to Delivery Method →'}
                   </Button>
                 </div>
               </div>
@@ -410,9 +412,9 @@ const CheckoutPage = () => {
             {step === 3 && (
               <div className={styles.fieldGroup}>
                 <div>
-                  <h2 className={styles.stepHeading}>3. Delivery Method</h2>
+                  <h2 className={styles.stepHeading}>{language === 'am' ? '3. የማጓጓዣ ዘዴ ይምረጡ' : '3. Delivery Method'}</h2>
                   <p className={styles.stepSubtext}>
-                    Choose the dispatch carrier speed for your curated order.
+                    {language === 'am' ? 'ለዚህ ትዕዛዝዎ የሚፈልጉትን የማጓጓዣ ፍጥነት ይምረጡ።' : 'Choose the dispatch carrier speed for your curated order.'}
                   </p>
                 </div>
                 <label
@@ -428,10 +430,10 @@ const CheckoutPage = () => {
                     onChange={handleChange}
                   />
                   <div className={styles.optionInfo}>
-                    <h4>Standard Ground Delivery</h4>
-                    <p>Delivered within 2–3 business days directly to your doorstep in Addis Ababa.</p>
+                    <h4>{language === 'am' ? 'መደበኛ የመሬት ማጓጓዣ' : 'Standard Ground Delivery'}</h4>
+                    <p>{language === 'am' ? 'ከ2 እስከ 3 የስራ ቀናት ውስጥ በአዲስ አበባ ወደ እርስዎ በር ይደርሳል።' : 'Delivered within 2–3 business days directly to your doorstep in Addis Ababa.'}</p>
                     <small style={{ color: 'var(--color-green)', fontWeight: 600 }}>
-                      Rate: {config?.currency || 'ETB'} {baseShipping.toFixed(2)}
+                      {language === 'am' ? 'የማጓጓዣ ዋጋ፡' : 'Rate:'} {config?.currency || 'ETB'} {baseShipping.toFixed(2)}
                     </small>
                   </div>
                 </label>
@@ -449,18 +451,18 @@ const CheckoutPage = () => {
                     onChange={handleChange}
                   />
                   <div className={styles.optionInfo}>
-                    <h4>✦ Priority Flightway Cargo (Ethiopian Airlines)</h4>
-                    <p>Next-day priority dispatch with live cargo bill tracking number and signature confirmation.</p>
+                    <h4>{language === 'am' ? '✦ የኢትዮጵያ አየር መንገድ ካርጎ ፈጣን በረራ' : '✦ Priority Flightway Cargo (Ethiopian Airlines)'}</h4>
+                    <p>{language === 'am' ? 'በቀጣዩ ቀን የሚላክ፣ ፈጣን የመከታተያ ቁጥር ያለው ዓለም አቀፍ የበረራ ካርጎ።' : 'Next-day priority dispatch with live cargo bill tracking number and signature confirmation.'}</p>
                     <small style={{ color: 'var(--color-gold)', fontWeight: 700 }}>
-                      Rate: {config?.currency || 'ETB'} {(baseShipping + 120).toFixed(2)} (+ETB 120 priority charge)
+                      {language === 'am' ? 'የማጓጓዣ ዋጋ፡' : 'Rate:'} {config?.currency || 'ETB'} {(baseShipping + 120).toFixed(2)} {language === 'am' ? '(+120 ብር የፈጣን በረራ ጭማሪ)' : '(+ETB 120 priority charge)'}
                     </small>
                   </div>
                 </label>
 
                 <div className={styles.buttonRow}>
-                  <Button variant="ghost" size="md" onClick={prevStep}>← Back</Button>
+                  <Button variant="ghost" size="md" onClick={prevStep}>← {t('common.back', 'Back')}</Button>
                   <Button variant="primary" size="md" onClick={nextStep}>
-                    Continue to Payment →
+                    {language === 'am' ? 'ወደ ክፍያ ምርጫ ቀጥል →' : 'Continue to Payment →'}
                   </Button>
                 </div>
               </div>
@@ -470,9 +472,9 @@ const CheckoutPage = () => {
             {step === 4 && (
               <div className={styles.fieldGroup}>
                 <div>
-                  <h2 className={styles.stepHeading}>4. Select Payment Method</h2>
+                  <h2 className={styles.stepHeading}>{language === 'am' ? '4. የክፍያ ዘዴ ይምረጡ' : '4. Select Payment Method'}</h2>
                   <p className={styles.stepSubtext}>
-                    Transactions are encrypted and processed through compliant financial gateways.
+                    {language === 'am' ? 'ሁሉም ክፍያዎች ደህንነታቸው በተጠበቀ እና በተረጋገጡ የክፍያ ኔትወርኮች ይስተናገዳሉ።' : 'Transactions are encrypted and processed through compliant financial gateways.'}
                   </p>
                 </div>
 
@@ -490,9 +492,9 @@ const CheckoutPage = () => {
                       onChange={handleChange}
                     />
                     <div className={styles.optionInfo}>
-                      <h4>Telebirr Digital Wallet</h4>
-                      <p>Instant mobile payment via Ethio Telecom Telebirr app or USSD prompt.</p>
-                      <Badge variant="gold" size="sm">Recommended in Ethiopia</Badge>
+                      <h4>{t('checkout.pay_telebirr', 'Telebirr Digital Wallet')}</h4>
+                      <p>{language === 'am' ? 'በኢትዮ ቴሌኮም ቴሌብር አፕሊኬሽን ወይም በUSSD ፈጣን ክፍያ።' : 'Instant mobile payment via Ethio Telecom Telebirr app or USSD prompt.'}</p>
+                      <Badge variant="gold" size="sm">{language === 'am' ? 'በኢትዮጵያ ተመራጭ' : 'Recommended in Ethiopia'}</Badge>
                     </div>
                   </label>
                 )}
@@ -511,8 +513,8 @@ const CheckoutPage = () => {
                       onChange={handleChange}
                     />
                     <div className={styles.optionInfo}>
-                      <h4>International Card (Visa / Mastercard)</h4>
-                      <p>Secure global card checkout powered by Stripe encrypted checkout.</p>
+                      <h4>{t('checkout.pay_card', 'International Card (Visa / Mastercard)')}</h4>
+                      <p>{language === 'am' ? 'በዓለም አቀፍ ቪዛ እና ማስተርካርድ በStripe አስተማማኝ ክፍያ።' : 'Secure global card checkout powered by Stripe encrypted checkout.'}</p>
                     </div>
                   </label>
                 )}
@@ -532,15 +534,15 @@ const CheckoutPage = () => {
                     />
                     <div className={styles.optionInfo}>
                       <h4>PayPal</h4>
-                      <p>Pay with your PayPal balance or connected bank account.</p>
+                      <p>{language === 'am' ? 'በፔይፓል አካውንትዎ ቀጥታ ይክፈሉ።' : 'Pay with your PayPal balance or connected bank account.'}</p>
                     </div>
                   </label>
                 )}
 
                 <div className={styles.buttonRow}>
-                  <Button variant="ghost" size="md" onClick={prevStep}>← Back</Button>
+                  <Button variant="ghost" size="md" onClick={prevStep}>← {t('common.back', 'Back')}</Button>
                   <Button variant="primary" size="md" onClick={nextStep}>
-                    Review Order →
+                    {language === 'am' ? 'ትዕዛዝዎን ይመርምሩ →' : 'Review Order →'}
                   </Button>
                 </div>
               </div>
@@ -550,36 +552,36 @@ const CheckoutPage = () => {
             {step === 5 && (
               <div className={styles.fieldGroup}>
                 <div>
-                  <h2 className={styles.stepHeading}>5. Review & Confirm Order</h2>
+                  <h2 className={styles.stepHeading}>{language === 'am' ? '5. ትዕዛዙን ይመርምሩና ያረጋግጡ' : '5. Review & Confirm Order'}</h2>
                   <p className={styles.stepSubtext}>
-                    Please review your delivery details and order pieces before finalizing.
+                    {language === 'am' ? 'እባክዎ ትዕዛዝዎን ከማጠናቀቅዎ በፊት መረጃዎን በትክክል ይፈትሹ።' : 'Please review your delivery details and order pieces before finalizing.'}
                   </p>
                 </div>
 
                 <div className={styles.reviewSection}>
-                  <h4>Recipient & Contact</h4>
+                  <h4>{language === 'am' ? 'ተቀባይ እና አድራሻ' : 'Recipient & Contact'}</h4>
                   <p><strong>{formData.fullName}</strong></p>
                   <p>{formData.email} • {formData.phone}</p>
                 </div>
 
                 <div className={styles.reviewSection}>
-                  <h4>Delivery Address</h4>
+                  <h4>{t('checkout.shipping_address', 'Delivery Address')}</h4>
                   <p>{formData.street}</p>
                   <p>{formData.city}, {formData.region}, {formData.country} {formData.postalCode}</p>
                   <p style={{ marginTop: '0.4rem', color: 'var(--color-green)', fontWeight: 600 }}>
-                    Method: {formData.deliveryMethod === 'express_cargo' ? 'Priority Flightway Cargo' : 'Standard Ground'}
+                    {language === 'am' ? 'የማጓጓዣ ዘዴ፡' : 'Method:'} {formData.deliveryMethod === 'express_cargo' ? (language === 'am' ? 'የኢትዮጵያ አየር መንገድ ካርጎ' : 'Priority Flightway Cargo') : (language === 'am' ? 'መደበኛ የመሬት ማጓጓዣ' : 'Standard Ground')}
                   </p>
                 </div>
 
                 <div className={styles.reviewSection}>
-                  <h4>Payment Choice</h4>
+                  <h4>{t('checkout.payment_method', 'Payment Choice')}</h4>
                   <p style={{ textTransform: 'capitalize' }}>
-                    <strong>{formData.paymentMethod}</strong> payment
+                    <strong>{formData.paymentMethod}</strong> {language === 'am' ? 'ክፍያ' : 'payment'}
                   </p>
                 </div>
 
                 <div className={styles.buttonRow}>
-                  <Button variant="ghost" size="md" onClick={prevStep}>← Modify Details</Button>
+                  <Button variant="ghost" size="md" onClick={prevStep}>← {language === 'am' ? 'መረጃ አሻሽል' : 'Modify Details'}</Button>
                   <Button
                     variant="primary"
                     size="lg"
@@ -587,7 +589,9 @@ const CheckoutPage = () => {
                     disabled={!items.length}
                     onClick={handlePlaceOrder}
                   >
-                    Place Order & Confirm ({config?.currency || 'ETB'} {grandTotal.toFixed(2)}) →
+                    {language === 'am'
+                      ? `ትዕዛዙን አረጋግጥና ላክ (${config?.currency || 'ብር'} ${grandTotal.toFixed(2)}) →`
+                      : `Place Order & Confirm (${config?.currency || 'ETB'} ${grandTotal.toFixed(2)}) →`}
                   </Button>
                 </div>
               </div>
@@ -596,7 +600,7 @@ const CheckoutPage = () => {
 
           {/* Sticky Order Summary Sidebar */}
           <aside className={styles.summary}>
-            <h3>Order Summary ({items.length} items)</h3>
+            <h3>{t('cart.order_summary', 'Order Summary')} ({items.length} {language === 'am' ? 'ቅርሶች' : 'items'})</h3>
             <div className={styles.itemsList}>
               {items.map((item) => (
                 <div key={item._id} className={styles.summaryItem}>
@@ -607,17 +611,17 @@ const CheckoutPage = () => {
             </div>
 
             <div className={styles.costRow}>
-              <span>Subtotal:</span>
+              <span>{t('cart.subtotal', 'Subtotal')}:</span>
               <span>{config?.currency || 'ETB'} {total.toFixed(2)}</span>
             </div>
 
             <div className={styles.costRow}>
-              <span>Carrier Shipping:</span>
+              <span>{t('cart.shipping', 'Carrier Shipping')}:</span>
               <span>{config?.currency || 'ETB'} {shipping.toFixed(2)}</span>
             </div>
 
             <div className={styles.totalRow}>
-              <span>Total:</span>
+              <span>{t('cart.total', 'Total')}:</span>
               <span>{config?.currency || 'ETB'} {grandTotal.toFixed(2)}</span>
             </div>
           </aside>

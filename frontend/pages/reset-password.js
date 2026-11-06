@@ -3,10 +3,12 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
 import { authAPI } from '../lib/api';
+import { useLanguage } from '../context/LanguageContext';
 import styles from './auth.module.css';
 
 const ResetPasswordPage = () => {
   const router = useRouter();
+  const { t, language } = useLanguage();
   const [token, setToken] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -54,7 +56,7 @@ const ResetPasswordPage = () => {
   return (
     <>
       <Head>
-        <title>Reset Password | Habesha Store</title>
+        <title>{language === 'am' ? 'አዲስ የይለፍ ቃል' : 'Reset Password'} | Habesha Store</title>
       </Head>
       <div className={styles.authContainer}>
         <div className={styles.authCard}>
@@ -66,18 +68,18 @@ const ResetPasswordPage = () => {
               </Link>
             </div>
             <div className={styles.authHeader}>
-              <span className={styles.brandSubtitle}>NEW CREDENTIALS</span>
-              <h1>Choose a New Password</h1>
-              <p>Create a secure passphrase for your Habesha Store account.</p>
+              <span className={styles.brandSubtitle}>{language === 'am' ? 'አዲስ ምስጢረ ቃል' : 'NEW CREDENTIALS'}</span>
+              <h1>{language === 'am' ? 'አዲስ የይለፍ ቃል ይምረጡ' : 'Choose a New Password'}</h1>
+              <p>{language === 'am' ? 'ለመለያዎ ጠንካራና አስተማማኝ አዲስ የይለፍ ቃል ይፍጠሩ።' : 'Create a secure passphrase for your Habesha Store account.'}</p>
             </div>
 
             {error && <div className={styles.error}>{error}</div>}
 
             {success ? (
               <div style={{ background: '#f5faf7', border: '1px solid #bce3cb', padding: '1.5rem', borderRadius: '4px', margin: '1.5rem 0' }}>
-                <h3 style={{ color: '#134e35', marginBottom: '0.5rem', fontSize: '1.1rem' }}>✓ Password Reset Complete</h3>
+                <h3 style={{ color: '#134e35', marginBottom: '0.5rem', fontSize: '1.1rem' }}>✓ {language === 'am' ? 'የይለፍ ቃልዎ በተሳካ ሁኔታ ተቀይሯል' : 'Password Reset Complete'}</h3>
                 <p style={{ color: '#252923', fontSize: '0.9rem', lineHeight: 1.5 }}>
-                  Your password has been successfully updated. You may now sign in to your sanctuary.
+                  {language === 'am' ? 'የይለፍ ቃልዎ ተቀይሯል። አሁን በአዲሱ የይለፍ ቃልዎ መግባት ይችላሉ።' : 'Your password has been successfully updated. You may now sign in to your sanctuary.'}
                 </p>
                 <div style={{ marginTop: '1.25rem' }}>
                   <Link
@@ -92,7 +94,7 @@ const ResetPasswordPage = () => {
                       textDecoration: 'none',
                     }}
                   >
-                    Proceed to Sign In →
+                    {language === 'am' ? 'ወደ መግቢያ ገጽ ይሂዱ →' : 'Proceed to Sign In →'}
                   </Link>
                 </div>
               </div>
@@ -100,14 +102,14 @@ const ResetPasswordPage = () => {
               <form className={styles.authForm} onSubmit={handleSubmit}>
                 {!router.query.token && (
                   <div className={styles.formGroup}>
-                    <label htmlFor="token">Security Token</label>
+                    <label htmlFor="token">{language === 'am' ? 'የደህንነት ቶከን' : 'Security Token'}</label>
                     <input
                       type="text"
                       id="token"
                       name="token"
                       value={token}
                       onChange={(e) => setToken(e.target.value)}
-                      placeholder="Paste your reset token here"
+                      placeholder={language === 'am' ? 'የቶከን ቁጥርዎን እዚህ ይለጥፉ' : 'Paste your reset token here'}
                       required
                     />
                   </div>
@@ -115,13 +117,13 @@ const ResetPasswordPage = () => {
 
                 <div className={styles.formGroup}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <label htmlFor="newPassword">New Password</label>
+                    <label htmlFor="newPassword">{language === 'am' ? 'አዲስ የይለፍ ቃል' : 'New Password'}</label>
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       style={{ background: 'none', border: 'none', color: 'var(--color-gold)', fontSize: '0.78rem', cursor: 'pointer', padding: 0 }}
                     >
-                      {showPassword ? 'Hide' : 'Show'}
+                      {showPassword ? (language === 'am' ? 'ደብቅ' : 'Hide') : (language === 'am' ? 'አሳይ' : 'Show')}
                     </button>
                   </div>
                   <input
@@ -136,7 +138,7 @@ const ResetPasswordPage = () => {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label htmlFor="confirmPassword">Confirm New Password</label>
+                  <label htmlFor="confirmPassword">{language === 'am' ? 'አዲሱን የይለፍ ቃል ያረጋግጡ' : 'Confirm New Password'}</label>
                   <input
                     type={showPassword ? 'text' : 'password'}
                     id="confirmPassword"
@@ -149,21 +151,21 @@ const ResetPasswordPage = () => {
                 </div>
 
                 <button type="submit" className={styles.submitBtn} disabled={loading}>
-                  {loading ? 'Securing account...' : 'Set New Password'}
+                  {loading ? (language === 'am' ? 'በማስተካከል ላይ...' : 'Securing account...') : (language === 'am' ? 'አዲስ የይለፍ ቃል አዘጋጅ' : 'Set New Password')}
                 </button>
               </form>
             )}
 
             <p className={styles.link} style={{ marginTop: '1.5rem' }}>
-              Already know your credentials? <Link href="/login">Sign In</Link>
+              {language === 'am' ? 'የይለፍ ቃልዎን አስታወሱ?' : 'Already know your credentials?'} <Link href="/login">{t('auth.sign_in_btn', 'Sign In')}</Link>
             </p>
           </div>
 
           <div className={styles.authImage} style={{ backgroundImage: "url('/images/pottery.jpg')" }}>
             <div className={styles.imageOverlay}>
-              <span className={styles.imageTag}>AUTHENTIC HERITAGE</span>
-              <h2>Craftsmanship that endures generations.</h2>
-              <div><strong>Protected</strong> sessions <strong>Encrypted</strong> keys</div>
+              <span className={styles.imageTag}>{language === 'am' ? 'እውነተኛ ቅርስ' : 'AUTHENTIC HERITAGE'}</span>
+              <h2>{language === 'am' ? 'ለትውልድ የሚሻገር ድንቅ የእጅ ጥበብ።' : 'Craftsmanship that endures generations.'}</h2>
+              <div><strong>{language === 'am' ? 'የተጠበቀ' : 'Protected'}</strong> {language === 'am' ? 'ግንኙነት' : 'sessions'} <strong>{language === 'am' ? 'የተመሰጠረ' : 'Encrypted'}</strong> {language === 'am' ? 'ደህንነት' : 'keys'}</div>
             </div>
           </div>
         </div>

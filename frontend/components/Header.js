@@ -12,7 +12,7 @@ import { useLanguage } from '../context/LanguageContext';
 const Header = () => {
   const router = useRouter();
   const { user, logout } = useAuth();
-  const { language, toggleLanguage, t } = useLanguage();
+  const { language, setLanguage, toggleLanguage, t } = useLanguage();
   const cartItemCount = useCartStore((state) => state.items.reduce((count, item) => count + item.quantity, 0));
   const wishlistCount = useWishlistStore((state) => state.items.length);
   const [notifications, setNotifications] = useState([]);
@@ -120,15 +120,27 @@ const Header = () => {
         </nav>
 
         <div className={styles.actions}>
-          <button
-            type="button"
-            className={styles.langBtn}
-            onClick={toggleLanguage}
-            title={language === 'en' ? 'ቀይር ወደ አማርኛ (Switch to Amharic)' : 'Switch to English'}
-            aria-label="Toggle language"
-          >
-            <span>{language === 'en' ? '🇪🇹 አማርኛ' : '🇬🇧 EN'}</span>
-          </button>
+          <div className={styles.langSwitch} role="group" aria-label="Language selection / የቋንቋ ምርጫ">
+            <span className={styles.langGlobe} title="Language / ቋንቋ">
+              <Icon name="globe" size={15} />
+            </span>
+            <button
+              type="button"
+              className={`${styles.langOption} ${language === 'en' ? styles.langOptionActive : ''}`}
+              onClick={() => setLanguage('en')}
+              aria-label="Switch to English"
+            >
+              🇬🇧 EN
+            </button>
+            <button
+              type="button"
+              className={`${styles.langOption} ${language === 'am' ? styles.langOptionActive : ''}`}
+              onClick={() => setLanguage('am')}
+              aria-label="ቀይር ወደ አማርኛ"
+            >
+              🇪🇹 አማ
+            </button>
+          </div>
 
           <form onSubmit={handleSearchSubmit} className={styles.searchBtn}>
             <Icon name="search" size={15} />
@@ -260,15 +272,29 @@ const Header = () => {
         <div className={styles.drawerHeader}>
           <span className={styles.logoText} style={{ fontSize: '1.2rem' }}>Habesha Store</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <button
-              type="button"
-              className={styles.langBtn}
-              onClick={toggleLanguage}
-              title={language === 'en' ? 'ቀይር ወደ አማርኛ' : 'Switch to English'}
-              style={{ padding: '0.25rem 0.5rem', fontSize: '0.7rem' }}
-            >
-              <span>{language === 'en' ? '🇪🇹 አማርኛ' : '🇬🇧 EN'}</span>
-            </button>
+            <div className={styles.langSwitch} role="group" aria-label="Language selection" style={{ padding: '2px' }}>
+              <span className={styles.langGlobe} title="Language">
+                <Icon name="globe" size={13} />
+              </span>
+              <button
+                type="button"
+                className={`${styles.langOption} ${language === 'en' ? styles.langOptionActive : ''}`}
+                onClick={() => setLanguage('en')}
+                style={{ padding: '3px 6px', fontSize: '0.7rem' }}
+                aria-label="Switch to English"
+              >
+                🇬🇧 EN
+              </button>
+              <button
+                type="button"
+                className={`${styles.langOption} ${language === 'am' ? styles.langOptionActive : ''}`}
+                onClick={() => setLanguage('am')}
+                style={{ padding: '3px 6px', fontSize: '0.7rem' }}
+                aria-label="ቀይር ወደ አማርኛ"
+              >
+                🇪🇹 አማ
+              </button>
+            </div>
             <button
               type="button"
               className={styles.drawerCloseBtn}
@@ -285,7 +311,7 @@ const Header = () => {
             <Icon name="search" size={15} />
             <input
               type="text"
-              placeholder="Search items, spices..."
+              placeholder={t('nav.search_placeholder', 'Search items, spices...')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -293,55 +319,55 @@ const Header = () => {
         </div>
 
         <div className={styles.drawerSection}>
-          <span className={styles.drawerSectionLabel}>Curated Collections</span>
+          <span className={styles.drawerSectionLabel}>{t('nav.collections', 'Curated Collections')}</span>
           <div className={styles.drawerNavLinks}>
             <Link href="/collections" className={styles.drawerNavLink} onClick={() => setMobileMenuOpen(false)}>
-              <span>🏛️</span> The Collections
+              <span>🏛️</span> {t('nav.collections', 'The Collections')}
             </Link>
             <Link href="/products?category=textiles" className={styles.drawerNavLink} onClick={() => setMobileMenuOpen(false)}>
-              <span>✨</span> Handwoven Textiles
+              <span>✨</span> {t('nav.textiles', 'Handwoven Textiles')}
             </Link>
             <Link href="/products?category=spices" className={styles.drawerNavLink} onClick={() => setMobileMenuOpen(false)}>
-              <span>🌶️</span> Highland Spices
+              <span>🌶️</span> {t('nav.spices', 'Highland Spices')}
             </Link>
             <Link href="/products?category=crafts" className={styles.drawerNavLink} onClick={() => setMobileMenuOpen(false)}>
-              <span>🏺</span> Pottery & Artwork
+              <span>🏺</span> {t('nav.crafts', 'Pottery & Artwork')}
             </Link>
             <Link href="/products?category=coffee" className={styles.drawerNavLink} onClick={() => setMobileMenuOpen(false)}>
-              <span>☕</span> Origin Coffee
+              <span>☕</span> {t('nav.coffee', 'Origin Coffee')}
             </Link>
             <Link href="/products" className={styles.drawerNavLink} onClick={() => setMobileMenuOpen(false)}>
-              <span>📦</span> All Works
+              <span>📦</span> {t('nav.all_works', 'All Works')}
             </Link>
           </div>
         </div>
 
         <div className={styles.drawerSection}>
-          <span className={styles.drawerSectionLabel}>Account & Orders</span>
+          <span className={styles.drawerSectionLabel}>{t('nav.my_account', 'Account & Orders')}</span>
           <div className={styles.drawerNavLinks}>
             {user ? (
               <>
                 <Link href="/dashboard" className={styles.drawerNavLink} onClick={() => setMobileMenuOpen(false)}>
-                  <span>👤</span> Dashboard ({user.name})
+                  <span>👤</span> {t('nav.my_account', 'Dashboard')} ({user.name})
                 </Link>
                 <Link href="/orders" className={styles.drawerNavLink} onClick={() => setMobileMenuOpen(false)}>
-                  <span>📜</span> My Orders
+                  <span>📜</span> {t('nav.orders', 'My Orders')}
                 </Link>
                 <Link href="/wishlist" className={styles.drawerNavLink} onClick={() => setMobileMenuOpen(false)}>
-                  <span>🤎</span> Saved Treasures
+                  <span>🤎</span> {t('nav.wishlist', 'Saved Treasures')}
                 </Link>
                 {user.role === 'seller' && (
                   <Link href="/vendor" className={styles.drawerNavLink} onClick={() => setMobileMenuOpen(false)}>
-                    <span>💼</span> Vendor Terminal
+                    <span>💼</span> {t('nav.vendor_terminal', 'Artisan Studio')}
                   </Link>
                 )}
                 {user.role === 'admin' && (
                   <Link href="/admin" className={styles.drawerNavLink} onClick={() => setMobileMenuOpen(false)}>
-                    <span>⚙️</span> Admin Console
+                    <span>⚙️</span> {t('nav.admin_portal', 'Admin Console')}
                   </Link>
                 )}
                 <Link href="/payment-history" className={styles.drawerNavLink} onClick={() => setMobileMenuOpen(false)}>
-                  <span>💳</span> Payment History
+                  <span>💳</span> {t('nav.payments', 'Payment History')}
                 </Link>
                 <button
                   type="button"
@@ -349,16 +375,16 @@ const Header = () => {
                   style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
                   onClick={() => { handleLogout(); setMobileMenuOpen(false); }}
                 >
-                  <span>🚪</span> Sign Out
+                  <span>🚪</span> {t('nav.sign_out', 'Sign Out')}
                 </button>
               </>
             ) : (
               <>
                 <Link href="/login" className={styles.drawerNavLink} onClick={() => setMobileMenuOpen(false)}>
-                  <span>🔑</span> Sign In
+                  <span>🔑</span> {t('nav.sign_in', 'Sign In')}
                 </Link>
                 <Link href="/register" className={styles.drawerNavLink} onClick={() => setMobileMenuOpen(false)}>
-                  <span>✨</span> Create Collector Account
+                  <span>✨</span> {t('nav.register', 'Join as Collector')}
                 </Link>
               </>
             )}

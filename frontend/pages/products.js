@@ -8,10 +8,12 @@ import LoadingScreen from '../components/LoadingScreen';
 import ProductCard from '../components/ProductCard';
 import Breadcrumbs from '../components/Breadcrumbs';
 import EmptyState from '../components/EmptyState';
+import { useLanguage } from '../context/LanguageContext';
 import styles from '../styles/products.module.css';
 
 const ProductsPage = () => {
   const router = useRouter();
+  const { t, language } = useLanguage();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
@@ -120,18 +122,18 @@ const ProductsPage = () => {
       <main className={styles.container}>
         <Breadcrumbs
           items={[
-            { label: 'Shop', href: '/products' },
+            { label: t('nav.shop', 'Shop'), href: '/products' },
             ...(filters.category ? [{ label: filters.category.toUpperCase() }] : []),
           ]}
         />
 
         <div className={styles.headerRow}>
-          <span className={styles.eyebrow}>Curated Masterpieces</span>
+          <span className={styles.eyebrow}>{t('home.curated_title', 'Curated Masterpieces')}</span>
           <h1 className={styles.pageTitle}>
-            {filters.category ? `${filters.category.charAt(0).toUpperCase() + filters.category.slice(1)} Collection` : 'Objects with a Story.'}
+            {filters.category ? `${filters.category.charAt(0).toUpperCase() + filters.category.slice(1)} ${t('nav.collections', 'Collection')}` : t('catalog.title', 'Objects with a Story.')}
           </h1>
           <p className={styles.pageDescription}>
-            Every piece is ethically sourced and handcrafted by independent Ethiopian artisans, carrying centuries of cultural heritage directly to your home.
+            {t('catalog.sub', 'Every piece is ethically sourced and handcrafted by independent Ethiopian artisans, carrying centuries of cultural heritage directly to your home.')}
           </p>
         </div>
 
@@ -140,7 +142,7 @@ const ProductsPage = () => {
           <div className={styles.primaryFilters}>
             <input
               type="text"
-              placeholder="Search by name, artisan, or material (e.g. Tibeb, Sidama, Clay)..."
+              placeholder={t('nav.search_placeholder', 'Search by name, artisan, or material (e.g. Tibeb, Sidama, Clay)...')}
               className={styles.searchInput}
               value={filters.search}
               onChange={(e) => updateFilter('search', e.target.value)}
@@ -153,13 +155,13 @@ const ProductsPage = () => {
               onChange={(e) => updateFilter('category', e.target.value)}
               aria-label="Filter by category"
             >
-              <option value="">All Categories</option>
-              <option value="textiles">Handwoven Textiles 🧣</option>
-              <option value="coffee">Highland Coffee ☕</option>
-              <option value="spices">Traditional Spices 🌶️</option>
-              <option value="crafts">Pottery & Crafts 🏺</option>
-              <option value="jewelry">Filigree Jewelry 💎</option>
-              <option value="art">Fine Art & Icons 🖼️</option>
+              <option value="">{t('catalog.all_categories', 'All Categories')}</option>
+              <option value="textiles">{t('catalog.cat_textiles', 'Handwoven Textiles')} 🧣</option>
+              <option value="coffee">{t('catalog.cat_coffee', 'Highland Coffee')} ☕</option>
+              <option value="spices">{t('catalog.cat_spices', 'Traditional Spices')} 🌶️</option>
+              <option value="crafts">{t('catalog.cat_crafts', 'Pottery & Crafts')} 🏺</option>
+              <option value="jewelry">{t('catalog.cat_jewelry', 'Filigree Jewelry')} 💎</option>
+              <option value="art">{t('catalog.cat_art', 'Fine Art & Icons')} 🖼️</option>
             </select>
 
             <select
@@ -168,17 +170,17 @@ const ProductsPage = () => {
               onChange={(e) => updateFilter('sortBy', e.target.value)}
               aria-label="Sort products"
             >
-              <option value="newest">Sort: Newest First</option>
-              <option value="price_asc">Price: Low to High</option>
-              <option value="price_desc">Price: High to Low</option>
-              <option value="rating">Best Rated</option>
-              <option value="popularity">Most Popular</option>
+              <option value="newest">{t('catalog.sort_newest', 'Sort: Newest First')}</option>
+              <option value="price_asc">{t('catalog.sort_price_asc', 'Price: Low to High')}</option>
+              <option value="price_desc">{t('catalog.sort_price_desc', 'Price: High to Low')}</option>
+              <option value="rating">{t('catalog.sort_rating', 'Best Rated')}</option>
+              <option value="popularity">{t('catalog.sort_featured', 'Most Popular')}</option>
             </select>
           </div>
 
           <div className={styles.secondaryFilters}>
             <div className={styles.priceGroup}>
-              <span>Price (ETB):</span>
+              <span>{t('catalog.price_range', 'Price')} ({t('common.currency', 'ETB')}):</span>
               <input
                 type="number"
                 placeholder="Min"
@@ -204,9 +206,9 @@ const ProductsPage = () => {
                 onChange={(e) => updateFilter('minRating', e.target.value)}
                 aria-label="Filter by minimum rating"
               >
-                <option value="">All Ratings</option>
-                <option value="4">4★ & above</option>
-                <option value="4.5">4.5★ & above</option>
+                <option value="">{language === 'am' ? 'ሁሉም ደረጃዎች' : 'All Ratings'}</option>
+                <option value="4">4★ {language === 'am' ? 'እና ከዚያ በላይ' : '& above'}</option>
+                <option value="4.5">4.5★ {language === 'am' ? 'እና ከዚያ በላይ' : '& above'}</option>
               </select>
 
               <label className={styles.checkboxLabel}>
@@ -215,7 +217,7 @@ const ProductsPage = () => {
                   checked={filters.inStock}
                   onChange={(e) => updateFilter('inStock', e.target.checked)}
                 />
-                <span>In Stock Only</span>
+                <span>{t('catalog.in_stock_only', 'In Stock Only')}</span>
               </label>
             </div>
           </div>
@@ -290,7 +292,7 @@ const ProductsPage = () => {
               className={styles.clearAllBtn}
               onClick={clearAllFilters}
             >
-              Clear all filters
+              {t('catalog.clear_filters', 'Clear all filters')}
             </button>
           </div>
         )}
@@ -298,20 +300,24 @@ const ProductsPage = () => {
         {/* Product Count Indicator */}
         <div className={styles.countBar}>
           <span>
-            Showing <span className={styles.countNumber}>{products.length}</span> of {totalCount} curated works
+            {language === 'am' ? (
+              <>ከ {totalCount} የተመረጡ ቅርሶች ውስጥ <span className={styles.countNumber}>{products.length}</span> በማሳየት ላይ</>
+            ) : (
+              <>Showing <span className={styles.countNumber}>{products.length}</span> of {totalCount} curated works</>
+            )}
           </span>
-          <span>Authentic ethical provenance</span>
+          <span>{t('product.direct_artisan', 'Authentic ethical provenance')}</span>
         </div>
 
         {/* Grid or Empty State */}
         {loading ? (
-          <LoadingScreen label="Unfolding the collection..." />
+          <LoadingScreen label={language === 'am' ? 'ቅርሶቹን በማዘጋጀት ላይ...' : 'Unfolding the collection...'} />
         ) : products.length === 0 ? (
           <EmptyState
             icon="🔍"
-            title="No pieces match your search"
-            description="Try clearing some of your active filters or explore our broader curated collection."
-            actionLabel="Reset All Filters"
+            title={t('catalog.no_results', 'No pieces match your search')}
+            description={language === 'am' ? 'የተወሰኑ ማጣሪያዎችን ያንሱ ወይም አጠቃላይ ስብስቦቻችንን ይጎብኙ።' : 'Try clearing some of your active filters or explore our broader curated collection.'}
+            actionLabel={t('catalog.clear_filters', 'Reset All Filters')}
             onAction={clearAllFilters}
           />
         ) : (

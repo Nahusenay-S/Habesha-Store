@@ -8,11 +8,13 @@ import Footer from '../components/Footer';
 import LoadingScreen from '../components/LoadingScreen';
 import EmptyState from '../components/EmptyState';
 import Badge from '../components/Badge';
+import { useLanguage } from '../context/LanguageContext';
 import styles from '../styles/payment-history.module.css';
 
 const PaymentHistoryPage = () => {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
+  const { t, language } = useLanguage();
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
@@ -94,38 +96,42 @@ const PaymentHistoryPage = () => {
       <div className={styles.container}>
         <div className={styles.headerRow}>
           <div>
-            <span className={styles.eyebrow}>Ledger & Invoices</span>
-            <h1>Payment History</h1>
+            <span className={styles.eyebrow}>{language === 'am' ? 'የክፍያ መዝገብ እና ደረሰኞች' : 'Ledger & Invoices'}</span>
+            <h1>{t('payments.title', 'Payment History')}</h1>
           </div>
         </div>
 
         <div className={styles.filterSection}>
-          {['all', 'completed', 'pending', 'failed', 'refunded'].map((statusKey) => (
+          {[
+            { key: 'all', label: t('payments.all', 'All Payments') },
+            { key: 'completed', label: t('payments.completed', 'Completed') },
+            { key: 'pending', label: t('payments.pending', 'Pending') },
+            { key: 'failed', label: t('payments.failed', 'Failed') },
+            { key: 'refunded', label: t('payments.refunded', 'Refunded') },
+          ].map(({ key, label }) => (
             <button
-              key={statusKey}
+              key={key}
               type="button"
-              className={filter === statusKey ? styles.activeFilter : ''}
-              onClick={() => setFilter(statusKey)}
+              className={filter === key ? styles.activeFilter : ''}
+              onClick={() => setFilter(key)}
             >
-              {statusKey === 'all'
-                ? 'All Payments'
-                : statusKey.charAt(0).toUpperCase() + statusKey.slice(1)}
+              {label}
             </button>
           ))}
         </div>
 
         {loading ? (
-          <LoadingScreen compact label="Retrieving ledger records..." />
+          <LoadingScreen compact label={language === 'am' ? 'የክፍያ መዝገብዎን በማምጣት ላይ...' : 'Retrieving ledger records...'} />
         ) : filteredPayments.length === 0 ? (
           <EmptyState
             icon="💳"
-            title="No payment records found"
+            title={language === 'am' ? 'ምንም የክፍያ መዝገብ አልተገኘም' : 'No payment records found'}
             description={
               filter === 'all'
-                ? 'You have not completed any payments yet. Explore our handcrafted Ethiopian collections!'
-                : `No transactions found matching status "${filter}".`
+                ? (language === 'am' ? 'እስካሁን ምንም ዓይነት ክፍያ አልፈጸሙም። የተመረጡ የኢትዮጵያ ቅርሶቻችንን ይጎብኙ!' : 'You have not completed any payments yet. Explore our handcrafted Ethiopian collections!')
+                : (language === 'am' ? `በ "${filter}" ሁኔታ የተመዘገበ ክፍያ አልተገኘም።` : `No transactions found matching status "${filter}".`)
             }
-            actionLabel={filter !== 'all' ? 'Reset Status Filter' : 'Explore Collections'}
+            actionLabel={filter !== 'all' ? (language === 'am' ? 'ማጣሪያውን መልስ' : 'Reset Status Filter') : t('nav.shop', 'Explore Collections')}
             actionHref={filter === 'all' ? '/products' : undefined}
             onAction={filter !== 'all' ? () => setFilter('all') : undefined}
           />
@@ -134,31 +140,41 @@ const PaymentHistoryPage = () => {
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Amount</th>
-                  <th>Method</th>
-                  <th>Status</th>
-                  <th>Transaction ID</th>
-                  <th>Invoice</th>
-                  <th>Action</th>
+                  <th>{t('payments.date', 'Date')}</th>
+                  <th>{t('payments.amount', 'Amount')}</th>
+                  <th>{t('payments.method', 'Method')}</th>
+                  <th>{t('payments.status', 'Status')}</th>
+                  <th>{t('payments.transaction_id', 'Transaction ID')}</th>
+                  <th>{t('payments.invoice', 'Invoice')}</th>
+                  <th>{language === 'am' ? 'ተግባር' : 'Action'}</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredPayments.map((payment) => {
                   const paymentKey = payment._id || payment.id || Math.random();
                   const paymentId = payment._id || payment.id;
+                  const statusLabel =
+                    payment.status === 'completed'
+                      ? t('payments.completed', 'Completed')
+                      : payment.status === 'pending'
+                      ? t('payments.pending', 'Pending')
+                      : payment.status === 'failed'
+                      ? t('payments.failed', 'Failed')
+                      : payment.status === 'refunded'
+                      ? t('payments.refunded', 'Refunded')
+                      : (payment.status?.toUpperCase() || 'UNKNOWN');
                   return (
                     <tr key={paymentKey}>
                       <td>{payment.createdAt ? new Date(payment.createdAt).toLocaleDateString() : '—'}</td>
                       <td className={styles.amount}>
-                        ETB {Number(payment.amount || 0).toFixed(2)}
+                        {t('common.currency', 'ETB')} {Number(payment.amount || 0).toFixed(2)}
                       </td>
                       <td>
                         <span className={styles.badge}>{payment.paymentMethod || 'Online'}</span>
                       </td>
                       <td>
                         <Badge variant={getStatusBadgeVariant(payment.status)} size="sm">
-                          {payment.status?.toUpperCase() || 'UNKNOWN'}
+                          {statusLabel}
                         </Badge>
                       </td>
                       <td className={styles.transactionId}>
@@ -167,7 +183,7 @@ const PaymentHistoryPage = () => {
                       <td>
                         {payment.invoiceNumber ? (
                           <a href={`/invoices/${payment.invoiceNumber}`} className={styles.link}>
-                            View Invoice
+                            {t('payments.view_invoice', 'View Invoice')}
                           </a>
                         ) : (
                           '—'
@@ -180,7 +196,7 @@ const PaymentHistoryPage = () => {
                             className={styles.actionBtn}
                             onClick={() => router.push(`/payment/${paymentId}`)}
                           >
-                            Details
+                            {t('payments.details_btn', 'Details')}
                           </button>
                         )}
                       </td>

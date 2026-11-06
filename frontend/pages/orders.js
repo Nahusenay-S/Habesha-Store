@@ -8,10 +8,12 @@ import EmptyState from '../components/EmptyState';
 import Badge from '../components/Badge';
 import { orderAPI } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import styles from '../styles/orders.module.css';
 
 const OrdersPage = () => {
   const { user, loading } = useAuth();
+  const { t, language } = useLanguage();
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
 
@@ -109,16 +111,26 @@ const OrdersPage = () => {
       </Head>
       <Header />
       <main className={styles.page}>
-        <span className={styles.eyebrow}>Your account</span>
-        <h1 style={{ marginBottom: '1.5rem' }}>Order history.</h1>
+        <span className={styles.eyebrow}>{language === 'am' ? 'የእርስዎ መለያ' : 'Your account'}</span>
+        <h1 style={{ marginBottom: '1.5rem' }}>{t('orders.title', 'Order history.')}</h1>
 
         {ordersLoading ? (
-          <LoadingScreen compact label="Retrieving your orders..." />
+          <LoadingScreen compact label={language === 'am' ? 'የትዕዛዝ ታሪክዎን በማምጣት ላይ...' : 'Retrieving your orders...'} />
         ) : orders.length ? (
           <div className={styles.list}>
             {orders.map((order) => {
               const orderId = order._id || order.id || '';
               const orderShort = orderId.toString().slice(0, 8).toUpperCase();
+              const statusDisplay =
+                order.status === 'delivered'
+                  ? t('orders.status_delivered', 'Delivered Safely')
+                  : order.status === 'shipped'
+                  ? t('orders.status_shipped', 'Shipped via Cargo')
+                  : order.status === 'cancelled'
+                  ? t('orders.status_cancelled', 'Cancelled')
+                  : order.status === 'processing'
+                  ? t('orders.status_processing', 'In Workshop')
+                  : t('orders.status_pending', 'Pending');
               return (
                 <Link href={`/orders/${orderId}`} className={styles.row} key={orderId}>
                   <div>
@@ -132,10 +144,10 @@ const OrdersPage = () => {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <Badge variant={getOrderStatusVariant(order.status)} size="sm">
-                      {order.status || 'Pending'}
+                      {statusDisplay}
                     </Badge>
                     <strong style={{ whiteSpace: 'nowrap' }}>
-                      ETB {Number(order.totalAmount || 0).toFixed(2)} →
+                      {t('common.currency', 'ETB')} {Number(order.totalAmount || 0).toFixed(2)} →
                     </strong>
                   </div>
                 </Link>
@@ -145,9 +157,9 @@ const OrdersPage = () => {
         ) : (
           <EmptyState
             icon="📦"
-            title="Your order history is waiting for its first story."
-            description="Explore our handwoven textiles, highland spices, and ceremonial coffee to begin your journey."
-            actionLabel="Explore the Collection"
+            title={t('orders.empty_title', 'Your order history is waiting for its first story.')}
+            description={t('orders.empty_desc', 'Explore our handwoven textiles, highland spices, and ceremonial coffee to begin your journey.')}
+            actionLabel={t('nav.shop', 'Explore the Collection')}
             actionHref="/products"
           />
         )}

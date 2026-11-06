@@ -13,6 +13,7 @@ import { productAPI, reviewAPI } from '../../lib/api';
 import { useCartStore } from '../../store/cartStore';
 import { useWishlistStore } from '../../store/wishlistStore';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import styles from '../../styles/product-detail.module.css';
 
 const ProductDetailPage = () => {
@@ -21,6 +22,7 @@ const ProductDetailPage = () => {
   const { addToCart } = useCartStore();
   const { toggle: toggleWishlist, items: wishlistItems } = useWishlistStore();
   const { user } = useAuth();
+  const { t, language } = useLanguage();
 
   const [data, setData] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
@@ -284,13 +286,13 @@ const ProductDetailPage = () => {
             </p>
 
             <div className={styles.priceRatingRow}>
-              <span className={styles.price}>ETB {price.toFixed(2)}</span>
-              <span className={styles.rating}>★ {Number(product.rating || 5).toFixed(1)} ({reviews.length} reviews)</span>
+              <span className={styles.price}>{t('common.currency', 'ETB')} {price.toFixed(2)}</span>
+              <span className={styles.rating}>★ {Number(product.rating || 5).toFixed(1)} ({reviews.length} {t('product.reviews', 'reviews')})</span>
               <span className={styles.stockBadge}>
                 {inStock ? (
-                  <Badge variant="success">In Stock ({product.stock})</Badge>
+                  <Badge variant="success">{t('product.in_stock', 'In Stock')} ({product.stock})</Badge>
                 ) : (
-                  <Badge variant="danger">Sold Out</Badge>
+                  <Badge variant="danger">{t('product.out_of_stock', 'Sold Out')}</Badge>
                 )}
               </span>
             </div>
@@ -301,7 +303,7 @@ const ProductDetailPage = () => {
             <div className={styles.purchaseSection}>
               {inStock && !isSeller && (
                 <div className={styles.quantityRow}>
-                  <span className={styles.qtyLabel}>Quantity:</span>
+                  <span className={styles.qtyLabel}>{t('cart.quantity', 'Quantity')}:</span>
                   <div className={styles.qtyControls}>
                     <button
                       type="button"
@@ -324,9 +326,9 @@ const ProductDetailPage = () => {
 
               {addedNotice && (
                 <div style={{ background: '#eaf5ee', color: '#174f3f', padding: '0.75rem 1rem', marginBottom: '1rem', border: '1px solid #b7dfca', borderRadius: '3px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span>✓ Added {quantity} to your shopping bag!</span>
+                  <span>✓ {language === 'am' ? `${quantity} ቅርሶች ወደ ቅርጫትዎ ተጨምረዋል!` : `Added ${quantity} to your shopping bag!`}</span>
                   <Link href="/cart" style={{ color: '#174f3f', fontWeight: 700, textDecoration: 'underline' }}>
-                    View Bag →
+                    {t('cart.title', 'Shopping Bag')} →
                   </Link>
                 </div>
               )}
@@ -338,7 +340,7 @@ const ProductDetailPage = () => {
                   disabled={!inStock || isSeller}
                   onClick={handleAddToCart}
                 >
-                  {addedNotice ? 'Added ✓' : inStock ? 'Add to Shopping Bag' : 'Sold Out'}
+                  {addedNotice ? t('product.added', 'Added ✓') : inStock ? t('product.add_to_cart', 'Add to Shopping Bag') : t('product.out_of_stock', 'Sold Out')}
                 </Button>
                 <Button
                   variant="gold"
@@ -346,7 +348,7 @@ const ProductDetailPage = () => {
                   disabled={!inStock || isSeller}
                   onClick={handleBuyNow}
                 >
-                  Buy Now →
+                  {t('product.buy_now', 'Buy Now')} →
                 </Button>
               </div>
 
@@ -358,7 +360,7 @@ const ProductDetailPage = () => {
                   style={{ margin: 0, flex: 1, minWidth: '160px' }}
                 >
                   <Icon name="heart" size={16} />
-                  <span>{isSaved ? 'Saved in Treasures' : 'Save to Treasures'}</span>
+                  <span>{isSaved ? t('product.saved', 'Saved in Treasures') : t('product.save_wishlist', 'Save to Treasures')}</span>
                 </button>
                 <button
                   type="button"
@@ -367,7 +369,7 @@ const ProductDetailPage = () => {
                   style={{ margin: 0, flex: 1, minWidth: '160px' }}
                 >
                   <span>{shareNotice ? '✓' : '🔗'}</span>
-                  <span>{shareNotice ? 'Link Copied to Clipboard!' : 'Share Piece'}</span>
+                  <span>{shareNotice ? (language === 'am' ? 'ሊንኩ ተገልብጧል!' : 'Link Copied to Clipboard!') : (language === 'am' ? 'ይህንን ቅርስ ያጋሩ' : 'Share Piece')}</span>
                 </button>
               </div>
             </div>
@@ -380,28 +382,28 @@ const ProductDetailPage = () => {
                   className={`${styles.tabBtn} ${activeTab === 'story' ? styles.tabBtnActive : ''}`}
                   onClick={() => setActiveTab('story')}
                 >
-                  Heritage Story
+                  {t('detail.description_tab', 'Heritage Story')}
                 </button>
                 <button
                   type="button"
                   className={`${styles.tabBtn} ${activeTab === 'specs' ? styles.tabBtnActive : ''}`}
                   onClick={() => setActiveTab('specs')}
                 >
-                  Specifications
+                  {t('detail.details_tab', 'Specifications')}
                 </button>
                 <button
                   type="button"
                   className={`${styles.tabBtn} ${activeTab === 'artisan' ? styles.tabBtnActive : ''}`}
                   onClick={() => setActiveTab('artisan')}
                 >
-                  Artisan Maker
+                  {t('detail.maker_workshop', 'Artisan Maker')}
                 </button>
                 <button
                   type="button"
                   className={`${styles.tabBtn} ${activeTab === 'shipping' ? styles.tabBtnActive : ''}`}
                   onClick={() => setActiveTab('shipping')}
                 >
-                  Shipping & Origin
+                  {language === 'am' ? 'ማጓጓዣ እና አመጣጥ' : 'Shipping & Origin'}
                 </button>
               </div>
 
@@ -410,7 +412,9 @@ const ProductDetailPage = () => {
                   <div>
                     <p>{product.description}</p>
                     <p style={{ marginTop: '0.75rem', fontStyle: 'italic', color: 'var(--color-gray)' }}>
-                      Each creation carries unique artisanal irregularities that testify to hand production without factory tooling.
+                      {language === 'am'
+                        ? 'እያንዳንዱ ምርት በእጅ የተሠራ መሆኑን የሚያረጋግጥ ልዩ ጥበባዊ አሻራ አለው።'
+                        : 'Each creation carries unique artisanal irregularities that testify to hand production without factory tooling.'}
                     </p>
                   </div>
                 )}
@@ -419,24 +423,24 @@ const ProductDetailPage = () => {
                   <table className={styles.specTable}>
                     <tbody>
                       <tr>
-                        <td>Origin</td>
-                        <td>Ethiopia (Highlands Region)</td>
+                        <td>{t('detail.origin', 'Origin')}</td>
+                        <td>{language === 'am' ? 'ኢትዮጵያ (የደጋ አካባቢ)' : 'Ethiopia (Highlands Region)'}</td>
                       </tr>
                       <tr>
-                        <td>Category</td>
+                        <td>{t('vendor.product_category', 'Category')}</td>
                         <td>{product.category?.toUpperCase()}</td>
                       </tr>
                       <tr>
-                        <td>Technique</td>
-                        <td>Traditional Ancestral Craftsmanship</td>
+                        <td>{t('detail.materials', 'Technique')}</td>
+                        <td>{language === 'am' ? 'ባህላዊ የትውልድ የእደ-ጥበብ ዘዴ' : 'Traditional Ancestral Craftsmanship'}</td>
                       </tr>
                       <tr>
-                        <td>Stock Reference</td>
+                        <td>{language === 'am' ? 'የዕቃ መለያ ቁጥር' : 'Stock Reference'}</td>
                         <td>HB-{product._id.slice(0, 8).toUpperCase()}</td>
                       </tr>
                       <tr>
-                        <td>Care Instructions</td>
-                        <td>Gentle hand wash or dry dust; store away from prolonged direct moisture.</td>
+                        <td>{language === 'am' ? 'የአያያዝ መመሪያ' : 'Care Instructions'}</td>
+                        <td>{language === 'am' ? 'በእጅ በቀስታ እጠቡት ወይም አቧራውን ይጥረጉ፤ ከእርጥበት ይጠብቁት።' : 'Gentle hand wash or dry dust; store away from prolonged direct moisture.'}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -445,8 +449,9 @@ const ProductDetailPage = () => {
                 {activeTab === 'artisan' && (
                   <div>
                     <p>
-                      Crafted by <strong>{product.seller?.name || 'Local Artisan Guild'}</strong>. 
-                      Every purchase sends earnings directly to independent makers and preserves community weaving, pottery, and culinary arts.
+                      {language === 'am'
+                        ? <>የተሠራው በ <strong>{product.seller?.name || 'የሀገር ውስጥ የሸማኔ ማህበር'}</strong> ነው። የእርስዎ ግዢ ገቢውን በቀጥታ ለእደ-ጥበብ ባለሙያዎች ያስተላልፋል።</>
+                        : <>Crafted by <strong>{product.seller?.name || 'Local Artisan Guild'}</strong>. Every purchase sends earnings directly to independent makers and preserves community weaving, pottery, and culinary arts.</>}
                     </p>
                     <div style={{ marginTop: '1rem' }}>
                       <Button
@@ -454,7 +459,7 @@ const ProductDetailPage = () => {
                         size="sm"
                         onClick={() => setShowInquiry(!showInquiry)}
                       >
-                        {showInquiry ? 'Close Inquiry Form' : '💬 Send Message to Artisan'}
+                        {showInquiry ? (language === 'am' ? 'የመልዕክት ቅጹን ዝጋ' : 'Close Inquiry Form') : `💬 ${t('detail.inquire_title', 'Send Message to Artisan')}`}
                       </Button>
                     </div>
 
@@ -464,20 +469,20 @@ const ProductDetailPage = () => {
                         {inquirySuccess && <p style={{ color: 'var(--color-green)', margin: 0 }}>{inquirySuccess}</p>}
                         <textarea
                           required
-                          placeholder="Ask the artisan about sizing, materials, or custom crafts..."
+                          placeholder={t('detail.inquire_placeholder', 'Ask the artisan about sizing, materials, or custom crafts...')}
                           value={inquiryMessage}
                           onChange={(e) => setInquiryMessage(e.target.value)}
                           style={{ minHeight: '80px', padding: '0.75rem', border: '1px solid var(--color-line)', width: '100%', boxSizing: 'border-box' }}
                         />
                         <input
                           type="tel"
-                          placeholder="Your phone number (optional)"
+                          placeholder={t('detail.inquire_phone', 'Your phone number (optional)')}
                           value={inquiryPhone}
                           onChange={(e) => setInquiryPhone(e.target.value)}
                           style={{ padding: '0.6rem', border: '1px solid var(--color-line)', width: '100%', boxSizing: 'border-box' }}
                         />
                         <Button type="submit" variant="primary" size="sm" loading={inquiryLoading}>
-                          Submit Message to Artisan
+                          {t('detail.inquire_submit', 'Submit Message to Artisan')}
                         </Button>
                       </form>
                     )}
@@ -487,11 +492,11 @@ const ProductDetailPage = () => {
                 {activeTab === 'shipping' && (
                   <div>
                     <p>
-                      <strong>Dispatched via Ethiopian Airlines Cargo:</strong> Carefully wrapped in protective organic fibers.
+                      <strong>{language === 'am' ? 'በኢትዮጵያ አየር መንገድ ካርጎ የሚላክ:' : 'Dispatched via Ethiopian Airlines Cargo:'}</strong> {language === 'am' ? 'ከተፈጥሮ በተገኙ ክሮች በጥንቃቄ ተጠቅልሎ ይላካል።' : 'Carefully wrapped in protective organic fibers.'}
                     </p>
                     <p style={{ marginTop: '0.5rem' }}>
-                      ✦ Local Addis Ababa Delivery: 24–48 hours<br />
-                      ✦ Regional & International Flightway Cargo: 3–7 business days with live cargo tracking number provided upon dispatch.
+                      {language === 'am' ? '✦ በአዲስ አበባ ውስጥ ማድረስ፡ ከ24 እስከ 48 ሰዓታት' : '✦ Local Addis Ababa Delivery: 24–48 hours'}<br />
+                      {language === 'am' ? '✦ ክፍለ ሀገር እና ዓለም አቀፍ የበረራ ካርጎ፡ ከ3 እስከ 7 የስራ ቀናት በቀጥታ የበረራ መከታተያ ቁጥር' : '✦ Regional & International Flightway Cargo: 3–7 business days with live cargo tracking number provided upon dispatch.'}
                     </p>
                   </div>
                 )}
@@ -503,7 +508,7 @@ const ProductDetailPage = () => {
         {/* Related Heritage Pieces */}
         {relatedProducts.length > 0 && (
           <section className={styles.relatedSection}>
-            <h2>Related Heritage Pieces</h2>
+            <h2>{language === 'am' ? 'ተመሳሳይ የባህል ቅርሶች' : 'Related Heritage Pieces'}</h2>
             <div className={styles.relatedGrid}>
               {relatedProducts.map((p) => (
                 <ProductCard key={p._id} product={p} />
@@ -516,8 +521,8 @@ const ProductDetailPage = () => {
         <section className={styles.reviewsSection}>
           <div className={styles.reviewsHeading}>
             <div>
-              <span className={styles.categoryTag}>Verified Feedback</span>
-              <h2>Collector Reviews ({reviews.length})</h2>
+              <span className={styles.categoryTag}>{t('home.testimonials_badge', 'Verified Feedback')}</span>
+              <h2>{t('detail.reviews_heading', 'Collector Reviews')} ({reviews.length})</h2>
             </div>
           </div>
 
@@ -526,13 +531,13 @@ const ProductDetailPage = () => {
               reviews.map((item) => (
                 <article key={item._id} className={styles.reviewCard}>
                   <div className={styles.reviewCardHeader}>
-                    <strong>{item.author?.name || 'Verified Collector'}</strong>
+                    <strong>{item.author?.name || t('home.verified_collector', 'Verified Collector')}</strong>
                     <span className={styles.reviewRating}>
                       {'★'.repeat(item.rating)}{'☆'.repeat(5 - item.rating)}
                     </span>
                   </div>
                   {item.isVerified && (
-                    <Badge variant="success" size="sm">✓ Verified Collector</Badge>
+                    <Badge variant="success" size="sm">✓ {t('home.verified_collector', 'Verified Collector')}</Badge>
                   )}
                   <h3 className={styles.reviewTitle}>{item.title}</h3>
                   <p className={styles.reviewComment}>{item.comment}</p>
@@ -540,36 +545,36 @@ const ProductDetailPage = () => {
               ))
             ) : (
               <p style={{ gridColumn: '1 / -1', color: 'var(--color-gray)' }}>
-                No reviews yet for this piece. Be the first to share your notes on its craft and texture.
+                {t('detail.no_reviews', 'No reviews yet for this piece. Be the first to share your notes on its craft and texture.')}
               </p>
             )}
           </div>
 
           {/* Leave a Review Form */}
           <div className={styles.reviewFormBox}>
-            <h3>Leave a review</h3>
+            <h3>{t('detail.leave_review', 'Leave a review')}</h3>
             {reviewError && <p style={{ color: '#c02b2b', margin: '0 0 1rem' }}>{reviewError}</p>}
             {reviewSuccess && <p style={{ color: 'var(--color-green)', margin: '0 0 1rem' }}>{reviewSuccess}</p>}
             <form onSubmit={submitReview} style={{ display: 'grid', gap: '1rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <label htmlFor="rating-select" style={{ fontSize: '0.9rem', fontWeight: 600 }}>Rating:</label>
+                <label htmlFor="rating-select" style={{ fontSize: '0.9rem', fontWeight: 600 }}>{t('detail.review_rating_label', 'Rating')}:</label>
                 <select
                   id="rating-select"
                   value={review.rating}
                   onChange={(e) => setReview({ ...review, rating: Number(e.target.value) })}
                   style={{ padding: '0.5rem 0.75rem', border: '1px solid var(--color-line)', background: '#fff' }}
                 >
-                  <option value={5}>★★★★★ (5 - Masterpiece)</option>
-                  <option value={4}>★★★★☆ (4 - Excellent)</option>
-                  <option value={3}>★★★☆☆ (3 - Good)</option>
-                  <option value={2}>★★☆☆☆ (2 - Fair)</option>
-                  <option value={1}>★☆☆☆☆ (1 - Poor)</option>
+                  <option value={5}>★★★★★ (5 - {language === 'am' ? 'ድንቅ ስራ' : 'Masterpiece'})</option>
+                  <option value={4}>★★★★☆ (4 - {language === 'am' ? 'በጣም ጥሩ' : 'Excellent'})</option>
+                  <option value={3}>★★★☆☆ (3 - {language === 'am' ? 'ጥሩ' : 'Good'})</option>
+                  <option value={2}>★★☆☆☆ (2 - {language === 'am' ? 'መካከለኛ' : 'Fair'})</option>
+                  <option value={1}>★☆☆☆☆ (1 - {language === 'am' ? 'ደካማ' : 'Poor'})</option>
                 </select>
               </div>
 
               <input
                 required
-                placeholder="Review headline (e.g. Magnificent weave and soft texture)"
+                placeholder={t('detail.review_title_placeholder', 'Review headline (e.g. Magnificent weave and soft texture)')}
                 value={review.title}
                 onChange={(e) => setReview({ ...review, title: e.target.value })}
                 style={{ padding: '0.75rem', border: '1px solid var(--color-line)', font: 'inherit' }}
@@ -577,14 +582,14 @@ const ProductDetailPage = () => {
 
               <textarea
                 required
-                placeholder="Share notes on the weight, craftsmanship, and how you display or use this piece..."
+                placeholder={t('detail.review_comment_placeholder', 'Share notes on the weight, craftsmanship, and how you display or use this piece...')}
                 value={review.comment}
                 onChange={(e) => setReview({ ...review, comment: e.target.value })}
                 style={{ minHeight: '110px', padding: '0.75rem', border: '1px solid var(--color-line)', font: 'inherit' }}
               />
 
               <Button type="submit" variant="primary" size="md" loading={reviewLoading}>
-                Submit Review
+                {t('detail.review_submit', 'Submit Review')}
               </Button>
             </form>
           </div>
@@ -593,8 +598,8 @@ const ProductDetailPage = () => {
         {/* Recently Viewed Rail */}
         {recentlyViewed.length > 0 && (
           <section className={styles.relatedSection} style={{ marginTop: '3.5rem' }}>
-            <span className={styles.categoryTag}>Collector Memory</span>
-            <h2>Recently Viewed Pieces</h2>
+            <span className={styles.categoryTag}>{language === 'am' ? 'የቅርብ ጊዜ ጉብኝት' : 'Collector Memory'}</span>
+            <h2>{language === 'am' ? 'በቅርብ ጊዜ ያገኟቸው ቅርሶች' : 'Recently Viewed Pieces'}</h2>
             <div className={styles.relatedGrid}>
               {recentlyViewed.map((item) => (
                 <ProductCard key={item.id} product={{ _id: item.id, ...item }} />
