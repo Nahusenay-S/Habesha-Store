@@ -7,14 +7,14 @@ import styles from './AnimatedReceipt.module.css';
 const BAR_WIDTHS = [2, 4, 1, 3, 5, 2, 1, 4, 2, 3, 5, 1, 3, 2, 4, 1, 3, 2, 4, 1, 5, 2, 3, 1, 4, 2];
 
 const SPARKLES = [
-  { id: 1, tx: '-70px', ty: '-90px', color: '#c5a15a', size: 8, delay: '0.9s' },
-  { id: 2, tx: '85px', ty: '-110px', color: '#0d6832', size: 10, delay: '1.0s' },
-  { id: 3, tx: '-120px', ty: '-30px', color: '#e6ca85', size: 6, delay: '1.1s' },
-  { id: 4, tx: '110px', ty: '40px', color: '#c5a15a', size: 9, delay: '0.95s' },
-  { id: 5, tx: '-90px', ty: '100px', color: '#0d6832', size: 7, delay: '1.15s' },
-  { id: 6, tx: '70px', ty: '120px', color: '#e6ca85', size: 8, delay: '1.05s' },
-  { id: 7, tx: '-40px', ty: '-130px', color: '#c5a15a', size: 11, delay: '1.2s' },
-  { id: 8, tx: '40px', ty: '-140px', color: '#0d6832', size: 8, delay: '1.1s' },
+  { id: 1, tx: '-70px', ty: '-90px', color: '#c5a15a', size: 8, delay: '2.7s' },
+  { id: 2, tx: '85px', ty: '-110px', color: '#0d6832', size: 10, delay: '2.8s' },
+  { id: 3, tx: '-120px', ty: '-30px', color: '#e6ca85', size: 6, delay: '2.9s' },
+  { id: 4, tx: '110px', ty: '40px', color: '#c5a15a', size: 9, delay: '2.75s' },
+  { id: 5, tx: '-90px', ty: '100px', color: '#0d6832', size: 7, delay: '2.95s' },
+  { id: 6, tx: '70px', ty: '120px', color: '#e6ca85', size: 8, delay: '2.85s' },
+  { id: 7, tx: '-40px', ty: '-130px', color: '#c5a15a', size: 11, delay: '3.0s' },
+  { id: 8, tx: '40px', ty: '-140px', color: '#0d6832', size: 8, delay: '2.9s' },
 ];
 
 const AnimatedReceipt = ({ order, onPrint }) => {

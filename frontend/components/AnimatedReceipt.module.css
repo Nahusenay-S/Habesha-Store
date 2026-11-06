@@ -44,47 +44,65 @@
   transform-origin: top center;
 }
 
-/* Slide-out Print Animation */
+/* Slide-out Print Animation - Slow, realistic mechanical paper feed */
 .printAnimation {
-  animation: printReceipt 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: printReceipt 3.0s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes printReceipt {
   0% {
-    transform: translateY(-80px) scaleY(0.1);
+    transform: translateY(-160px) scaleY(0.04);
     opacity: 0;
     max-height: 0;
   }
-  30% {
+  15% {
     opacity: 1;
+    transform: translateY(-90px) scaleY(0.22);
+    max-height: 220px;
+  }
+  45% {
+    transform: translateY(-35px) scaleY(0.62);
+    max-height: 580px;
+  }
+  75% {
+    transform: translateY(-8px) scaleY(0.92);
+    max-height: 920px;
   }
   100% {
     transform: translateY(0) scaleY(1);
     opacity: 1;
-    max-height: 2000px;
+    max-height: 2200px;
   }
 }
 
-/* Serrated Zigzag Sawtooth Edges */
+/* Finely Trimmed Serrated Zigzag Edge */
 .sawtoothTop,
 .sawtoothBottom {
   position: absolute;
   left: 0;
   right: 0;
-  height: 8px;
-  background-size: 16px 8px;
-  background-repeat: repeat-x;
+  height: 5px;
   z-index: 5;
+  background-repeat: repeat-x;
 }
 
 .sawtoothTop {
   top: 0;
-  background-image: radial-gradient(circle at 8px 0px, transparent 8px, #faf8f3 8.5px);
+  height: 4px;
+  background-size: 8px 4px;
+  background-image: 
+    linear-gradient(45deg, transparent 2px, #faf8f3 0),
+    linear-gradient(-45deg, transparent 2px, #faf8f3 0);
 }
 
 .sawtoothBottom {
   bottom: 0;
-  background-image: radial-gradient(circle at 8px 8px, transparent 8px, #faf8f3 8.5px);
+  height: 5px;
+  background-size: 8px 5px;
+  background-position: left bottom;
+  background-image: 
+    linear-gradient(-45deg, #fbf5eb 3px, transparent 0),
+    linear-gradient(45deg, #fbf5eb 3px, transparent 0);
 }
 
 /* Watermark */
@@ -162,7 +180,7 @@
   background: rgba(220, 245, 230, 0.88);
   font-size: 1.25rem;
   box-shadow: 0 0 0 2px rgba(13, 104, 50, 0.2), inset 0 0 6px rgba(13, 104, 50, 0.15);
-  animation: stampImpact 0.65s 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  animation: stampImpact 0.65s 2.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
 }
 
 .stampPending {
