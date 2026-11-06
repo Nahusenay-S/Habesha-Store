@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import LoadingScreen from '../components/LoadingScreen';
+import ChapaCheckoutModal from '../components/ChapaCheckoutModal';
 import { orderAPI, paymentAPI } from '../lib/api';
 import { useLanguage } from '../context/LanguageContext';
 import styles from '../styles/order-confirmation.module.css';
@@ -12,7 +13,7 @@ import AnimatedReceipt from '../components/AnimatedReceipt';
 
 const OrderConfirmationPage = () => {
   const router = useRouter();
-  const { id, ref, pid, tx_ref, provider, sandbox, chapa_returned } = router.query;
+  const { id, ref, pid, tx_ref, provider, sandbox, chapa_returned, open_modal } = router.query;
   const { t, language } = useLanguage();
   const [order, setOrder] = useState(null);
   const [verifying, setVerifying] = useState(false);
@@ -20,6 +21,8 @@ const OrderConfirmationPage = () => {
   const [verifyError, setVerifyError] = useState('');
   const [telebirrData, setTelebirrData] = useState({ ref: ref || '', pid: pid || '' });
   const [chapaLoading, setChapaLoading] = useState(false);
+  const [showChapaModal, setShowChapaModal] = useState(false);
+  const [activeTxRef, setActiveTxRef] = useState(tx_ref || '');
 
   const loadOrder = () => {
     const orderId = id || (router.isReady ? router.query.id : null);
@@ -35,6 +38,13 @@ const OrderConfirmationPage = () => {
       loadOrder();
     }
   }, [router.isReady, id]);
+
+  // Auto-open modal if redirected from checkout with open_modal=true
+  useEffect(() => {
+    if (open_modal === 'true' && order && order.paymentStatus !== 'completed') {
+      setShowChapaModal(true);
+    }
+  }, [open_modal, order]);
 
   // Handle genuine Chapa return verification (only after returning from gateway)
   useEffect(() => {
@@ -61,21 +71,13 @@ const OrderConfirmationPage = () => {
     setChapaLoading(true);
     setVerifyError('');
     try {
-      const res = await paymentAPI.initiateChapaPayment({ orderId: order._id });
+      const res = await paymentAPI.initiateChapaPayment({ orderId: order._id || order.id });
       if (res.data?.checkoutUrl) {
         if (res.data.isSandbox) {
-          // Interactive sandbox processing: waits for user action, then completes
-          setTimeout(async () => {
-            try {
-              await paymentAPI.verifyChapaPayment(res.data.txRef);
-              setVerifiedNotice(language === 'am' ? '✓ የቻፓ የሙከራ ክፍያ በተሳካ ሁኔታ ተጠናቋል!' : '✓ Chapa sandbox payment verified successfully!');
-              loadOrder();
-            } catch (vErr) {
-              setVerifyError('Sandbox verification could not be completed.');
-            } finally {
-              setChapaLoading(false);
-            }
-          }, 1500);
+          // Open interactive simulated Chapa checkout modal
+          setActiveTxRef(res.data.txRef);
+          setShowChapaModal(true);
+          setChapaLoading(false);
         } else {
           // Live gateway: redirect to official hosted Chapa checkout portal
           window.location.href = res.data.checkoutUrl;
@@ -84,6 +86,16 @@ const OrderConfirmationPage = () => {
     } catch (err) {
       setVerifyError(err.response?.data?.error || 'Unable to redirect to Chapa checkout.');
       setChapaLoading(false);
+    }
+  };
+
+  const handleChapaModalSuccess = async (reference) => {
+    try {
+      await paymentAPI.verifyChapaPayment(reference);
+      setVerifiedNotice(language === 'am' ? '✓ የቻፓ ክፍያ በተሳካ ሁኔታ ተጠናቋል!' : '✓ Chapa payment verified successfully!');
+      loadOrder();
+    } catch (err) {
+      setVerifyError('Verification could not be confirmed. Please check order status.');
     }
   };
 
@@ -207,6 +219,15 @@ const OrderConfirmationPage = () => {
             )}
           </div>
         )}
+
+        {/* Chapa Hosted Payment Modal */}
+        <ChapaCheckoutModal
+          isOpen={showChapaModal}
+          onClose={() => setShowChapaModal(false)}
+          order={order}
+          txRef={activeTxRef}
+          onPaymentSuccess={handleChapaModalSuccess}
+        />
 
         {/* Telebirr Payment Action Card */}
         {order.paymentMethod === 'telebirr' && (

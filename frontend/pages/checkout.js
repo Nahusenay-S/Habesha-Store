@@ -170,8 +170,13 @@ const CheckoutPage = () => {
         try {
           const chapaRes = await paymentAPI.initiateChapaPayment({ orderId: createdOrder._id });
           if (chapaRes.data?.checkoutUrl) {
-            window.location.href = chapaRes.data.checkoutUrl;
-            return;
+            if (chapaRes.data.isSandbox) {
+              router.push(`/order-confirmation?id=${createdOrder._id}&provider=chapa&sandbox=true&open_modal=true`);
+              return;
+            } else {
+              window.location.href = chapaRes.data.checkoutUrl;
+              return;
+            }
           }
         } catch (chapaErr) {
           console.warn('Chapa initiation warning, routing to confirmation:', chapaErr);

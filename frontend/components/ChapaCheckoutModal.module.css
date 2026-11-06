@@ -1,0 +1,255 @@
+.chapaWrapper {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: #1a1a1a;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.chapaHeader {
+  background: #00ac51;
+  color: #ffffff;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brandArea {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.chapaLogo {
+  font-weight: 800;
+  font-size: 1.35rem;
+  letter-spacing: -0.03em;
+  background: #ffffff;
+  color: #00ac51;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.merchantTag {
+  font-size: 0.85rem;
+  opacity: 0.95;
+  font-weight: 500;
+}
+
+.amountArea {
+  text-align: right;
+}
+
+.amountLabel {
+  display: block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.85;
+}
+
+.amountValue {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.sandboxNotice {
+  background: #fff8e6;
+  border-bottom: 1px solid #faecc3;
+  padding: 0.5rem 1.5rem;
+  font-size: 0.78rem;
+  color: #8c6b00;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sandboxBadge {
+  background: #8c6b00;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.methodTabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid #ebebeb;
+  background: #fcfcfc;
+}
+
+.tabBtn {
+  background: none;
+  border: none;
+  padding: 0.85rem 0.5rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #666666;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.tabBtn:hover {
+  background: #f4fbf7;
+  color: #00ac51;
+}
+
+.tabBtnActive {
+  background: #ffffff;
+  color: #00ac51;
+  border-bottom-color: #00ac51;
+}
+
+.tabIcon {
+  font-size: 1.25rem;
+}
+
+.bodyContent {
+  padding: 1.5rem;
+}
+
+.formGroup {
+  margin-bottom: 1.1rem;
+}
+
+.formGroup label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #444444;
+  margin-bottom: 0.4rem;
+}
+
+.formInput {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.92rem;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: #00ac51;
+  box-shadow: 0 0 0 3px rgba(0, 172, 81, 0.15);
+}
+
+.hintText {
+  font-size: 0.78rem;
+  color: #71717a;
+  margin-top: 0.35rem;
+}
+
+.payButton {
+  width: 100%;
+  background: #00ac51;
+  color: #ffffff;
+  border: none;
+  padding: 0.9rem 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background 0.2s, transform 0.1s;
+  box-shadow: 0 4px 12px rgba(0, 172, 81, 0.25);
+  margin-top: 1.25rem;
+}
+
+.payButton:hover:not(:disabled) {
+  background: #009345;
+  transform: translateY(-1px);
+}
+
+.payButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Push Prompt Simulation */
+.ussdPrompt {
+  background: #f7faf8;
+  border: 1px solid #d0ebd8;
+  border-radius: 8px;
+  padding: 1.25rem;
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+.ussdIcon {
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+  animation: pulse 1.5s infinite;
+}
+
+.ussdTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0b3d2c;
+  margin-bottom: 0.25rem;
+}
+
+.ussdDesc {
+  font-size: 0.85rem;
+  color: #4b5563;
+  margin-bottom: 0.75rem;
+}
+
+.pinInput {
+  letter-spacing: 0.5em;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-align: center;
+  max-width: 160px;
+  margin: 0.5rem auto 1rem;
+  padding: 0.4rem;
+  border: 2px solid #00ac51;
+  border-radius: 6px;
+}
+
+.securityNote {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  text-align: center;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@media (max-width: 520px) {
+  .methodTabs {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .chapaHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .amountArea {
+    text-align: left;
+  }
+}
