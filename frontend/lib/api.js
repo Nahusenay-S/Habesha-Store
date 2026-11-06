@@ -104,4 +104,11 @@ export const adminAPI = {
   toggleProductStatus: (id, isActive) => api.put(`/admin/products/${id}/status`, { isActive }),
 };
 
+export const uploadAPI = {
+  uploadImages: (formData) =>
+    api.post('/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+};
+
 export default api;

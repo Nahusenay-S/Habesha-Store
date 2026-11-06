@@ -416,6 +416,28 @@
   background: #f7f3ec;
 }
 
+.langBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--color-line);
+  background: white;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-dark);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.langBtn:hover {
+  border-color: var(--color-gold);
+  background: #fdfbf7;
+  color: var(--color-green);
+}
+
 @media (max-width: 768px) {
   .hamburgerBtn {
     display: flex;

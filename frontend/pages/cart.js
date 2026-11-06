@@ -11,6 +11,7 @@ import Icon from '../components/Icon';
 import LoadingScreen from '../components/LoadingScreen';
 import { useCartStore } from '../store/cartStore';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { configAPI } from '../lib/api';
 import styles from '../styles/cart.module.css';
 
@@ -25,6 +26,7 @@ const CartPage = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
+  const { t } = useLanguage();
   const [config, setConfig] = useState(null);
 
   // Promo code state
@@ -140,12 +142,12 @@ const CartPage = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
           <div>
             <span className={styles.eyebrow}>CURATED SELECTION</span>
-            <h1 style={{ margin: '0.4rem 0 0' }}>Shopping Bag</h1>
+            <h1 style={{ margin: '0.4rem 0 0' }}>{t('cart.title', 'Shopping Bag')}</h1>
           </div>
           {items.length > 0 && (
             <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
               <Link href="/products" style={{ color: 'var(--color-green)', fontSize: '0.9rem', fontWeight: 600, textDecoration: 'underline' }}>
-                ← Continue Browsing
+                ← {t('cart.continue_shopping', 'Continue Browsing')}
               </Link>
               <button
                 type="button"
@@ -165,9 +167,9 @@ const CartPage = () => {
         {items.length === 0 ? (
           <EmptyState
             icon="🛍️"
-            title="Your bag is waiting"
-            description="Explore our curated collection of Ethiopian handwoven textiles, roasted single-origin coffees, and handcrafted jewelry."
-            actionLabel="Discover Collection"
+            title={t('cart.empty_title', 'Your bag is waiting')}
+            description={t('cart.empty_desc', 'Explore our curated collection of Ethiopian handwoven textiles, roasted single-origin coffees, and handcrafted jewelry.')}
+            actionLabel={t('cart.continue_shopping', 'Discover Collection')}
             actionHref="/products"
           />
         ) : (
@@ -323,7 +325,7 @@ const CartPage = () => {
                 onClick={() => router.push('/checkout')}
                 disabled={loading || items.length === 0}
               >
-                Proceed to Checkout →
+                {t('cart.checkout', 'Proceed to Checkout')} →
               </Button>
             </div>
           </div>

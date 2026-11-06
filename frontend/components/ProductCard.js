@@ -6,6 +6,7 @@ import { useCartStore } from '../store/cartStore';
 import Icon from './Icon';
 import { useWishlistStore } from '../store/wishlistStore';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import QuickViewModal from './QuickViewModal';
 
 const ProductCard = ({ product }) => {
@@ -14,6 +15,7 @@ const ProductCard = ({ product }) => {
   const toggleWishlist = useWishlistStore((state) => state.toggle);
   const wishlistItems = useWishlistStore((state) => state.items);
   const { user, loading: authLoading } = useAuth();
+  const { t } = useLanguage();
   const saved = Boolean(user && wishlistItems.some((item) => item._id === product._id));
   const [addedNotice, setAddedNotice] = useState(false);
   const [showQuickView, setShowQuickView] = useState(false);
@@ -74,7 +76,7 @@ const ProductCard = ({ product }) => {
           }}
           aria-label={`Quick view ${product.name}`}
         >
-          <span>👁</span> Quick View
+          <span>👁</span> {t('product.quick_view', 'Quick View')}
         </button>
       </div>
 
@@ -86,7 +88,7 @@ const ProductCard = ({ product }) => {
 
         <div className={styles.footer}>
           <div className={styles.priceRating}>
-            <span className={styles.price}>ETB {price.toFixed(2)}</span>
+            <span className={styles.price}>{t('common.currency', 'ETB')} {price.toFixed(2)}</span>
             <span className={styles.rating}>★ {Number(product.rating || 0).toFixed(1)}</span>
           </div>
           {product.stock > 0 ? (
@@ -98,10 +100,10 @@ const ProductCard = ({ product }) => {
               title={isSeller ? 'Artisan accounts cannot purchase' : 'Add to cart'}
             >
               <Icon name="cart" size={15} />
-              {addedNotice ? 'Added ✓' : isSeller ? 'Artisan view' : 'Add to bag'}
+              {addedNotice ? 'Added ✓' : isSeller ? 'Artisan view' : t('product.add_to_cart', 'Add to bag')}
             </button>
           ) : (
-            <span className={styles.outOfStock}>Out of Stock</span>
+            <span className={styles.outOfStock}>{t('product.out_of_stock', 'Out of Stock')}</span>
           )}
         </div>
       </div>

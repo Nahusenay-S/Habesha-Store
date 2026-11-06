@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Button from '../components/Button';
 import Badge from '../components/Badge';
-import { vendorAPI, productAPI, orderAPI, notificationAPI, authAPI } from '../lib/api';
+import { vendorAPI, productAPI, orderAPI, notificationAPI, authAPI, uploadAPI } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import styles from '../styles/vendor.module.css';
 
@@ -29,6 +29,41 @@ const VendorPage = () => {
     stock: '',
     imagesText: '',
   });
+  const [uploadingImages, setUploadingImages] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+
+  const handleFileUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    setUploadingImages(true);
+    setUploadError('');
+
+    const formData = new FormData();
+    files.forEach((file) => formData.append('images', file));
+
+    try {
+      const res = await uploadAPI.uploadImages(formData);
+      const newUrls = res.data.urls || [];
+      const currentUrls = form.imagesText
+        ? form.imagesText.split('\n').map((u) => u.trim()).filter(Boolean)
+        : [];
+      const combined = [...currentUrls, ...newUrls].join('\n');
+      setForm((prev) => ({ ...prev, imagesText: combined }));
+    } catch (err) {
+      setUploadError(err.response?.data?.error || 'Failed to upload image(s). Ensure files are JPG, PNG, or WEBP under 5MB.');
+    } finally {
+      setUploadingImages(false);
+      if (e.target) e.target.value = '';
+    }
+  };
+
+  const handleRemoveImage = (urlToRemove) => {
+    const currentUrls = form.imagesText
+      ? form.imagesText.split('\n').map((u) => u.trim()).filter(Boolean)
+      : [];
+    const updated = currentUrls.filter((u) => u !== urlToRemove).join('\n');
+    setForm((prev) => ({ ...prev, imagesText: updated }));
+  };
 
   // Store Profile State
   const [storeProfile, setStoreProfile] = useState({
@@ -347,12 +382,63 @@ const VendorPage = () => {
                 />
               </div>
               <div className={`${styles.field} ${styles.wide}`}>
-                <label>Photo URLs (One per line or comma-separated)</label>
+                <label>Product Photography</label>
+
+                {/* Direct File Upload Zone */}
+                <label className={styles.uploadZone}>
+                  <span className={styles.uploadIcon}>📷</span>
+                  <strong>{uploadingImages ? 'Uploading photos...' : 'Click or Drop Photos to Upload'}</strong>
+                  <p style={{ margin: '0.25rem 0 0', fontSize: '0.78rem', color: 'var(--color-gray)' }}>
+                    PNG, JPG, or WEBP up to 5MB. Select one or multiple craft photos.
+                  </p>
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleFileUpload}
+                    disabled={uploadingImages}
+                    style={{ display: 'none' }}
+                  />
+                </label>
+
+                {uploadError && (
+                  <p style={{ color: '#c02b2b', fontSize: '0.82rem', margin: '0 0 0.5rem' }}>{uploadError}</p>
+                )}
+
+                {/* Uploaded Photos Preview Thumbnails */}
+                {form.imagesText.trim() && (
+                  <div style={{ marginBottom: '0.75rem' }}>
+                    <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--color-gray)' }}>Attached Photos:</span>
+                    <div className={styles.previewGrid}>
+                      {form.imagesText.split('\n').map((u) => u.trim()).filter(Boolean).map((imgUrl, i) => (
+                        <div key={imgUrl + i} className={styles.previewCard}>
+                          <img
+                            src={imgUrl.startsWith('/') && !imgUrl.startsWith('/images') ? `http://localhost:5000${imgUrl}` : imgUrl}
+                            alt="Uploaded craft preview"
+                            onError={(e) => { e.currentTarget.src = '/images/heritage-textile.jpg'; }}
+                          />
+                          <button
+                            type="button"
+                            className={styles.removeThumbBtn}
+                            onClick={() => handleRemoveImage(imgUrl)}
+                            title="Remove photo"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <label style={{ fontSize: '0.78rem', color: 'var(--color-gray)', marginTop: '0.25rem' }}>
+                  Or enter photo URLs directly (one per line):
+                </label>
                 <textarea
                   placeholder="https://images.unsplash.com/... or /images/heritage-textile.jpg"
                   value={form.imagesText}
                   onChange={(e) => setForm({ ...form, imagesText: e.target.value })}
-                  style={{ minHeight: '60px' }}
+                  style={{ minHeight: '55px', fontSize: '0.82rem' }}
                 />
               </div>
               <div className={`${styles.field} ${styles.wide}`}>

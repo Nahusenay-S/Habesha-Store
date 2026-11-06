@@ -8,6 +8,7 @@ import ProductCard from '../components/ProductCard';
 import Newsletter from '../components/Newsletter';
 import Icon from '../components/Icon';
 import { productAPI } from '../lib/api';
+import { useLanguage } from '../context/LanguageContext';
 import styles from '../styles/home.module.css';
 
 const TESTIMONIALS = [
@@ -36,6 +37,7 @@ const TESTIMONIALS = [
 
 const HomePage = () => {
   const router = useRouter();
+  const { t } = useLanguage();
   const [featuredProducts, setFeaturedProducts] = useState([]);
 
   useEffect(() => {
@@ -69,10 +71,10 @@ const HomePage = () => {
           />
         </div>
         <div className={styles.heroContent}>
-          <span className={styles.eyebrow}>Artisan Guilds · Direct from Ethiopia</span>
-          <h1>Objects with a story, made to be kept.</h1>
+          <span className={styles.eyebrow}>{t('home.badge', 'The Highland Heritage Collection')}</span>
+          <h1>{t('home.hero_title', 'Authentic Ethiopian Craftsmanship, Delivered Worldwide')}</h1>
           <p>
-            Explore authentic Ethiopian creations, thoughtfully handcrafted by independent makers and brought closer to the world.
+            {t('home.hero_sub', 'Handwoven textiles, sacred single-origin coffee, and highland pottery direct from master artisans in Addis Ababa, Dorze, and Harar.')}
           </p>
           <div className={styles.heroBtnGroup}>
             <button
@@ -80,14 +82,14 @@ const HomePage = () => {
               className={styles.ctaBtn}
               onClick={() => router.push('/products')}
             >
-              Explore the Collection <span aria-hidden="true">→</span>
+              {t('home.explore_btn', 'Explore the Collection')} <span aria-hidden="true">→</span>
             </button>
             <button
               type="button"
               className={styles.secondaryCtaBtn}
               onClick={() => router.push('/about')}
             >
-              Discover Our Story
+              {t('home.heritage_btn', 'Our Heritage & Artisans')}
             </button>
           </div>
         </div>
@@ -242,27 +244,27 @@ const HomePage = () => {
 
       {/* The Habesha Promise */}
       <section className={styles.features}>
-        <span className={styles.eyebrow}>The Habesha Promise</span>
-        <h2>Why Choose Habesha Store?</h2>
+        <span className={styles.eyebrow}>{t('home.why_title', 'The Habesha Store Standard')}</span>
+        <h2>{t('home.why_sub', 'Why Choose Habesha Store?')}</h2>
         <div className={styles.featureGrid}>
           <div className={styles.featureCard}>
             <span><Icon name="check" /></span>
-            <h3>Certified Authentic</h3>
-            <p>Direct from independent Ethiopian makers</p>
+            <h3>{t('home.feat_artisan', '100% Master Artisan Made')}</h3>
+            <p>{t('home.feat_artisan_desc', 'Direct from independent Ethiopian makers')}</p>
           </div>
           <div className={styles.featureCard}>
             <span><Icon name="truck" /></span>
-            <h3>Flightway Cargo</h3>
-            <p>Reliable tracking via Ethiopian Airlines</p>
+            <h3>{t('home.feat_cargo', 'Ethiopian Airlines Cargo')}</h3>
+            <p>{t('home.feat_cargo_desc', 'Reliable tracking via Ethiopian Airlines')}</p>
           </div>
           <div className={styles.featureCard}>
             <span><Icon name="check" /></span>
-            <h3>Secure Telebirr & Card</h3>
-            <p>Encrypted local and global payments</p>
+            <h3>{t('home.feat_payments', 'Secure Telebirr & Card')}</h3>
+            <p>{t('home.feat_payments_desc', 'Encrypted local and global payments')}</p>
           </div>
           <div className={styles.featureCard}>
             <span><Icon name="heart" /></span>
-            <h3>Ethical Provenance</h3>
+            <h3>{t('product.provenance', 'Ethical Provenance')}</h3>
             <p>Fair trade supporting highland artisans</p>
           </div>
         </div>
