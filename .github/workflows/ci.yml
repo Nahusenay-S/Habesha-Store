@@ -42,6 +42,14 @@ jobs:
           cd backend
           npm ci
 
+      - name: Run Database Migrations
+        run: |
+          cd backend
+          npm run migrate
+        env:
+          NODE_ENV: test
+          DATABASE_URL: postgres://habesha_user:habesha_password@localhost:5432/habesha_test
+
       - name: Run Integration Tests
         run: |
           cd backend

@@ -43,6 +43,138 @@
   font-size: .78rem;
 }
 
+/* Icon-Only Language Dropdown for Footer */
+.langMenu {
+  position: relative;
+  display: inline-flex;
+  margin-top: 1rem;
+}
+
+.langTrigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid var(--color-line);
+  color: var(--color-dark);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.langTrigger:hover,
+.langTriggerActive {
+  background: #ffffff;
+  color: var(--color-gold);
+  border-color: var(--color-gold);
+  box-shadow: 0 3px 8px rgba(197, 161, 90, 0.25);
+}
+
+.langDropdown {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  width: 220px;
+  background: #ffffff;
+  border: 1px solid var(--color-line);
+  box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 100;
+  animation: footerLangSlide 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes footerLangSlide {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.langDropdownHeader {
+  padding: 0.6rem 0.85rem;
+  background: #fdfbf7;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.langDropdownHeader span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-green);
+}
+
+.langOptionsList {
+  padding: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.langOptionItem {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.langOptionItem:hover {
+  background: #f7f3ec;
+}
+
+.langOptionItemActive {
+  background: #eef6f2;
+}
+
+.langFlag {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.langMeta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.langName {
+  font-size: 0.84rem;
+  color: var(--color-dark);
+  font-weight: 600;
+}
+
+.langOptionItemActive .langName {
+  color: var(--color-green);
+  font-weight: 700;
+}
+
+.langRegion {
+  font-size: 0.68rem;
+  color: #777;
+}
+
+.langCheck {
+  font-size: 0.9rem;
+  color: var(--color-green);
+  font-weight: 800;
+}
+
 @media (max-width: 768px) {
   .container { grid-template-columns: 1fr 1fr; gap: 2rem; padding: 0 1.25rem; }
 }

@@ -27,3 +27,6 @@ Thumbs.db
 
 # testing
 /coverage
+
+# uploads
+uploads/

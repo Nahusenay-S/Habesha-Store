@@ -16,6 +16,12 @@ describe('Habesha Store API & Communication Flow Tests', () => {
   const testSellerEmail = `testseller_${Date.now()}@example.com`;
 
   beforeAll(async () => {
+    // Ensure database schema and tables exist before running test suite
+    const fs = require('fs');
+    const path = require('path');
+    const schemaSql = fs.readFileSync(path.join(__dirname, '..', 'schema.sql'), 'utf8');
+    await query(schemaSql);
+
     // Register buyer
     const buyerRes = await request(app)
       .post('/api/auth/register')

@@ -19,11 +19,19 @@ const Header = () => {
   const [showNotifs, setShowNotifs] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showLangMenu, setShowLangMenu] = useState(false);
+  const [showMobileLang, setShowMobileLang] = useState(false);
   const notifRef = useRef(null);
+  const langRef = useRef(null);
+  const mobileLangRef = useRef(null);
 
   // Close mobile drawer on route change
   useEffect(() => {
-    const handleRouteChange = () => setMobileMenuOpen(false);
+    const handleRouteChange = () => {
+      setMobileMenuOpen(false);
+      setShowLangMenu(false);
+      setShowMobileLang(false);
+    };
     router.events.on('routeChangeComplete', handleRouteChange);
     return () => router.events.off('routeChangeComplete', handleRouteChange);
   }, [router]);
@@ -40,11 +48,17 @@ const Header = () => {
     loadNotifications();
   }, [user]);
 
-  // Close notifications dropdown on click outside
+  // Close dropdowns on click outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (notifRef.current && !notifRef.current.contains(e.target)) {
         setShowNotifs(false);
+      }
+      if (langRef.current && !langRef.current.contains(e.target)) {
+        setShowLangMenu(false);
+      }
+      if (mobileLangRef.current && !mobileLangRef.current.contains(e.target)) {
+        setShowMobileLang(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -120,26 +134,59 @@ const Header = () => {
         </nav>
 
         <div className={styles.actions}>
-          <div className={styles.langSwitch} role="group" aria-label="Language selection / የቋንቋ ምርጫ">
-            <span className={styles.langGlobe} title="Language / ቋንቋ">
-              <Icon name="globe" size={15} />
-            </span>
+          {/* Language selector: clean globe icon with animated dropdown */}
+          <div className={styles.langMenu} ref={langRef}>
             <button
               type="button"
-              className={`${styles.langOption} ${language === 'en' ? styles.langOptionActive : ''}`}
-              onClick={() => setLanguage('en')}
-              aria-label="Switch to English"
+              className={`${styles.langTrigger} ${showLangMenu ? styles.langTriggerActive : ''}`}
+              onClick={() => setShowLangMenu(!showLangMenu)}
+              aria-label="Select language / ቋንቋ ይምረጡ"
+              title={language === 'am' ? 'ቋንቋ: አማርኛ (ቀይር)' : 'Language: English (Switch)'}
+              aria-expanded={showLangMenu}
             >
-              🇬🇧 EN
+              <Icon name="globe" size={18} />
             </button>
-            <button
-              type="button"
-              className={`${styles.langOption} ${language === 'am' ? styles.langOptionActive : ''}`}
-              onClick={() => setLanguage('am')}
-              aria-label="ቀይር ወደ አማርኛ"
-            >
-              🇪🇹 አማ
-            </button>
+
+            {showLangMenu && (
+              <div className={styles.langDropdown}>
+                <div className={styles.langDropdownHeader}>
+                  <span>{language === 'am' ? 'ቋንቋ ይምረጡ' : 'Select Language'}</span>
+                </div>
+                <div className={styles.langOptionsList}>
+                  <button
+                    type="button"
+                    className={`${styles.langOptionItem} ${language === 'en' ? styles.langOptionItemActive : ''}`}
+                    onClick={() => {
+                      setLanguage('en');
+                      setShowLangMenu(false);
+                    }}
+                  >
+                    <span className={styles.langFlag}>🇬🇧</span>
+                    <div className={styles.langMeta}>
+                      <span className={styles.langName}>English</span>
+                      <small className={styles.langRegion}>United Kingdom / Global</small>
+                    </div>
+                    {language === 'en' && <span className={styles.langCheck}>✓</span>}
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`${styles.langOptionItem} ${language === 'am' ? styles.langOptionItemActive : ''}`}
+                    onClick={() => {
+                      setLanguage('am');
+                      setShowLangMenu(false);
+                    }}
+                  >
+                    <span className={styles.langFlag}>🇪🇹</span>
+                    <div className={styles.langMeta}>
+                      <span className={styles.langName}>አማርኛ</span>
+                      <small className={styles.langRegion}>ኢትዮጵያ (Ge&apos;ez)</small>
+                    </div>
+                    {language === 'am' && <span className={styles.langCheck}>✓</span>}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           <form onSubmit={handleSearchSubmit} className={styles.searchBtn}>
@@ -272,28 +319,53 @@ const Header = () => {
         <div className={styles.drawerHeader}>
           <span className={styles.logoText} style={{ fontSize: '1.2rem' }}>Habesha Store</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <div className={styles.langSwitch} role="group" aria-label="Language selection" style={{ padding: '2px' }}>
-              <span className={styles.langGlobe} title="Language">
-                <Icon name="globe" size={13} />
-              </span>
+            <div className={styles.langMenu} ref={mobileLangRef}>
               <button
                 type="button"
-                className={`${styles.langOption} ${language === 'en' ? styles.langOptionActive : ''}`}
-                onClick={() => setLanguage('en')}
-                style={{ padding: '3px 6px', fontSize: '0.7rem' }}
-                aria-label="Switch to English"
+                className={`${styles.langTrigger} ${showMobileLang ? styles.langTriggerActive : ''}`}
+                onClick={() => setShowMobileLang(!showMobileLang)}
+                aria-label="Select language / ቋንቋ ይምረጡ"
+                title={language === 'am' ? 'ቋንቋ: አማርኛ' : 'Language: English'}
               >
-                🇬🇧 EN
+                <Icon name="globe" size={17} />
               </button>
-              <button
-                type="button"
-                className={`${styles.langOption} ${language === 'am' ? styles.langOptionActive : ''}`}
-                onClick={() => setLanguage('am')}
-                style={{ padding: '3px 6px', fontSize: '0.7rem' }}
-                aria-label="ቀይር ወደ አማርኛ"
-              >
-                🇪🇹 አማ
-              </button>
+              {showMobileLang && (
+                <div className={styles.langDropdown} style={{ right: 0, top: 'calc(100% + 5px)', width: '200px' }}>
+                  <div className={styles.langDropdownHeader}>
+                    <span>{language === 'am' ? 'ቋንቋ ይምረጡ' : 'Select Language'}</span>
+                  </div>
+                  <div className={styles.langOptionsList}>
+                    <button
+                      type="button"
+                      className={`${styles.langOptionItem} ${language === 'en' ? styles.langOptionItemActive : ''}`}
+                      onClick={() => {
+                        setLanguage('en');
+                        setShowMobileLang(false);
+                      }}
+                    >
+                      <span className={styles.langFlag}>🇬🇧</span>
+                      <div className={styles.langMeta}>
+                        <span className={styles.langName}>English</span>
+                      </div>
+                      {language === 'en' && <span className={styles.langCheck}>✓</span>}
+                    </button>
+                    <button
+                      type="button"
+                      className={`${styles.langOptionItem} ${language === 'am' ? styles.langOptionItemActive : ''}`}
+                      onClick={() => {
+                        setLanguage('am');
+                        setShowMobileLang(false);
+                      }}
+                    >
+                      <span className={styles.langFlag}>🇪🇹</span>
+                      <div className={styles.langMeta}>
+                        <span className={styles.langName}>አማርኛ</span>
+                      </div>
+                      {language === 'am' && <span className={styles.langCheck}>✓</span>}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
             <button
               type="button"

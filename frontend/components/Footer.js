@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Icon from './Icon';
 import { useLanguage } from '../context/LanguageContext';
@@ -6,6 +6,18 @@ import styles from './Footer.module.css';
 
 const Footer = () => {
   const { language, setLanguage, t } = useLanguage();
+  const [showLangMenu, setShowLangMenu] = useState(false);
+  const langRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (langRef.current && !langRef.current.contains(e.target)) {
+        setShowLangMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <footer className={styles.footer}>
@@ -20,44 +32,59 @@ const Footer = () => {
           <span style={{ fontSize: '0.8rem', color: 'var(--color-gold)', display: 'block', marginTop: '0.75rem', fontWeight: 600 }}>
             {language === 'am' ? 'በኢትዮጵያ በባህላዊ ቅርስ የታነጸ።' : 'Crafted with cultural provenance in Ethiopia.'}
           </span>
-          <div style={{ marginTop: '1rem', display: 'inline-flex', alignItems: 'center', background: '#ffffff', border: '1px solid var(--color-line)', borderRadius: '24px', padding: '2px 4px', gap: '2px' }}>
-            <span style={{ color: 'var(--color-gold)', padding: '0 4px 0 6px', display: 'inline-flex', alignItems: 'center' }} title="Language / ቋንቋ">
-              <Icon name="globe" size={15} />
-            </span>
+
+          {/* Minimalist Globe Icon Dropdown for Footer */}
+          <div className={styles.langMenu} ref={langRef}>
             <button
               type="button"
-              onClick={() => setLanguage('en')}
-              style={{
-                padding: '4px 9px',
-                borderRadius: '16px',
-                border: 'none',
-                background: language === 'en' ? 'var(--color-green)' : 'transparent',
-                color: language === 'en' ? '#fff' : '#666',
-                fontWeight: language === 'en' ? 700 : 500,
-                fontSize: '0.74rem',
-                cursor: 'pointer',
-              }}
-              aria-label="Switch to English"
+              className={`${styles.langTrigger} ${showLangMenu ? styles.langTriggerActive : ''}`}
+              onClick={() => setShowLangMenu(!showLangMenu)}
+              aria-label="Select language / ቋንቋ ይምረጡ"
+              title={language === 'am' ? 'ቋንቋ: አማርኛ (ቀይር)' : 'Language: English (Switch)'}
             >
-              🇬🇧 English
+              <Icon name="globe" size={17} />
             </button>
-            <button
-              type="button"
-              onClick={() => setLanguage('am')}
-              style={{
-                padding: '4px 9px',
-                borderRadius: '16px',
-                border: 'none',
-                background: language === 'am' ? 'var(--color-green)' : 'transparent',
-                color: language === 'am' ? '#fff' : '#666',
-                fontWeight: language === 'am' ? 700 : 500,
-                fontSize: '0.74rem',
-                cursor: 'pointer',
-              }}
-              aria-label="ቀይር ወደ አማርኛ"
-            >
-              🇪🇹 አማርኛ
-            </button>
+
+            {showLangMenu && (
+              <div className={styles.langDropdown}>
+                <div className={styles.langDropdownHeader}>
+                  <span>{language === 'am' ? 'ቋንቋ ይምረጡ' : 'Select Language'}</span>
+                </div>
+                <div className={styles.langOptionsList}>
+                  <button
+                    type="button"
+                    className={`${styles.langOptionItem} ${language === 'en' ? styles.langOptionItemActive : ''}`}
+                    onClick={() => {
+                      setLanguage('en');
+                      setShowLangMenu(false);
+                    }}
+                  >
+                    <span className={styles.langFlag}>🇬🇧</span>
+                    <div className={styles.langMeta}>
+                      <span className={styles.langName}>English</span>
+                      <small className={styles.langRegion}>Global (EN)</small>
+                    </div>
+                    {language === 'en' && <span className={styles.langCheck}>✓</span>}
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`${styles.langOptionItem} ${language === 'am' ? styles.langOptionItemActive : ''}`}
+                    onClick={() => {
+                      setLanguage('am');
+                      setShowLangMenu(false);
+                    }}
+                  >
+                    <span className={styles.langFlag}>🇪🇹</span>
+                    <div className={styles.langMeta}>
+                      <span className={styles.langName}>አማርኛ</span>
+                      <small className={styles.langRegion}>ኢትዮጵያ (Ge&apos;ez)</small>
+                    </div>
+                    {language === 'am' && <span className={styles.langCheck}>✓</span>}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

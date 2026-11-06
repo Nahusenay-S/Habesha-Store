@@ -9,6 +9,7 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import LoadingScreen from '../../components/LoadingScreen';
 import Badge from '../../components/Badge';
+import AnimatedReceipt from '../../components/AnimatedReceipt';
 import styles from '../../styles/payment-detail.module.css';
 
 const PaymentDetailPage = () => {
@@ -20,6 +21,7 @@ const PaymentDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [refunding, setRefunding] = useState(false);
   const [refundMsg, setRefundMsg] = useState('');
+  const [showReceipt, setShowReceipt] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -254,6 +256,16 @@ const PaymentDetailPage = () => {
           </div>
 
           <div className={styles.actions}>
+            <button
+              type="button"
+              className={styles.downloadBtn}
+              onClick={() => setShowReceipt(!showReceipt)}
+              style={{ background: 'var(--color-green)' }}
+            >
+              {showReceipt
+                ? (language === 'am' ? '▲ ደረሰኝ ደብቅ' : '▲ Hide Animated Receipt')
+                : (language === 'am' ? '📜 አኒሜትድ ደረሰኝ ተመልከት' : '📜 View Animated Receipt')}
+            </button>
             {payment.status === 'completed' && !payment.refundAmount && (
               <button
                 type="button"
@@ -275,6 +287,22 @@ const PaymentDetailPage = () => {
               </Link>
             )}
           </div>
+
+          {showReceipt && (
+            <div style={{ marginTop: '2.5rem' }}>
+              <AnimatedReceipt
+                order={{
+                  _id: orderIdentifier !== 'N/A' ? orderIdentifier : (payment.transactionId || payment._id),
+                  items: typeof payment.order === 'object' && payment.order?.items ? payment.order.items : [{ name: 'Heritage Collection Order', quantity: 1, price: payment.amount }],
+                  totalAmount: payment.amount,
+                  shippingAddress: typeof payment.order === 'object' && payment.order?.shippingAddress ? payment.order.shippingAddress : { fullName: user.name },
+                  paymentMethod: payment.paymentMethod || 'Online Gateway',
+                  paymentStatus: payment.status,
+                  createdAt: payment.createdAt,
+                }}
+              />
+            </div>
+          )}
         </div>
       </div>
       <Footer />

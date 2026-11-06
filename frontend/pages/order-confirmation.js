@@ -7,6 +7,7 @@ import { orderAPI, paymentAPI } from '../lib/api';
 import { useLanguage } from '../context/LanguageContext';
 import styles from '../styles/order-confirmation.module.css';
 import Icon from '../components/Icon';
+import AnimatedReceipt from '../components/AnimatedReceipt';
 
 const OrderConfirmationPage = () => {
   const router = useRouter();
@@ -125,6 +126,9 @@ const OrderConfirmationPage = () => {
             )}
           </div>
         )}
+
+        {/* Animated Digital Receipt */}
+        <AnimatedReceipt order={order} />
 
         <div className={styles.cards}>
           <div>
