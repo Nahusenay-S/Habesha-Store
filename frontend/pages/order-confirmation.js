@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
+import LoadingScreen from '../components/LoadingScreen';
 import { orderAPI, paymentAPI } from '../lib/api';
 import { useLanguage } from '../context/LanguageContext';
 import styles from '../styles/order-confirmation.module.css';
@@ -21,16 +22,19 @@ const OrderConfirmationPage = () => {
   const [chapaLoading, setChapaLoading] = useState(false);
 
   const loadOrder = () => {
-    if (id) {
-      orderAPI.getById(id)
+    const orderId = id || (router.isReady ? router.query.id : null);
+    if (orderId) {
+      orderAPI.getById(orderId)
         .then((response) => setOrder(response.data))
         .catch(() => setOrder(false));
     }
   };
 
   useEffect(() => {
-    loadOrder();
-  }, [id]);
+    if (router.isReady && id) {
+      loadOrder();
+    }
+  }, [router.isReady, id]);
 
   // Handle genuine Chapa return verification (only after returning from gateway)
   useEffect(() => {
@@ -131,7 +135,7 @@ const OrderConfirmationPage = () => {
   };
 
   if (order === false) return <><Header /><main className={styles.message}><h1>{t('order_detail.not_found', 'Order not found')}</h1><p>{t('order_detail.not_found_desc', 'We could not find this order.')}</p><Link href="/products">{t('cart.continue_shopping', 'Browse the collection')}</Link></main><Footer /></>;
-  if (!order) return <><Header /><main className={styles.message}>{t('common.loading', 'Loading your order...')}</main><Footer /></>;
+  if (!order) return <><Header /><LoadingScreen label={language === 'am' ? 'ትዕዛዝዎን በመጫን ላይ...' : 'Loading your order...'} /><Footer /></>;
 
   const isPaid = order.paymentStatus === 'completed';
 
@@ -256,7 +260,7 @@ const OrderConfirmationPage = () => {
         <div className={styles.cards}>
           <div>
             <span>{language === 'am' ? 'የትዕዛዝ ቁጥር' : 'Order number'}</span>
-            <strong>#{order._id.slice(0, 8).toUpperCase()}</strong>
+            <strong>#{(order._id || order.id || '').slice(0, 8).toUpperCase()}</strong>
             <small><Icon name="check" size={13} /> {language === 'am' ? 'ትዕዛዝዎ በመለያዎ ተመዝግቧል' : 'Order confirmed in your account'}</small>
           </div>
           <div>
@@ -272,7 +276,7 @@ const OrderConfirmationPage = () => {
             <span>{order.items?.length || 0} {language === 'am' ? 'ቅርሶች' : 'items'}</span>
           </header>
           {order.items?.map((item) => (
-            <div className={styles.item} key={item.product?.id}>
+            <div className={styles.item} key={item.product?.id || item._id}>
               <div>
                 <small>{item.product?.seller?.name || (language === 'am' ? 'የሀበሻ እደ-ጥበብ ባለሙያ' : 'Habesha artisan')}</small>
                 <span>{item.product?.name} × {item.quantity}</span>
@@ -285,7 +289,7 @@ const OrderConfirmationPage = () => {
               {language === 'am' ? 'የክፍያ ዘዴ:' : 'Payment Method:'} <strong style={{ textTransform: 'capitalize' }}>{order.paymentMethod || 'secure checkout'}</strong>
               {' '}(<em style={{ color: isPaid ? '#078930' : '#d97706' }}>{isPaid ? (language === 'am' ? 'ተጠናቋል' : 'Completed') : (language === 'am' ? 'በመጠባበቅ ላይ' : 'Pending')}</em>)
             </span>
-            <small>{t('payments.transaction_id', 'Transaction ID:')} #{order._id.slice(0, 8).toUpperCase()}</small>
+            <small>{t('payments.transaction_id', 'Transaction ID:')} #{(order._id || order.id || '').slice(0, 8).toUpperCase()}</small>
             <div>
               <span>{t('cart.total', 'Total amount')}</span>
               <strong>{t('common.currency', 'ETB')} {Number(order.totalAmount).toFixed(2)}</strong>
@@ -294,7 +298,7 @@ const OrderConfirmationPage = () => {
         </section>
 
         <div className={styles.actions}>
-          <Link href={`/orders/${order._id}`}>
+          <Link href={`/orders/${order._id || order.id}`}>
             <Icon name="truck" size={15} /> {language === 'am' ? 'ትዕዛዝ ተከታተል' : 'Track order'}
           </Link>
           <Link href="/products">{language === 'am' ? 'ወደ ስብስቦች ተመለስ' : 'Back to collection'}</Link>
