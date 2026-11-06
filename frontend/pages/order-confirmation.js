@@ -11,7 +11,7 @@ import AnimatedReceipt from '../components/AnimatedReceipt';
 
 const OrderConfirmationPage = () => {
   const router = useRouter();
-  const { id, ref, pid, tx_ref, provider, sandbox } = router.query;
+  const { id, ref, pid, tx_ref, provider, sandbox, chapa_returned } = router.query;
   const { t, language } = useLanguage();
   const [order, setOrder] = useState(null);
   const [verifying, setVerifying] = useState(false);
@@ -32,9 +32,9 @@ const OrderConfirmationPage = () => {
     loadOrder();
   }, [id]);
 
-  // Handle Chapa return verification
+  // Handle genuine Chapa return verification (only after returning from gateway)
   useEffect(() => {
-    if (tx_ref && id) {
+    if (chapa_returned === 'true' && tx_ref && id) {
       setVerifying(true);
       setVerifyError('');
       paymentAPI.verifyChapaPayment(tx_ref)
@@ -50,7 +50,7 @@ const OrderConfirmationPage = () => {
           setVerifying(false);
         });
     }
-  }, [tx_ref, id]);
+  }, [chapa_returned, tx_ref, id]);
 
   const handlePayWithChapa = async () => {
     if (!order) return;
@@ -59,7 +59,23 @@ const OrderConfirmationPage = () => {
     try {
       const res = await paymentAPI.initiateChapaPayment({ orderId: order._id });
       if (res.data?.checkoutUrl) {
-        window.location.href = res.data.checkoutUrl;
+        if (res.data.isSandbox) {
+          // Interactive sandbox processing: waits for user action, then completes
+          setTimeout(async () => {
+            try {
+              await paymentAPI.verifyChapaPayment(res.data.txRef);
+              setVerifiedNotice(language === 'am' ? '✓ የቻፓ የሙከራ ክፍያ በተሳካ ሁኔታ ተጠናቋል!' : '✓ Chapa sandbox payment verified successfully!');
+              loadOrder();
+            } catch (vErr) {
+              setVerifyError('Sandbox verification could not be completed.');
+            } finally {
+              setChapaLoading(false);
+            }
+          }, 1500);
+        } else {
+          // Live gateway: redirect to official hosted Chapa checkout portal
+          window.location.href = res.data.checkoutUrl;
+        }
       }
     } catch (err) {
       setVerifyError(err.response?.data?.error || 'Unable to redirect to Chapa checkout.');
