@@ -58,6 +58,7 @@ jobs:
           NODE_ENV: test
           DATABASE_URL: postgres://habesha_user:habesha_password@localhost:5432/habesha_test
           JWT_SECRET: ci_test_secret_key_habesha_store_987654321
+          JWT_EXPIRE: 7d
           PORT: 5000
 
   frontend-build:

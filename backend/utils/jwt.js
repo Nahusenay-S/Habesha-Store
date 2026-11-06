@@ -1,14 +1,15 @@
 const jwt = require('jsonwebtoken');
 
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE,
-  });
+  const secret = process.env.JWT_SECRET || 'habesha-store-default-dev-secret-key';
+  const expiresIn = process.env.JWT_EXPIRE || '7d';
+  return jwt.sign({ id }, secret, { expiresIn });
 };
 
 const verifyToken = (token) => {
   try {
-    return jwt.verify(token, process.env.JWT_SECRET);
+    const secret = process.env.JWT_SECRET || 'habesha-store-default-dev-secret-key';
+    return jwt.verify(token, secret);
   } catch (error) {
     return null;
   }
